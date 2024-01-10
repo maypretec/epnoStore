@@ -1,0 +1,22 @@
+{
+    "es-mx":
+    {
+        "AddPart":
+        {
+            "1": "Nombre",
+            "2": "",
+            "3": ""
+            
+        }
+    },
+    "en-us":
+    {
+        "AddPart":
+        {
+            "1": "Name",
+            "2": "Please input a name for the part",
+            "3": "The name of the new part",
+            "4": "The name for the new part to be submitted into EP&O's platform. This name helps you identify the part with a friendly identifier you assign"
+        }
+    }
+}

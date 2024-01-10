@@ -1,0 +1,45 @@
+.upload-list-inline .ant-upload-list-item {
+  float: left !important;
+  width: 200px !important;
+  margin-right: 8px !important;
+}
+.my_comment {
+  text-align: right;
+  .ant-comment-inner {
+    flex-direction: row-reverse !important;
+    display: flex !important;
+  }
+  .ant-comment-content-author {
+    flex-direction: row-reverse !important;
+    margin-bottom: 10px;
+  }
+  
+  .span-comment {
+    border-radius: 20px;
+    background-color: #0084FF;
+    color: white;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    padding-right:10px;
+    padding-left:10px;
+    display: inline-block
+    // font-weight: 600;
+  }
+
+}
+.user_comment{
+  .ant-comment-content-author {
+    margin-bottom: 10px;
+  }
+  .span-comment {
+    border-radius: 20px;
+    background-color: #E4E6EB;
+    // color: white;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    padding-right:10px;
+    padding-left:10px;
+    display: inline-block
+    // font-weight: 600;
+  }
+}

@@ -1,0 +1,44 @@
+.divider_h {
+    height: auto;
+}
+
+.subtotal {
+    display: flex;
+    // align-items: center;
+    justify-content: space-between;
+}
+
+.btnOrden {
+    button {
+        margin-top: 16;
+        color: white;
+        background-color: rgb(0, 21, 41);
+        width: 100%;
+    }
+
+}
+
+.producto {
+    display: flex;
+    // align-items: center;
+    justify-content: space-between;
+}
+
+.alinear {
+
+    display: flex;
+    justify-content: flex-end;
+
+
+}
+
+.circle {
+    border-radius: 8px;
+}
+.reload-button{
+    // .ant-btn-icon-only{
+    vertical-align: top !important;
+    margin-top: -7px !important;
+    // }
+
+}
