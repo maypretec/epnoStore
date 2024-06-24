@@ -119,6 +119,7 @@ export default function LayoutPage(props) {
 
 
   useEffect(() => {
+    console.log(role)
     //productos
     ProductService.GetProducts()
     .then((response) => {

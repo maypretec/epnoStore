@@ -33,7 +33,9 @@ export default function CPLayout(props) {
   const formRef = React.createRef();
   const [form] = Form.useForm();
   const { children } = props;
-  let role = localStorage.getItem('role');;
+
+
+  let role = localStorage.getItem('role');
   // TODO: change to dynamic role reading
 
   const footerContent = <div className="footer_cart">
@@ -158,6 +160,7 @@ export default function CPLayout(props) {
       </Menu.ItemGroup>
     </Menu>
   );
+
   const userNotifications = (
     <Menu >
       <Menu.ItemGroup title="Notificaciones">
@@ -171,6 +174,7 @@ export default function CPLayout(props) {
       </Menu.ItemGroup>
     </Menu>
   );
+
   const ChangeNotification = (id) => {
     NotificationService.ChangeStatus(id)
     .then(response => {
@@ -192,7 +196,7 @@ export default function CPLayout(props) {
       </Row>
     )
   } else {
-    if (role == 1 || role == 2 || role == 3 || role == 5 || role == 10) {
+    //if (role == 1 || role == 2 || role == 3 || role == 5 || role == 10) {
       return (
         <Layout style={{ minHeight: "100vh" }}>
 
@@ -409,8 +413,8 @@ export default function CPLayout(props) {
         </Layout >
       );
 
-    } else {
-      return <Forbidden />
-    }
+    //} else {
+      //return <Forbidden />
+    //}
   }
 }

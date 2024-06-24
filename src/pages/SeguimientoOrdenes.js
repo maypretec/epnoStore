@@ -31,7 +31,7 @@ export default function SeguimientoOrdenes(props) {
     useEffect(() => {
         setLoading(true);
 
-        OrderService.OpenOrders()
+        /*OrderService.OpenOrders()
             .then((response) => {
                 return response.data
             })
@@ -40,7 +40,7 @@ export default function SeguimientoOrdenes(props) {
                 setLoading(false)
 
 
-            }).catch(console.log)
+            }).catch(console.log)*/
 
     }, [])
 

@@ -19,12 +19,17 @@ export default function Login() {
 
   const onFinish = (values) => {
     setLoading(true);
-    AuthService.Login(values)
+    AuthService.LoginEpno(values)
       .then(response => {
+        console.log(response)
         if (response.status === 200) {
           localStorage.setItem('role', response.data.role);
+          if (response.data.role == 4){
+            history('/orders/request');
+          } else if (response.data.role == 6) {
+            history('/dashboard')
+          }
           setLoading(false);
-          history('/orders/request');
           // if (response.data.user.email_verified_at == null) {
           //   history('/unverified')
           // } else if (response.data.user.status == 2) {

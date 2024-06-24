@@ -1,4 +1,10 @@
-export const BASE_URL = 'https://dev.gw.client.epno.app';
+export const BASE_URL = 'https://us-central1-app-epno.cloudfunctions.net/app/api/';
+//export const BASE_URL = 'http://localhost:5000/app-epno/us-central1/app/api/';
+
+//export const BASE_URL = 'https://dev.gw.client.epno.app';
+
+export const FIREBASE_URL = 'https://us-central1-app-epno.cloudfunctions.net/app/api/'
+
 export const requestMethods = {
     GET:        'GET',
     POST:       'POST',
@@ -20,8 +26,9 @@ export const API = {
         CONNECT:    'CONNECT',
     },
     AUTH: {
+        LOGIN_EPNO:         'auth/login',
         LOGIN:              '/api/self-service/sign-in',
-        REGISTER:           '/api/register',
+        REGISTER:           'auth/register',
         CHECK_SESSION:      '/check-session',
         PASSWORD_RESET:     '/password/reset',
         PASSWORD_EMAIL:     '/password/email'
