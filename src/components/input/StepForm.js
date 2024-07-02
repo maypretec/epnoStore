@@ -7,10 +7,23 @@ import {
 	Input,
 	DatePicker,
 	Button,
+	Select,
+
 } from "antd";
+import { useEffect, useState } from "react";
+
+const { Option } = Select;
 
 export default function StepGeneralServiceForm(props) {
 	const { next, setFormValue, formValue } = props;
+	const categories = [
+		{ id: 1, name: 'Servicios' },
+		{ id: 2, name: 'Tecnologia' },
+		{ id: 3, name: 'Maquinado' },
+		{ id: 4, name: 'MRO' },
+		{ id: 5, name: 'MRP' },
+	];
+		
 
 	const onChange = (targetInput) => {
 		setFormValue((state) => ({
@@ -24,6 +37,16 @@ export default function StepGeneralServiceForm(props) {
 			time: dateString,
 		}));
 	};
+
+	const onCatChange = (value) => {
+    setFormValue((state) => ({
+			...state,
+			cat1: value[0],
+			cat2: value[1]
+		}));
+    
+  };
+
 
 	return (
 		<>
@@ -109,6 +132,28 @@ export default function StepGeneralServiceForm(props) {
 									name="time"
 									onChange={onDateChange}
 								/>
+							</Form.Item>
+						</Col>
+					</Row>
+					<Row gutter={[12, 12]}>
+						<Col xs={24} md={18}>
+							<Form.Item 
+								label="Categoria(s)" 
+								name="categories"
+								rules={[{ required: true, message: 'Debes elegir almenos una categoria' }]}
+							>
+								<Select
+										mode="multiple"
+										allowClear
+										onChange={onCatChange}
+										placeholder="Seleccionar la(s) categoria(s)"
+										name="categoria"
+										rules={[{ required: true }]}
+								>
+								{ categories.map((category, index) => (
+									<Option key={index} value={category.id}>{category.name}</Option>
+								))}
+								</Select>
 							</Form.Item>
 						</Col>
 					</Row>

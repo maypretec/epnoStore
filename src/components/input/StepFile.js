@@ -5,6 +5,18 @@ import { InboxOutlined } from "@ant-design/icons";
 export default function StepFile(props) {
 	const { setFormValue, filesArray } = props;
 
+	const getBase64 = (file) => {
+		return new Promise((resolve, reject) => {
+			const reader = new FileReader();
+			reader.readAsDataURL(file);
+			reader.onload = () => {
+				const base64String = reader.result.split(',')[1];
+				resolve(base64String);
+			};
+			reader.onerror = (error) => reject(error);
+		});
+	};
+
 	const propsDrag = {
 		onRemove: (file) => {
 			setFormValue((state) => {
@@ -16,10 +28,11 @@ export default function StepFile(props) {
 				};
 			});
 		},
-		beforeUpload: (file) => {
+		beforeUpload: async (file) => {
+			const base64 = await getBase64(file);
 			setFormValue((state) => ({
 				...state,
-				fileList: [...state.fileList, file],
+				fileList: base64,
 			}));
 			return false;
 		},
@@ -32,7 +45,7 @@ export default function StepFile(props) {
 				<Typography.Paragraph mark>
 					<Typography.Text type="secondary" style={{ fontSize: 14 }}>
 						<Badge status="error" />
-						Recuerda que el nombre de tus archivos debe ser
+						Recuerda que el nombre de tus archivo debe ser
 						descriptivo: Ej. Servicio 1 especificaciones.
 					</Typography.Text>
 				</Typography.Paragraph>
@@ -40,20 +53,19 @@ export default function StepFile(props) {
 			<Col xs={22}>
 				<Upload.Dragger
 					{...propsDrag}
-					maxCount={25}
-					listType="picture"
+					maxCount={1}
+					listType='picture'
 					name="files"
-					multiple={true}
+					multiple={false}
 				>
 					<p className="ant-upload-drag-icon">
 						<InboxOutlined />
 					</p>
 					<p className="ant-upload-text">
-						Arrastra o da click para subir archivos.
+						Arrastra o da click para subir el archivo.
 					</p>
 					<p className="ant-upload-hint">
-						Puedes subir archivos en uno en uno o seleccionar varios
-						a la vez, solo puedes subir maximo 10 archivos.
+						Por el momento solo puedes subir un solo archivo PDF
 					</p>
 				</Upload.Dragger>
 			</Col>

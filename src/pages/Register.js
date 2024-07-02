@@ -296,6 +296,7 @@ export default function RegisterX() {
           AuthService.LoginEpno({email: formDataObject.email, password: formDataObject.password})
             .then(response => {
               localStorage.setItem('role', response.data.role)
+              localStorage.setItem('user', response.data);
               if (response.data.role == 4){
                 history('/orders/request');
               } else if (response.data.role == 6) {

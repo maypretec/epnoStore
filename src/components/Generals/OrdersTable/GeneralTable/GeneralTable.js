@@ -18,15 +18,17 @@ import ServiceStatus from "../../ServiceStatus/ServiceStatus";
 export default function AgentTable(props) {
 	const { openOrders, loading } = props;
 
+	console.log(openOrders)
+
 	const [tableData, setTableData] = useState(
 		openOrders.map((order, index) => {
 			return {
 				key: index,
-				order_id: order.order_num,
-				order_title: order.service.title,
-				client_name: order.client_name,
-				order_status: order.service.step_id,
-				days_of_age: moment(order.created_at).fromNow(),
+				order_id: order.id,
+				order_title: order.title,
+				client_name: order.userName,
+				order_status: order.status,
+				days_of_age: moment(order.createdAt).fromNow(), 
 			};
 		})
 	);
@@ -58,11 +60,11 @@ export default function AgentTable(props) {
 				openOrders.map((order, index) => {
 					return {
 						key: index,
-						order_id: order.order_num,
-						order_title: order.service.title,
-						client_name: order.client_name,
-						order_status: [order.service.step_id],
-						days_of_age: moment(order.created_at).fromNow(),
+						order_id: order.id,
+						order_title: order.title,
+						client_name: order.userName,
+						order_status: order.status,
+						days_of_age: moment(order.createdAt).fromNow(), 
 					};
 				})
 			);

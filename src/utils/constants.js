@@ -1,5 +1,5 @@
-export const BASE_URL = 'https://us-central1-app-epno.cloudfunctions.net/app/api/';
-//export const BASE_URL = 'http://localhost:5000/app-epno/us-central1/app/api/';
+//export const BASE_URL = 'https://us-central1-app-epno.cloudfunctions.net/app/api/';
+export const BASE_URL = 'http://localhost:5000/app-epno/us-central1/app/api/';
 
 //export const BASE_URL = 'https://dev.gw.client.epno.app';
 
@@ -62,7 +62,9 @@ export const API = {
             CHANGE_INFO:        '/api/self-service/change_service_info',
             CHANGE_STEP:        '/api/self-service/service_change_step',
             GENERAL_SERVICES:   '/api/self-service/orders/new',
-            NEW_SERVICE:        '/api/self-service/new_service',
+            NEW_SERVICE:        'services/new',
+            GET_ALL:            'services/getAll',
+            GET_BY_USER:        'services/getByUser'
         },
         SUBSERVICES: {
             ADD:                    '/api/self-service/add_new_subservice',

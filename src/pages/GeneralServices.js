@@ -9,6 +9,7 @@ import OrderService from '../utils/api/orders';
 
 export default function GeneralServices() {
 	const { Step } = Steps;
+	const user = JSON.parse(localStorage.getItem('user'))
 
 	const [loading, setLoading] = useState(false);
 
@@ -31,8 +32,22 @@ export default function GeneralServices() {
 
 	const onFinish = () => {
 		setLoading(true);
+		console.log(formValue)
+		console.log(user)
+		let service = {
+			userId: user.id,
+			userName: user.name,
+      enterprise: 'Por borrar',
+      title: formValue.title,
+      description: formValue.description,
+      cat1: formValue.cat1,
+      cat2: formValue.cat2,
+			fileBase64: formValue.fileList
+		}
 
-		OrderService.GeneralServices(formValue)
+		console.log(service)
+
+		OrderService.NewService(service)
 			.then((response) => {
 				if (response.data.success === true) {
 					setTimeout(() => {
@@ -40,7 +55,7 @@ export default function GeneralServices() {
 							open: true,
 							type: 'success',
 							title: '¡Solicitud enviada con exito!',
-							description: 'Tu numero de orden es: ' + 'response.data.purchase_order' + ', podras ver tu pedido, en apartado de ORDENES .',
+							description: 'Tu numero de orden es: ' + response.data.purchase_order + ', podras ver tu pedido, en apartado de ORDENES .',
 							req_id: response.data.service_id,
 						});
 						setLoading(false);
