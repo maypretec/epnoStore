@@ -1,5 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { Col, Row, Table, Card, Button, Switch, Form, Input, Divider, Typography, Dropdown, Menu, Rate, Tag, Select, Tooltip, InputNumber, Skeleton } from "antd";
+import {
+  Col,
+  Row,
+  Table,
+  Card,
+  Button,
+  Switch,
+  Form,
+  Input,
+  Divider,
+  Typography,
+  Dropdown,
+  Menu,
+  Rate,
+  Tag,
+  Select,
+  Tooltip,
+  InputNumber,
+  Skeleton,
+} from "antd";
 import { MoreOutlined, PlusOutlined } from "@ant-design/icons";
 import ClientInfo from "../ClientInfo";
 import LocationService from "../../../utils/api/locations";
@@ -13,327 +32,349 @@ const { Option } = Select;
 const { SubMenu } = Menu;
 
 export default function ProfileInfo(props) {
-    // const [newLocation, setNewLocation] = useState(false)
-    const [form] = Form.useForm();
-    const { locations, id } = props;
+  // const [newLocation, setNewLocation] = useState(false)
+  const [form] = Form.useForm();
+  const { locations, id } = props;
 
-    const [profile, setProfile] = useState([]);
-    const [reload, setReload] = useState(false)
-    let token = localStorage.getItem('token');
-    const [load, setLoad] = useState({
-        loadings: []
-    })
+	const user = JSON.parse(localStorage.getItem('user'))
 
+  const [profile, setProfile] = useState([]);
+  const [reload, setReload] = useState(false);
+  let token = localStorage.getItem("token");
+  const [load, setLoad] = useState({
+    loadings: [],
+  });
 
-    // API informacion de perfil
-    useEffect(() => {
-        ProfileService.ProfileInfo(id)
-        .then((response) => {
-            return response.json()
-        })
-        .then((profile) => {
-            setProfile(profile)
-        }).catch(console.log)
-    }, [reload]);
+  // API informacion de perfil
+  useEffect(() => {
+		console.log(user)
+		setProfile(user)
+    /*ProfileService.ProfileInfo(id)
+      .then((response) => {
+        return response.json();
+      })
+      .then((profile) => {
+        setProfile(profile);
+      })
+      .catch(console.log);*/
+  }, [reload]);
 
-    // Deshabilitar campos
-    const [disabled, setDisabled] = useState({
-        stateOrg: true,
-        cityOrg: true,
-        pcOrg: true,
-        colonyOrg: true
+  // Deshabilitar campos
+  const [disabled, setDisabled] = useState({
+    stateOrg: true,
+    cityOrg: true,
+    pcOrg: true,
+    colonyOrg: true,
+  });
+
+  // Informacion seleccionada
+  const [formValue, setFormValue] = useState({
+    nombre: "",
+    pais: "",
+    estado: "",
+    ciudad: "",
+    codigo_postal: "",
+    colonia: "",
+    calle: "",
+    numero_exterior: "",
+    numero_interior: "",
+  });
+
+  const [country, setCountry] = useState({
+    countries: [],
+  });
+  const [state, setState] = useState({
+    states: [],
+  });
+  const [city, setCity] = useState({
+    cities: [],
+  });
+  const [pc, setPC] = useState({
+    pcodes: [],
+  });
+  const [colony, setColony] = useState({
+    colonies: [],
+  });
+
+  const [show, setShow] = useState(false);
+
+  // API de todos los paises
+  useEffect(() => {
+    RegisterService.Country()
+      .then((response) => {
+        return response.json();
+      })
+      .then((countries) => {
+        setCountry({ countries: countries });
+      })
+      .catch(console.log);
+  }, []);
+
+  // API de estado, habilitar campo
+  const onFormChangePais = (value) => {
+    let id = value;
+    // let tipo=event.target.name;
+    // setFormValue({
+    //     ...formValue,
+    //     [event.target.name]: event.target.value
+    // });
+
+    RegisterService.State(id)
+      .then((response) => {
+        return response.json();
+      })
+      .then((states) => {
+        setState({ states: states });
+        setDisabled({
+          ...disabled,
+          stateOrg: false,
+        });
+      })
+      .catch(console.log);
+  };
+
+  // API de ciudad, habilitar campo
+  const onFormChangeState = (value) => {
+    let id = value;
+    // let tipo=event.target.name;
+    // setFormValue({
+    //     ...formValue,
+    //     [event.target.name]: event.target.value
+    // });
+
+    RegisterService.City(id)
+      .then((response) => {
+        return response.json();
+      })
+      .then((cities) => {
+        setCity({ cities: cities });
+        setDisabled({
+          ...disabled,
+          cityOrg: false,
+        });
+      })
+      .catch(console.log);
+  };
+
+  // API codigo postal, habilitar campo
+  const onFormChangeCity = (value) => {
+    let id = value;
+    // let tipo=event.target.name;
+    // setFormValue({
+    //     ...formValue,
+    //     [event.target.name]: event.target.value
+    // });
+
+    RegisterService.PC(id)
+      .then((response) => {
+        return response.json();
+      })
+      .then((pcodes) => {
+        setPC({ pcodes: pcodes });
+        setDisabled({
+          ...disabled,
+          pcOrg: false,
+        });
+      })
+      .catch(console.log);
+  };
+
+  // API de colonia, habilitar campo
+  const onFormChangeCP = (value) => {
+    let id = value;
+    // let tipo=event.target.name;
+    // setFormValue({
+    //     ...formValue,
+    //     [event.target.name]: event.target.value
+    // });
+
+    RegisterService.Colony(id)
+      .then((response) => {
+        return response.json();
+      })
+      .then((colonies) => {
+        setColony({ colonies: colonies });
+        setDisabled({
+          ...disabled,
+          colonyOrg: false,
+        });
+      })
+      .catch(console.log);
+  };
+
+  const onFormChange = (value) => {
+    // setFormValue({
+    //     ...formValue,
+    //     [value.target.name]: value.target.value
+    // });
+  };
+
+  // Envio de datos a la API
+  const onFinish = (index) => (values) => {
+    setLoad(({ loadings }) => {
+      const newLoadings = [...loadings];
+      newLoadings[index] = true;
+
+      return {
+        loadings: newLoadings,
+      };
     });
 
-    // Informacion seleccionada
-    const [formValue, setFormValue] = useState({
-        nombre: "",
-        pais: "",
-        estado: "",
-        ciudad: "",
-        codigo_postal: "",
-        colonia: "",
-        calle: "",
-        numero_exterior: "",
-        numero_interior: "",
-    });
+    const params = new FormData();
+    // params.append('img', formImage.image);
 
-    const [country, setCountry] = useState({
-        countries: [],
-    });
-    const [state, setState] = useState({
-        states: [],
-    });
-    const [city, setCity] = useState({
-        cities: [],
-    });
-    const [pc, setPC] = useState({
-        pcodes: [],
-    });
-    const [colony, setColony] = useState({
-        colonies: [],
-    });
-
-    const [show, setShow] = useState(false);
-
-    // API de todos los paises
-    useEffect(() => {
-        RegisterService.Country()
-        .then((response) => {
-            return response.json()
-        })
-        .then((countries) => {
-            setCountry({ countries: countries })
-        }).catch(console.log)
-    }, []);
-
-    // API de estado, habilitar campo
-    const onFormChangePais = (value) => {
-        let id = value;
-        // let tipo=event.target.name;
-        // setFormValue({
-        //     ...formValue,
-        //     [event.target.name]: event.target.value
-        // });
-
-        RegisterService.State(id)
-        .then((response) => {
-            return response.json()
-        })
-        .then((states) => {
-            setState({ states: states })
-            setDisabled({
-                ...disabled,
-                stateOrg: false
-            })
-
-        }).catch(console.log)
-    };
-
-    // API de ciudad, habilitar campo
-    const onFormChangeState = (value) => {
-        let id = value;
-        // let tipo=event.target.name;
-        // setFormValue({
-        //     ...formValue,
-        //     [event.target.name]: event.target.value
-        // });
-
-        RegisterService.City(id)
-        .then((response) => {
-            return response.json()
-        })
-        .then((cities) => {
-            setCity({ cities: cities })
-            setDisabled({
-                ...disabled,
-                cityOrg: false
-            })
-        }).catch(console.log)
-    };
-
-    // API codigo postal, habilitar campo
-    const onFormChangeCity = (value) => {
-        let id = value;
-        // let tipo=event.target.name;
-        // setFormValue({
-        //     ...formValue,
-        //     [event.target.name]: event.target.value
-        // });
-
-        RegisterService.PC(id)
-        .then((response) => {
-            return response.json()
-        })
-        .then((pcodes) => {
-            setPC({ pcodes: pcodes })
-            setDisabled({
-                ...disabled,
-                pcOrg: false
-            })
-
-        }).catch(console.log)
-    };
-
-    // API de colonia, habilitar campo
-    const onFormChangeCP = (value) => {
-        let id = value;
-        // let tipo=event.target.name;
-        // setFormValue({
-        //     ...formValue,
-        //     [event.target.name]: event.target.value
-        // });
-
-        RegisterService.Colony(id)
-        .then((response) => {
-            return response.json()
-        })
-        .then((colonies) => {
-            setColony({ colonies: colonies })
-            setDisabled({
-                ...disabled,
-                colonyOrg: false
-            })
-        }).catch(console.log)
-    };
-
-
-    const onFormChange = value => {
-        // setFormValue({
-        //     ...formValue,
-        //     [value.target.name]: value.target.value
-        // });
-    };
-
-    // Envio de datos a la API
-    const onFinish = (index) => (values) => {
-
-        setLoad(({ loadings }) => {
+    LocationService.CreateLocation(values)
+      .then((response) => {
+        setTimeout(() => {
+          setShow(true);
+          setReload(!reload);
+          setLoad(({ loadings }) => {
             const newLoadings = [...loadings];
-            newLoadings[index] = true;
+            newLoadings[index] = false;
 
             return {
-                loadings: newLoadings,
+              loadings: newLoadings,
             };
-        })
+          });
+        });
+        form.resetFields();
+      })
+      .catch((error) => {
+        console.log(error.response.data.errors);
+        setTimeout(() => {
+          setLoad(({ loadings }) => {
+            const newLoadings = [...loadings];
+            newLoadings[index] = false;
 
-        const params = new FormData();
-        // params.append('img', formImage.image);
+            return {
+              loadings: newLoadings,
+            };
+          });
+        }, 1000);
+      });
+  };
 
-        LocationService.CreateLocation(values)
-        .then(response => {
-            setTimeout(() => {
-                setShow(true)
-                setReload(!reload);
-                setLoad(({ loadings }) => {
-                    const newLoadings = [...loadings];
-                    newLoadings[index] = false;
+  const recargar = () => {
+    window.location.reload(true);
+  };
 
-                    return {
-                        loadings: newLoadings
-                    };
-                });
-            })
-            form.resetFields();
-        })
-        .catch(error => {
-            console.log(error.response.data.errors)
-            setTimeout(() => {
-                setLoad(({ loadings }) => {
-                    const newLoadings = [...loadings];
-                    newLoadings[index] = false;
+  const desc = ["Horrible", "Malo", "Normal", "Bueno", "Excelente"];
 
-                    return {
-                        loadings: newLoadings
-                    };
-                });
-            }, 1000);
-        })
-    }
-
-    const recargar = () => {
-        window.location.reload(true);
-    }
-
-
-    const desc = ['Horrible', 'Malo', 'Normal', 'Bueno', 'Excelente'];
-
-
-    const menu = (
-        <Menu>
-            <Menu.Item>test1</Menu.Item>
-            <Menu.Item>test2</Menu.Item>
-        </Menu>
+  const menu = (
+    <Menu>
+      <Menu.Item>test1</Menu.Item>
+      <Menu.Item>test2</Menu.Item>
+    </Menu>
+  );
+  const title = (name, role) => (
+    <Row>
+      {profile == "" ? (
+        <Skeleton active paragraph={{ rows: 0 }} />
+      ) : (
+        <Col span={24}>
+          <Title level={3} style={{ color: "white" }}>
+            {name}{" "}
+            <Tag color="blue">
+              {role == 1 ? "Administrador"
+              : role == 2 ? "Finanzas"
+              : role == 3 ? "VS Manager"
+              : role == 5 ? "Buyer"
+              : (role == 4 || role == 6 || role == 9) && "Estandar"}
+            </Tag>
+          </Title>
+        </Col>
+      )}
+    </Row>
+  );
+  const extra = (rate) => (
+    <Row>
+      <Col span={24}>
+        <Text style={{ color: "white" }}>{rate} - </Text>
+        <Rate
+          tooltips={desc}
+          value={rate}
+          allowClear={false}
+          allowHalf
+          disabled
+        />
+      </Col>
+    </Row>
+  );
+  function filter(inputValue, path) {
+    return path.some(
+      (option) =>
+        option.label.toLowerCase().indexOf(inputValue.toLowerCase()) > -1
     );
-    const title = (name, role) =>
+  }
+  const data = [];
+  {
+    locations.map((loc) => {
+      data.push({
+        key: loc.id,
+        name: loc.name,
+        address:
+          loc.colonie +
+          " " +
+          loc.CP +
+          ", " +
+          loc.city +
+          ", " +
+          loc.state +
+          ", " +
+          loc.country,
+      });
+    });
+  }
 
-
-    (
-        <Row>
-            {
-
-                profile == "" ?
-                    <Skeleton active paragraph={{ rows: 0 }} />
-
-                    :
-                    <Col span={24}>
-                        <Title level={3} style={{ color: "white" }}>{name} <Tag color="blue">
-                            {
-                                role == 1 ? "Administrador"
-                                    : role == 2 ? "Finanzas"
-                                        : role == 3 ? "VS Manager"
-                                            : role == 5 ? "Buyer"
-                                                : (role == 4 || role == 6 || role == 9) && "Estandar"
-                            }
-                        </Tag></Title>
-                    </Col>
-            }
-        </Row>
-    );
-    const extra = (rate) =>
-    (
-        <Row>
-            <Col span={24}>
-                <Text style={{ color: "white" }}>{rate} - </Text><Rate tooltips={desc} value={rate} allowClear={false} allowHalf disabled />
-            </Col>
-        </Row>
-    );
-    function filter(inputValue, path) {
-        return path.some(option => option.label.toLowerCase().indexOf(inputValue.toLowerCase()) > -1);
-    }
-    const data = [];
+  const columns = [
     {
-        locations.map((loc) => {
-            data.push(
-                {
-                    key: loc.id,
-                    name: loc.name,
-                    address: loc.colonie + " " + loc.CP + ", " + loc.city + ", " + loc.state + ", " + loc.country
-                }
-            )
-        })
-    }
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      width: "30%",
+    },
+    {
+      title: "Address",
+      dataIndex: "address",
+      key: "address",
+      width: "60%",
+    },
+    {
+      title: "Action",
+      dataIndex: "action",
+      key: "action",
+      width: "10%",
+      render: (text, location) => (
+        <Dropdown overlay={menu} key={location.key}>
+          <a className="ant-dropdown-link">
+            <MoreOutlined />
+          </a>
+        </Dropdown>
+      ),
+    },
+  ];
+  // const inputCompanion = (labelNo, tooltiplabel) => {
+  //     return ({
+  //         placeholder: Lang("AddPart", labelNo),
+  //         suffix: tooltipIcon(tooltiplabel)
+  //     });
+  // };
+  // console.log(profile.info[0].name);
 
-    const columns =
-        [
-            {
-                title: "Name",
-                dataIndex: "name",
-                key: "name",
-                width: "30%"
-            },
-            {
-                title: "Address",
-                dataIndex: "address",
-                key: "address",
-                width: "60%"
-            },
-            {
-                title: "Action",
-                dataIndex: "action",
-                key: "action",
-                width: "10%",
-                render: (text, location) => <Dropdown overlay={menu} key={location.key}><a className="ant-dropdown-link"><MoreOutlined /></a></Dropdown>
-            }
-        ];
-    // const inputCompanion = (labelNo, tooltiplabel) => {
-    //     return ({
-    //         placeholder: Lang("AddPart", labelNo),
-    //         suffix: tooltipIcon(tooltiplabel)
-    //     });
-    // };
-    // console.log(profile.info[0].name);
-
-    return (
-        <Card
-            extra={profile.role_id == 3 || profile.role_id == 5 && extra(profile.user_rate)}
-
-            headStyle={{ background: "#001529" }} title={title(profile.name, profile.role_id)}>
-
-            <Divider orientation="left">Información</Divider>
-            <Row gutter={32}>
-                <ClientInfo reload={reload} setReload={setReload} profile={profile} />
-            </Row>
-            {/* <Divider orientation="left">Locaciones</Divider>
+  return (
+    <Card
+      extra={
+        profile.role_id == 3 ||
+        (profile.role_id == 5 && extra(profile.user_rate))
+      }
+      headStyle={{ background: "#001529" }}
+      title={title(profile.name, profile.role_id)}
+    >
+      <Divider orientation="left">Información</Divider>
+      <Row gutter={32}>
+        <ClientInfo reload={reload} setReload={setReload} profile={profile} />
+      </Row>
+      {/* <Divider orientation="left">Locaciones</Divider>
             <Row gutter={32}>
                 <Col xs={24} md={14}>
                     <Table columns={columns} dataSource={data} />
@@ -490,6 +531,6 @@ export default function ProfileInfo(props) {
                     </Card>
                 </Col>
             </Row> */}
-        </Card>
-    );
+    </Card>
+  );
 }

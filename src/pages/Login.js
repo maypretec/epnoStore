@@ -23,6 +23,7 @@ export default function Login() {
       .then(response => {
         console.log(response)
         if (response.status === 200) {
+          
           localStorage.setItem('role', response.data.role); 
           localStorage.setItem('user', JSON.stringify(response.data));
           if (response.data.role == 4){

@@ -92,13 +92,13 @@ export default function ClientInfo(props) {
                                     <Text>Email:<Title level={4}>{profile.email}</Title></Text>
                                 </Col>
                                 <Col xs={24} md={10}>
-                                    <Text>Org Name:<Title level={4}>{profile.org}</Title></Text>
+                                    <Text>Org Name:<Title level={4}>{profile.bussiness}</Title></Text>
                                 </Col>
                                 <Col xs={24} md={14}>
                                     <Text>RFC:<Title level={4}>{profile.rfc}</Title></Text>
                                 </Col>
                                 <Col span={24}>
-                                    <Text>Address:<Title level={4}>{`${profile.colonie} ${profile.CP},${profile.city},${profile.state}, ${profile.country}`}</Title></Text>
+                                    <Text>Address:<Title level={4}>{`${profile.colony} ${profile.postal_code},${profile.city},${profile.state}, ${profile.country}`}</Title></Text>
                                 </Col>
                                 <Col xs={24} md={10}>
                                     <Text>Total :<Title level={3}>12,654</Title></Text>
