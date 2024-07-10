@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, Card, Col, Row, Alert, Modal, Typography, Avatar } from 'antd';
+import React, { useState } from 'react';
+import { Form, Input, Button, Col, Row, Alert, Avatar } from 'antd';
 import { UserOutlined, LockOutlined, ThunderboltTwoTone, EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import Layout from '../layouts/NavBar';
 import { Link, useNavigate } from 'react-router-dom';
@@ -26,27 +26,34 @@ export default function Login() {
           
           localStorage.setItem('role', response.data.role); 
           localStorage.setItem('user', JSON.stringify(response.data));
-          if (response.data.role == 4){
+          
+          /*if (response.data.role == 4){
             history('/orders/request');
           } else if (response.data.role == 6) {
             history('/dashboard')
-          }
+          }*/
+
           setLoading(false);
-          // if (response.data.user.email_verified_at == null) {
-          //   history('/unverified')
-          // } else if (response.data.user.status == 2) {
-          //   history('/error/401')
-          // } else if (response.data.user.status == 0) {
-          //   history('/@c-@s')
-          // } else if ((response.data.user.role_id == 1 || response.data.user.role_id == 2 || response.data.user.role_id == 3)) {
-          //   history('/dashboard')
-          // } else if (response.data.user.role_id == 4) {
-          //   history('/catalog')
-          // } else if (response.data.user.role_id == 5) {
-          //   history(`/orders/all/1`)
-          // } else if (response.data.user.role_id == 6) {
-          //   history(`/orders/all/1`)
-          // }
+
+          //  if (response.data.user.email_verified_at == null) {
+          //    history('/unverified')
+          //  } else if (response.data.user.status == 2) {
+          //    history('/error/401')
+          //  } else if (response.data.user.status == 0) {
+          //    history('/@c-@s')
+          //  } else if ((response.data.user.role == 1 || response.data.user.role == 2 || response.data.user.role == 3)) {
+          if ((response.data.role === 1 || response.data.role === 2 || response.data.role === 3)) {
+            history('/dashboard')
+          } else if (response.data.role === 4) {
+            history(`/orders/all/1`)
+            //history('/catalog')
+          } else if (response.data.role === 5) {
+            history(`/orders/all/1`)
+          } else if (response.data.role === 6) {
+            history(`/orders/all/1`)
+          } else if (response.data.role === 9) {
+            history(`/dashboard`)
+          }
 
         } else {
           

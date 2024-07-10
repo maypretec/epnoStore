@@ -1,5 +1,5 @@
-export const BASE_URL = 'https://us-central1-app-epno.cloudfunctions.net/app/api/';
-//export const BASE_URL = 'http://localhost:5000/app-epno/us-central1/app/api/';
+//export const BASE_URL = 'https://us-central1-app-epno.cloudfunctions.net/app/api/';
+export const BASE_URL = 'http://localhost:5000/app-epno/us-central1/app/api/';
 
 //export const BASE_URL = 'https://dev.gw.client.epno.app';
 
@@ -31,7 +31,10 @@ export const API = {
         REGISTER:           'auth/register',
         CHECK_SESSION:      '/check-session',
         PASSWORD_RESET:     '/password/reset',
-        PASSWORD_EMAIL:     '/password/email'
+        PASSWORD_EMAIL:     '/password/email',
+
+        // EPNO ------------------------------------------------------------
+        REGISTER_ADMIN:     'auth/registerAdmin'
     },
     USER: {
         CHANGE_USER:        '/api/self-service/change_user_vs',
@@ -41,7 +44,11 @@ export const API = {
         UPDOWN_USER:        '/api/self-service/updown_user',
         USERS:              '/api/self-service/get_all_users',
         ROLE:               '/api/self-service/user_role',
-        SOLICITUD_SOFTWARE: '/api/self-service/solicitudSoftware'
+        SOLICITUD_SOFTWARE: '/api/self-service/solicitudSoftware',
+
+        // EPNO --------------------------------------------------------------
+        GET_USER_BY_ID:     'users/getById'
+        
     },
     CUSTOMER:{
         ADD:                '/api/self-service/perfilCustomer',
@@ -64,7 +71,10 @@ export const API = {
             GENERAL_SERVICES:   '/api/self-service/orders/new',
             NEW_SERVICE:        'services/new',
             GET_ALL:            'services/getAll',
-            GET_BY_USER:        'services/getByUser'
+            GET_BY_USER:        'services/getByUser',
+
+            //EPNO
+            DETAILS:            'services/id/'
         },
         SUBSERVICES: {
             ADD:                    '/api/self-service/add_new_subservice',

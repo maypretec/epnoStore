@@ -1,22 +1,17 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Row, Col, Input, Table, Button, Tag, Badge } from "antd";
+import React, { useState, useEffect } from "react";
+import { Row, Col, Input, Table, Button, Tag } from "antd";
 import Highlighter from "react-highlight-words";
 import {
-	CheckCircleOutlined,
-	SyncOutlined,
-	CloseCircleOutlined,
-	CarOutlined,
-	ClockCircleOutlined,
-	MinusCircleOutlined,
-	FileSearchOutlined,
+	PlusOutlined
 } from "@ant-design/icons";
 // import Layout from "../../views/layouts/LayoutPage";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import moment from "moment";
 import ServiceStatus from "../../ServiceStatus/ServiceStatus";
 
 export default function AgentTable(props) {
 	const { openOrders, loading } = props;
+	let history = useNavigate();
 
 	console.log(openOrders)
 
@@ -69,10 +64,6 @@ export default function AgentTable(props) {
 				})
 			);
 	}, [searchedValue, openOrders, isDataFiltered]);
-
-	var icon;
-	var color;
-	var text;
 
 	const { Search } = Input;
 
@@ -156,7 +147,7 @@ export default function AgentTable(props) {
 	return (
 		<>
 			<Row gutter={[12, 12]}>
-				<Col xs={24}>
+				<Col xs={20}>
 					<Search
 						placeholder="Filtrar por numero de orden"
 						allowClear
@@ -164,6 +155,13 @@ export default function AgentTable(props) {
 						size="large"
 						onSearch={handleSearch}
 					/>
+				</Col>
+				<Col xs={4}>
+					<a href={'/orders/request'}> 
+						<Button type="primary" icon={<PlusOutlined/>} style={{width: '100%', height: '100%'}} >
+							Nueva orden
+          	</Button>
+					</a>
 				</Col>
 			</Row>
 			<Row gutter={[12, 12]}>

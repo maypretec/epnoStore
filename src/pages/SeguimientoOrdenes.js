@@ -36,17 +36,33 @@ export default function SeguimientoOrdenes(props) {
     Layout = CPLayout;
   }
   useEffect(() => {
-    setLoading(true);
-		console.log(user)
-    OrderService.GetServicesByUser({id: user.id}).then(response => {
-			console.log(response.data)
-			setOpenOrders(response.data);
-			setLoading(false);
-		})
-		.catch((error) => {
-			setLoading(false);
-			console.log(error);
-		});
+    console.log(role_auth)
+    if (role_auth == 2) {
+      setLoading(true);
+      console.log(user)
+      OrderService.GetServicesByUser({id: user.id}).then(response => {
+        console.log(response.data)
+        setOpenOrders(response.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+      });
+    } else {
+      setLoading(true);
+      console.log(user)
+      OrderService.GetAll().then(response => {
+        console.log(response.data)
+        setOpenOrders(response.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+      });
+    } 
+    
 		/*OrderService.OpenOrders()
       .then((response) => {
         return response.data;

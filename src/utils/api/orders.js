@@ -24,12 +24,13 @@ function AddRequest(request_body) {
   });
 }
 
-function OrderDetails(request_body) {
+function OrderDetailsOLD(request_body) {
   return request({
     url: API.ORDERS.DETAILS.concat(request_body),
     method: requestMethods.GET,
   });
 }
+
 function AddSubservice(request_body) {
   return request({
     url: API.ORDERS.SUBSERVICES.ADD,
@@ -255,10 +256,24 @@ function GetServicesByUser(body) {
   });
 }
 
+function GetAll(){
+  return request({
+    url: API.ORDERS.SERVICES.GET_ALL,
+    method: requestMethods.GET,
+  });
+}
+
+function ServiceDetails(request_body) {
+  return request({
+    url: API.ORDERS.SERVICES.DETAILS.concat(request_body),
+    method: requestMethods.GET,
+  });
+}
+
 const OrderService = {
   OpenOrders,
   AddRequest,
-  OrderDetails,
+  OrderDetailsOLD,
   AddSubservice,
   UploadQuote,
   RecommendedSuppliers,
@@ -275,7 +290,9 @@ const OrderService = {
   ChangeStep,
 
   NewService,
-  GetServicesByUser
+  GetServicesByUser,
+  ServiceDetails,
+  GetAll
 };
 
 export default OrderService;

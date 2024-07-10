@@ -15,8 +15,7 @@ import SupplierService from '../utils/api/suppliers';
 
 export default function OrderDetails() {
   const { id } = useParams();
-  const role = Number(localStorage.getItem("role"));
-  console.log(role)
+  const role = localStorage.getItem("role");
 
   const [disabled, setDisabled] = useState({
     disabled: true,
@@ -388,7 +387,7 @@ export default function OrderDetails() {
   var type = role;
   var Layout = "";
 
-  if (type === 4) {
+  if (type === "4") {
     Layout = LayoutPage;
   } else if (type === 6) {
     Layout = SupplierLayout;
@@ -467,7 +466,6 @@ export default function OrderDetails() {
           <Row gutter={[12, 12]}>
             <Col xs={24} lg={16} xl={16}>
               <OrderInfo
-                serviceData = {service}
                 details={order}
                 reload={reload}
                 role={role}

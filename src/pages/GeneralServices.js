@@ -37,7 +37,7 @@ export default function GeneralServices() {
 		let service = {
 			userId: user.id,
 			userName: user.name,
-      enterprise: 'Por borrar',
+      enterprise: user.bussiness,
       title: formValue.title,
       description: formValue.description,
       cat1: formValue.cat1,

@@ -19,6 +19,7 @@ import {
   Tooltip,
   message,
   Checkbox,
+  Steps,
   Select,
   InputNumber,
   Descriptions,
@@ -32,39 +33,52 @@ import "./OrderInfo.scss";
 import fileDownload from "js-file-download";
 import {
   DownloadOutlined,
+  FileTextOutlined,
   CheckCircleOutlined,
+  SyncOutlined,
   CloseCircleOutlined,
+  CarOutlined,
   ClockCircleOutlined,
   MinusCircleOutlined,
   UploadOutlined,
+  CaretRightOutlined,
   QuestionCircleOutlined,
+  FileSearchOutlined,
+  ThunderboltOutlined,
+  SettingOutlined,
   InboxOutlined,
   PlusOutlined,
+  EditOutlined,
   FileOutlined,
   DollarCircleOutlined,
   NumberOutlined,
+  HighlightOutlined,
+  RedoOutlined,
+  FieldTimeOutlined,
+  TrophyOutlined,
   AlertOutlined,
 } from "@ant-design/icons";
 import Rate from "../Rate";
 import Drawer from "../Drawer";
 import moment from "moment";
+import { isEmpty } from "lodash";
+import { useParams } from "react-router-dom";
+import FormItem from "antd/lib/form/FormItem";
 import OrderService from '../../utils/api/orders';
 import SupplierService from "../../utils/api/suppliers";
 import ComplaintService from "../../utils/api/complaints";
-import ServiceStatus from "../Generals/ServiceStatus";
-import UserService from "../../utils/api/users";
 
 const { TextArea } = Input;
 const { Panel } = Collapse;
+const { Search } = Input;
 const { Dragger } = Upload;
+const { Step } = Steps;
 const { Option } = Select;
 
 export default function OrderInfo(props) {
-  const {serviceData, details, reload, setReload, role, token, categorias, unidades } = props;
+  const { details, reload, setReload, role, token, categorias, unidades } =
+    props;
   // const { id, type } = useParams();
-  console.log(role)
-  const [service, setService] = useState(serviceData);
-  const [user, setUser] = useState({});
   const [form] = Form.useForm();
   const [formR] = Form.useForm();
   const [formC] = Form.useForm();
@@ -122,6 +136,7 @@ export default function OrderInfo(props) {
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   ];
   const defaultFileList = [];
+  const [editableDesc, setEditableDesc] = useState(details.service.desc);
   // supplierServices sirve para guardar los servicios que provee X supp, y con esto epno haga una Po hacia el supp.
   const [poToSupplier, setPoToSupplier] = useState({
     supplierServices: [],
@@ -139,7 +154,6 @@ export default function OrderInfo(props) {
         });
       });
   }
-  
   const propiedades = {
     defaultFileList,
     onDownload: (file) => {
@@ -819,107 +833,93 @@ export default function OrderInfo(props) {
         message.error("Hubo un error al levantar la queja.");
       });
   };
-
-  /* USER DATA API CALL*/
-  useEffect(() => {
-    UserService.GetUserById({id: service.userId}).then(value => {
-      console.log(value)
-      setUser(value.data)
-      console.log(user)
-    })
-
-    console.log(role)
-    console.log(service)
-    console.log(service.status)
-  }, []) 
-  
   return (
     <Row gutter={[12, 12]} justify="center" align="middle">
-      
-      {/* HEADER ------------------------------------------------------------------------- */}
-      {/* TODO: Change by status */}
       <Col xs={24}>
         <Row gutter={[12, 12]} justify="center" align="middle">
-          {/* TITULO */ }
           <Col xs={24} md={18} xl={20}>
             <Row gutter={[12, 12]} justify="center">
               <Col xs={24}>
-                <label style={{ fontWeight: 600, fontSize: 18, color: '#000000' }}>
-                  {service.title} - {service.id}
+                <label style={{ fontWeight: 600, fontSize: 18 }}>
+                  {details.service.order_num} - {details.service.title}
                 </label>
               </Col>
               <Col xs={24}>
                 <label style={{ fontWeight: 600, color: "#888888" }}>
-                  {moment(service.createdAt).format("DD/MM/YYYY H:ss")}{" "}
+                  {moment(details.service.created_at).format("DD/MM/YYYY H:ss")}{" "}
                   -
                 </label>{" "}
-                <ServiceStatus status={service.status}/>
-               
+                <Tag
+                  color={
+                    details.service.step_id == 1
+                      ? "purple"
+                      : details.service.step_id == 2
+                      ? "brown"
+                      : details.service.step_id == 3
+                      ? "default"
+                      : details.service.step_id == 4
+                      ? "processing"
+                      : details.service.step_id == 5
+                      ? "cyan"
+                      : details.service.step_id == 6
+                      ? "geekblue"
+                      : details.service.step_id == 7
+                      ? "success"
+                      : details.service.step_id == 8 ||
+                        details.service.step_i == 9 ||
+                        details.service.step_id == 12
+                      ? "#ff0000"
+                      : details.service.step_id == 11 && "#000"
+                  }
+                >
+                  {details.service.step_name}{" "}
+                </Tag>
               </Col>
             </Row>
           </Col>
 
-          {/* BOTON DE SEGUIMIENTO DE PROCESOS */}        
           <Col xs={24} md={6} xl={4} style={{ textAlign: "center" }}>
-
-          { /* Administrador */
-          role === '1' ? 
-            service.status === 1 ? // Aprovar 
-            <Popconfirm
+            {details.service.step_id == 1 && (role == 3 || role == 5) ? (
+              <Popconfirm
                 title="¿Seguro que desea enviar a cotizacion?"
                 onConfirm={() => serviceChangeStep(null)}
                 okText="Si"
                 cancelText="No"
               >
-              <Button
-                type="primary"
-                icon={<UploadOutlined />}
-                loading={loadServiceChangeStep}
-                disabled={details.subservices == "" && true}
-              >
-                En Cotización
-              </Button>
-            </Popconfirm>
-             
-            : service.status === 2 ? 
-            <Popconfirm
+                <Button
+                  type="primary"
+                  icon={<UploadOutlined />}
+                  loading={loadServiceChangeStep}
+                  disabled={details.subservices == "" && true}
+                >
+                  En Cotización
+                </Button>
+              </Popconfirm>
+            ) : details.service.step_id == 2 && (role == 3 || role == 5) ? (
+              //  El agente sube la cotizacion al cliente
+
+              <Popconfirm
                 title="¿Seguro que la orden esta lista para subir su cotizacion?"
                 onConfirm={() => setCotizacionEpnoToClientModal(true)}
                 okText="Si"
                 cancelText="No"
               >
-              <Button type="primary" icon={<UploadOutlined />}>
-                Subir COT
-              </Button>
-            </Popconfirm>
-
-            : (service.status === 7 || service.status === 8) ?
-              <Button type="dashed" danger /*onClick={() => }*/ >
-                  Seguir proceso
-              </Button>
-
-            : service.status === 5 ?
-            <Popconfirm
-                title="¿Seguro que desea confirmar esta orden como lista?"
-                onConfirm={() => setInvoiceFileModal(true)}
-                okText="Si"
-                cancelText="No"
-              >
+                <Button type="primary" icon={<UploadOutlined />}>
+                  Subir COT
+                </Button>
+              </Popconfirm>
+            ) : (details.service.step_id == 11 ||
+                details.service.step_id == 8) &&
+              (role == 3 || role == 5) ? (
+              //  Regresa la orden a su ultimo step
               <Button
-                type="primary"
-                icon={<CheckCircleOutlined />}
-                loading={loadServiceChangeStep}
+                type="dashed"
+                danger
+                // onClick={() => }
               >
-                Orden Lista
+                Seguir proceso
               </Button>
-            </Popconfirm>
-
-            : <></>
-          : <></>
-          }
-          { // Supplier
-            role === 4 ?
-              service.status === 3 ?
+            ) : details.service.step_id == 3 && role == 4 ? (
               <Row gutter={[12, 12]}>
                 <Col xs={24}>
                   <Button
@@ -945,13 +945,27 @@ export default function OrderInfo(props) {
                   </Popconfirm>
                 </Col>
               </Row>
-
-              : service.status === 6 ? 
+            ) : details.service.step_id == 5 && (role == 3 || role == 5) ? (
               <Popconfirm
-              title="¿Seguro que ha recibido su orden completa?"
-              onConfirm={() => serviceChangeStep(null)}
-              okText="Si"
-              cancelText="No"
+                title="¿Seguro que desea confirmar esta orden como lista?"
+                onConfirm={() => setInvoiceFileModal(true)}
+                okText="Si"
+                cancelText="No"
+              >
+                <Button
+                  type="primary"
+                  icon={<CheckCircleOutlined />}
+                  loading={loadServiceChangeStep}
+                >
+                  Orden Lista
+                </Button>
+              </Popconfirm>
+            ) : details.service.step_id == 6 && role == 4 ? (
+              <Popconfirm
+                title="¿Seguro que ha recibido su orden completa?"
+                onConfirm={() => serviceChangeStep(null)}
+                okText="Si"
+                cancelText="No"
               >
                 <Button
                   type="primary"
@@ -961,17 +975,26 @@ export default function OrderInfo(props) {
                   Entregado
                 </Button>
               </Popconfirm>
-
-              : <></>
-            : <></>
-          }
+            ) : (
+              (details.service.step_id == 5 ||
+                details.service.step_id == 6 ||
+                (details.service.step_id == 7 && role == 4)) && (
+                <Popconfirm
+                  title="¿Seguro que desea lavantar una queja sobre esta orden?"
+                  onConfirm={() => setQueja({ ...queja, modal: true })}
+                  okText="Si"
+                  cancelText="No"
+                >
+                  <Button type="primary" danger loading={queja.load}>
+                    Levantar queja
+                  </Button>
+                </Popconfirm>
+              )
+            )}
           </Col>
-
         </Row>
       </Col>
 
-      {/* PROFILE INFO DIV --------------------------------------------------------------- */}
-      {/* TODO: Show profile picture */}
       <Col xs={24}>
         <Card className="background-gris">
           <Row gutter={[12, 12]} align="middle">
@@ -985,31 +1008,39 @@ export default function OrderInfo(props) {
               <Row gutter={[12, 12]}>
                 <Col xs={24} md={12} xl={8}>
                   <label className="gris-bold">Cliente</label> <br />
-                  <b>{user.bussiness} </b>
+                  <b>{details.client.org_name} </b>
                 </Col>
                 <Col xs={24} md={12} xl={5}>
                   <label className="gris-bold">Teléfono</label> <br />
-                  <a href={`tel:${user.phone}`} style={{ fontWeight: 600 }} > {user.phone} </a>
+                  <a
+                    href={`tel:${details.client.contact_phone}`}
+                    style={{ fontWeight: 600 }}
+                  >
+                    {details.client.contact_phone}
+                  </a>
                 </Col>
                 <Col xs={24} md={14} lg={24} xl={11}>
                   <label className="gris-bold">Correo</label> <br />
-                  <a href={`mailto:${user.email}`} style={{ fontWeight: 600 }} > {user.email} </a>
+                  <a
+                    href={`mailto:${details.client.contact_email}`}
+                    style={{ fontWeight: 600 }}
+                  >
+                    {details.client.contact_email}
+                  </a>
                 </Col>
                 <Col xs={24} md={10} lg={24} xl={11}>
                   <label className="gris-bold">Requisitor</label> <br />
-                  <b>{user.name}</b>
+                  <b>{details.client.contact_name}</b>
                 </Col>
                 <Col xs={24} xl={13}>
                   <label className="gris-bold">Dirección</label> <br />
-                  <b>{user.street + ' ' + user.postal_code + ', ' + user.city + ', ' + user.state}</b>
+                  <b>{details.client.address}</b>
                 </Col>
               </Row>
             </Col>
           </Row>
         </Card>
       </Col>
-
-      {/* SERVICE INFO ------------------------------------------------------------------- */}
       <Col xs={24}>
         <Card
           headStyle={{ background: "#F4F6F6" }}
@@ -1017,37 +1048,34 @@ export default function OrderInfo(props) {
           // Servicio y categoria de la orden
           title={
             <Row gutter={[12, 12]}>
-              {/* CATEGORIAS */}
               <Col>
                 <b>Tipo: </b>
-                {
-                <>
-                  <Tag color={"#775dd9"}>
-                  {
-                    service.cat1 === 1 ? 'Servicios'
-                    : service.cat1 === 2 ? 'Tecnologia'
-                    : service.cat1 === 3 ? 'Maquinado'
-                    : service.cat1 === 4 ? 'MRO'
-                    : 'MRP'
-                  }
-                  </Tag>
-
-                  <Tag color={"#2caf8c"}>
-                  {
-                    service.cat2 === 1 ? 'Servicios'
-                    : service.cat2 === 2 ? 'Tecnologia'
-                    : service.cat2 === 3 ? 'Maquinado'
-                    : service.cat2 === 4 ? 'MRO'
-                    : 'MRP'
-                  }
-                  </Tag>
-                </>
-                }
-                
+                {details.service.type == "" && (role == 3 || role == 5) ? (
+                  <Select
+                    showSearch
+                    placeholder="Tipo de servicio"
+                    optionFilterProp="children"
+                    onChange={(value) => onChangeService(1, value)}
+                    style={{ width: 150 }}
+                    filterOption={(input, option) =>
+                      option.children
+                        .toLowerCase()
+                        .indexOf(input.toLowerCase()) >= 0
+                    }
+                    disabled={details.service.step_id == 9 && true}
+                  >
+                    <Option value="Fabricación">Fabricación</Option>
+                    <Option value="Servicio">Servicio</Option>
+                    <Option value="MRO">MRO</Option>
+                  </Select>
+                ) : details.service.type == "" &&
+                  (role == 4 || role == 6 || role == 1 || role == 2) ? (
+                  <label>Sin definir</label>
+                ) : (
+                  <label>{details.service.type}</label>
+                )}
               </Col>
-
-              {/* PRIORIDAD */}
-              {/*(role == 3 || role == 5 || role == 1 || role == 2) && (
+              {(role == 3 || role == 5 || role == 1 || role == 2) && (
                 <Col>
                   <b>Prioridad: </b>
                   {details.service.prioridad == "" ? (
@@ -1083,33 +1111,32 @@ export default function OrderInfo(props) {
                     </Tag>
                   )}
                 </Col>
-              )*/}
+              )}
             </Row>
           }
           extra={
             // Final cost de la orden
             <b>
-              
-              {service.price === '' || service.price === null || service.price === undefined ? 'Precio por definir' : service.price + ' $'}
-              {/*role == 4
+              $
+              {role == 4
                 ? details.service.client_cost
                 : (role == 6 ||
                     role == 3 ||
                     role == 5 ||
                     role == 1 ||
                     role == 2) &&
-                  details.service.supplier_cost*/}
+                  details.service.supplier_cost}
             </b>
           }
           actions={[
             <Row gutter={[12, 12]}>
-              {(role == 1) &&
-              ( service.status == 1 ||
-                service.status == 2 ||
-                service.status == 4 ||
-                service.status == 3 ||
-                service.status == 8 ||
-                service.status == 11) ? (
+              {(role == 3 || role == 5) &&
+              (details.service.step_id == 1 ||
+                details.service.step_id == 2 ||
+                details.service.step_id == 4 ||
+                details.service.step_id == 3 ||
+                details.service.step_id == 8 ||
+                details.service.step_id == 11) ? (
                 <Col xs={24} md={12} xl={8}>
                   <Popconfirm
                     title="¿Seguro que deseas cancelar esta orden?"
@@ -1123,15 +1150,15 @@ export default function OrderInfo(props) {
                       icon={<CheckCircleOutlined />}
                       loading={loadCancelar}
                     >
-                      Cancelar {service.id}
+                      Cancelar {details.service.order_num}
                     </Button>
                   </Popconfirm>
                 </Col>
               ) : (
                 role == 4 &&
-                (service.status == 1 ||
-                  service.status == 2 ||
-                  service.status == 4) && (
+                (details.service.step_id == 1 ||
+                  details.service.step_id == 2 ||
+                  details.service.step_id == 4) && (
                   <Col xs={24} md={12} xl={8}>
                     <Popconfirm
                       title="¿Seguro que deseas cancelar esta orden?"
@@ -1151,18 +1178,16 @@ export default function OrderInfo(props) {
                         icon={<CheckCircleOutlined />}
                         loading={loadCancelar}
                       >
-                        Solicitar cancelación {service.id}
+                        Solicitar cancelación {details.service.order_num}
                       </Button>
                     </Popconfirm>
                   </Col>
                 )
               )}
-              { /* COTIZACION FINAL */}
-              { /* TODO: Agregar cotizacion final de EPNO */}
               {role == 4 || role == 3 || role == 5 || role == 2 || role == 1 ? (
                 <Col xs={24} md={12} xl={6}>
                   <a
-                    href={service.fileUrl}
+                    href={`https://api.epno-app.com${details.service.quote_file}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     download
@@ -1206,26 +1231,43 @@ export default function OrderInfo(props) {
                 <Col xs={24} md={16} style={{ textAlign: "center" }}>
                   <b>Fecha de entrega:</b>{" "}
                   <b style={{ fontSize: 16 }}>
-                    { service.dueDate === '' ? 'Por definir' : moment(service.dueDate).format("DD/MM/YYYY")}
+                    {moment(details.service.deadline).format("DD/MM/YYYY")}
                   </b>
                 </Col>
-                {service.status == 1 && (
+                {(details.service.step_id == 1 ||
+                  details.subservices.length == 0 ||
+                  details.subservices.length > 1) && (
                   <>
+                    <Col xs={24} md={8}>
+                      <b>Cantidad: {details.service.qty} </b>
+                    </Col>
                     <Col xs={24}>
-                      <Paragraph > {service.description} </Paragraph>
+                      <Paragraph
+                        editable={
+                          details.service.step_id == 1 &&
+                          role != 4 && {
+                            icon: <HighlightOutlined />,
+                            tooltip: "click to edit text",
+                            onChange: (value) => {
+                              onChangeService(2, value);
+                              setEditableDesc(value);
+                            },
+                          }
+                        }
+                      >
+                        {editableDesc}
+                      </Paragraph>
                     </Col>
                   </>
                 )}
               </Row>
             </Col>
-
             <Col xs={24} md={6} lg={6} style={{ textAlign: "center" }}>
-              <Button onClick={() => setVisible(true)}>Documento</Button>
+              <Button onClick={() => setVisible(true)}>Archivos</Button>
             </Col>
           </Row>
         </Card>
       </Col>
-
       <Col xs={24}>
         {(role == 3 || role == 5 || role == 2 || role == 1) && (
           <Row gutter={[12, 12]} justify="center">
@@ -2324,7 +2366,6 @@ export default function OrderInfo(props) {
           )}
         </Row>
       </Col>
-
       <Drawer
         title={"Archivos Disponibles"}
         footerContent=""
@@ -2333,7 +2374,6 @@ export default function OrderInfo(props) {
       >
         <Upload {...propiedades}></Upload>
       </Drawer>
-
       <Modal
         title="Añadir proveedores al servicio."
         visible={addSupplierModal}
@@ -2454,7 +2494,6 @@ export default function OrderInfo(props) {
           </Row>
         </Form>
       </Modal>
-
       <Modal
         title="Rechazar orden"
         visible={rechazarCotSupplierModal}
@@ -2499,7 +2538,6 @@ export default function OrderInfo(props) {
           {/* </Row> */}
         </Form>
       </Modal>
-
       <Modal
         title={title}
         visible={solicitarCancelModal}
@@ -2536,7 +2574,6 @@ export default function OrderInfo(props) {
           </Col>
         </Form>
       </Modal>
-
       <Modal
         title="Cotizaciones aceptadas"
         visible={aceptCotModal}
@@ -3311,7 +3348,6 @@ export default function OrderInfo(props) {
           </p>
         </Dragger>
       </Modal>
-
       <Modal
         title="Levantar queja"
         closable={true}
