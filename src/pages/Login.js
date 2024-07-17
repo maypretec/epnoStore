@@ -42,21 +42,20 @@ export default function Login() {
           //  } else if (response.data.user.status == 0) {
           //    history('/@c-@s')
           //  } else if ((response.data.user.role == 1 || response.data.user.role == 2 || response.data.user.role == 3)) {
-          if ((response.data.role === 1 || response.data.role === 2 || response.data.role === 3)) {
+          if ((response.data.role == 1 || response.data.role == 2 || response.data.role == 3)) {
             history('/dashboard')
-          } else if (response.data.role === 4) {
+          } else if (response.data.role == 4) {
             history(`/orders/all/1`)
             //history('/catalog')
-          } else if (response.data.role === 5) {
+          } else if (response.data.role == 5) {
             history(`/orders/all/1`)
-          } else if (response.data.role === 6) {
+          } else if (response.data.role == 6) {
             history(`/orders/all/1`)
-          } else if (response.data.role === 9) {
+          } else if (response.data.role == 9) {
             history(`/dashboard`)
           }
 
         } else {
-          
         console.log(response);
           setError({
             status: true,
@@ -67,8 +66,11 @@ export default function Login() {
       })
       .catch(error => {
         console.log(error);
+        setError({
+          status: true,
+          msg: 'Usuario y/o contreseña incorrecta'
+        })
         setLoading(false);
-
       })
   }
 

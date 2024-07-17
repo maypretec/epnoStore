@@ -12,6 +12,7 @@ import ServiceStatus from "../../ServiceStatus/ServiceStatus";
 export default function AgentTable(props) {
 	const { openOrders, loading } = props;
 	let history = useNavigate();
+	let role = localStorage.getItem("role");
 
 	console.log(openOrders)
 
@@ -156,13 +157,16 @@ export default function AgentTable(props) {
 						onSearch={handleSearch}
 					/>
 				</Col>
+				{ role == 4 ? 
 				<Col xs={4}>
 					<a href={'/orders/request'}> 
 						<Button type="primary" icon={<PlusOutlined/>} style={{width: '100%', height: '100%'}} >
 							Nueva orden
-          	</Button>
+						</Button>
 					</a>
 				</Col>
+				: <></>}
+				
 			</Row>
 			<Row gutter={[12, 12]}>
 				<Col xs={24}>

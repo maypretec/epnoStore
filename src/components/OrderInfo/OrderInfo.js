@@ -741,9 +741,6 @@ export default function OrderInfo(props) {
       });
   };
 
-  /////////////////////////////////////////////
-  
-
   const sendPoToSupplier = (option, values) => {
     setLoadGenerarClientCot(true);
     setShowPdfCot(false);
@@ -830,6 +827,14 @@ export default function OrderInfo(props) {
   const [proposals, setProposals] = useState([])
   const [positions, setPositions] = useState([])
   const [proposalPrice, setProposalPrice] = useState([])
+  const [proposalFiles, setProposalFiles] = useState([])
+  const [proposalFilesUrl, setProposalFilesUrl] = useState([])
+  const [application, setApplication] = useState({
+		description: '',
+		price: 0,
+		dueDate: '',
+		fileList: [],
+	});
 
   /* USER DATA API CALL*/
   useEffect(() => {
@@ -841,11 +846,15 @@ export default function OrderInfo(props) {
         const proposalsResponse = await OrderService.GetProposalByService({ serviceId: service.id });
         const filterPositions = proposalsResponse.data.map((prop) => prop.place)
         const filterPrices = proposalsResponse.data.map((prop) => prop.price_epno)
-
+        const filterFiles =  proposalsResponse.data.map((prop) => prop.fileUrl_epno)
         setPositions(filterPositions)
         setProposalPrice(filterPrices)
+        setProposalFilesUrl(filterFiles)
 
-        if (role === 6) {
+        if (service.status >= 4 && (role == 1 || role == 4)){
+          const filteredProposalsDo = proposalsResponse.data.filter(proposal => proposal.status === true);
+          setProposals(filteredProposalsDo);
+        } else if (role === 6) {
           const filteredProposals = proposalsResponse.data.filter(proposal => proposal.userId === userData.id);
           setProposals(filteredProposals);
           
@@ -860,13 +869,6 @@ export default function OrderInfo(props) {
   }, [service.userId, service.id, role, userData.id]);
 
   // Updates service status -----------------------------------------------
-  const [application, setApplication] = useState({
-		description: '',
-		price: 0,
-		dueDate: '',
-		fileList: [],
-	});
-
   const onChange = (targetInput) => {
 		setApplication((state) => ({
 			...state,
@@ -895,6 +897,13 @@ export default function OrderInfo(props) {
     }));
   }
 
+  const onChangePropFile = (i, file) => {
+    setProposalFiles((state) => ({
+      ...state,
+      [i]: file
+    }));
+  }
+
   const updateService = (id, status) => {
     setLoadServiceChangeStep(true);
 
@@ -915,10 +924,10 @@ export default function OrderInfo(props) {
     });
   }
 
-  const updateServicePlacement = (id, place, price) => {
-    setLoadServiceChangeStep(true);
-
-    OrderService.UpdateServicePlacement({id: id, place: place, price_epno: price}).then(resp => {
+  const updateServicePlacement = (id, place, price, file) => {
+    //setLoadServiceChangeStep(true);
+    console.log(file)
+    OrderService.UpdateServicePlacement({id: id, place: place, price_epno: price, fileUrl_epno: file, userId: userData.id}).then(resp => {
       console.log(resp)
       if (resp.data.success === true) {
         setReload(!reload);
@@ -1013,6 +1022,18 @@ export default function OrderInfo(props) {
 		},
 		application
 	}; 
+
+  const propsProp = (i) => ({
+    beforeUpload: async (file) => {
+      const base64 = await getBase64(file);
+      setProposalFiles((state) => ({
+        ...state,  // mantener el estado anterior
+        [i]: base64,  // actualizar la entrada correspondiente a 'i'
+      }));
+      return false;
+    },
+    application
+  });
   // ------------------------------------------------------------
   return (
     <Row gutter={[12, 12]} justify="center" align="middle">
@@ -1328,7 +1349,7 @@ export default function OrderInfo(props) {
       </Col>
 
       {/* APPLY TO SERVICE ------------------------------------------------------------------- */}
-      {(role === 6  || role === 1) && service.status === 2 && proposals.length === 0 ? 
+      {(role === 6) && service.status === 2 && proposals.length === 0 ? 
       <Col xs={24}>
         <Card
           headStyle={{ background: "#F4F6F6" }}
@@ -1343,7 +1364,7 @@ export default function OrderInfo(props) {
               <Col xs={24} md={12} xl={8}>
                 <Popconfirm
                   title="¿Seguro que deseas enviar la cotizacion?"
-                  onConfirm={() => SelectCalcelCot("Cancelar orden", true, 2)}
+                  onConfirm={() => applyToService()}
                   okText="Si"
                   cancelText="No"
                 >
@@ -1352,7 +1373,6 @@ export default function OrderInfo(props) {
                     icon={<CheckCircleOutlined />} 
                     loading={loadCancelar}
                     disabled={application.fileList.length < 1}
-                    onClick={() => applyToService()}
                     >
                     Enviar cotizacion
                   </Button>
@@ -1430,7 +1450,7 @@ export default function OrderInfo(props) {
             extra={
               <Col xs={24}>
                 <Button
-                  href={sub.fileUrl}
+                  href={ role == 4 ? sub.fileUrl_epno : sub.fileUrl}
                   target="blank"
                   icon={<DownloadOutlined />}
                 >
@@ -1465,6 +1485,13 @@ export default function OrderInfo(props) {
                   </b> {sub.price_epno} </p>
                 </Col>
                 : <></>}
+                {role === 1 && (proposalFilesUrl[i] !== undefined) ?
+                <Col xs={24} >
+                  <Button href={proposalFilesUrl[i]} target="blank">
+                      Cotizacion EPNO
+                    </Button>
+                </Col>
+                : <></>}
                 <Col xs={24} >
                 <div style={{display: "flex", alignItems: 'bottom'}}>
                   {service.status === 2 && userData.role === 1 ? 
@@ -1478,8 +1505,13 @@ export default function OrderInfo(props) {
                     </Form.Item>
                   : <></>}
                   {service.status === 2 && userData.role === 1 ? 
-                    <Button style={{alignSelf: 'bottom'}}
-                      onClick={() => updateServicePlacement(sub.id, positions[i], proposalPrice[i])}
+                  <Upload {...propsProp(i)} maxCount={1} multiple='false' style={{marginRight: '8px'}}>
+                    <Button icon={<UploadOutlined />}>Cotizcion EPNO</Button>
+                  </Upload>
+                  : <></>}
+                  {service.status === 2 && userData.role === 1 ? 
+                    <Button style={{alignSelf: 'bottom', marginLeft: '8px'}}
+                      onClick={() => updateServicePlacement(sub.id, positions[i], proposalPrice[i], proposalFiles[i])}
                     >
                       Actualizar cambios
                     </Button>

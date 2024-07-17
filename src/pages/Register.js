@@ -261,7 +261,7 @@ export default function RegisterX() {
     formData.append("ext_num", values.ext_num);
     formData.append("int_num", values.int_num);
     formData.append("logo", values.logo);
-    formData.append("role", values.role);
+    formData.append("role", Number(values.role));
 
     let role_data = {};
 
@@ -291,43 +291,10 @@ export default function RegisterX() {
         console.log(response)
         if (response.data.success == true) {
           message.success(
-            "Registro creado correctamente, espere a iniciar sesión..."
+            "Registro creado correctamente!"
+          ).then(
+            history('/')
           );
-          AuthService.LoginEpno({email: formDataObject.email, password: formDataObject.password})
-            .then(response => {
-              localStorage.setItem('role', response.data.role)
-              localStorage.setItem('user', response.data);
-              if (response.data.role == 4){
-                history('/orders/request');
-              } else if (response.data.role == 6) {
-                history('/dashboard')
-              }
-            })
-          // axios.post('https://api.epno-app.com/api/login', values)
-          //     .then(response => {
-          //         localStorage.setItem('token', response.data.token)
-          //         localStorage.setItem('role', response.data.user.role_id)
-          //         setLoad(false)
-          //         if (response.data.user.email_verified_at == null) {
-          //             history('/unverified')
-          //         } else if (response.data.user.status == 2) {
-          //             history('/error/401')
-          //         } else if (response.data.user.status == 0) {
-          //             history('/@c-@s')
-          //         } else if ((response.data.user.role_id == 1 || response.data.user.role_id == 2 || response.data.user.role_id == 3)) {
-          //             history('/dashboard')
-          //         } else if (response.data.user.role_id == 4) {
-          //             history('/catalog')
-          //         } else if (response.data.user.role_id == 5) {
-          //             history(`/orders/${response.data.user.id}/1`)
-          //         } else if (response.data.user.role_id == 6) {
-          //             history(`/orders/${response.data.user.id}/1`)
-          //         }
-
-          //     })
-          //     .catch(error => {
-          //         setLoad(false)
-          //     })
         } else {
           setError(true);
           setLoad(false);
@@ -363,7 +330,7 @@ export default function RegisterX() {
           style={{ marginTop: 16, marginBottom: 16, textAlign: "center" }}
         >
           <Alert
-            message="El correo ya fue registrado con anterioridad"
+            message="Hay un error en los datos"
             type="error"
             closable
           />
