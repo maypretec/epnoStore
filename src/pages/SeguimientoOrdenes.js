@@ -35,46 +35,32 @@ export default function SeguimientoOrdenes(props) {
   ) {
     Layout = CPLayout;
   }
+
+
   useEffect(() => {
-    console.log(role_auth)
-    if (role_auth == 2) {
-      setLoading(true);
-      console.log(user)
-      OrderService.GetServicesByUser({id: user.id}).then(response => {
-        console.log(response.data)
-        setOpenOrders(response.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setLoading(false);
-        console.log(error);
-      });
-    } else {
-      setLoading(true);
-      console.log(user)
-      OrderService.GetAll().then(response => {
-        console.log(response.data)
-        setOpenOrders(response.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setLoading(false);
-        console.log(error);
-      });
-    } 
+    setLoading(true)
     
-		/*OrderService.OpenOrders()
-      .then((response) => {
-        return response.data;
-      })
-      .then((openOrders) => {
-        setOpenOrders(openOrders);
+    if (role_auth === '1') { // GET SERVICES FOR ADMIN
+      OrderService.GetAll().then(response => {
+        setOpenOrders(response.data);
         setLoading(false);
-      })
-      .catch((error) => {
+      }).catch((error) => { setLoading(false); });
+    }
+
+    if (role_auth === '4') { // GET SERVICES FOR INDUSTRY
+      OrderService.GetServicesByUser({id: user.id}).then(response => {
+        setOpenOrders(response.data);
         setLoading(false);
-        console.log(error);
-      });*/
+      }).catch((error) => { setLoading(false); });
+    }
+
+    if (role_auth === '6') { // GET SERVICES FOR SUPPLIER
+      const categories = { cat1: user.role_data.cat1, cat2: user.role_data.cat2 }
+      OrderService.GetServicesByCategory(categories).then(response => {
+        setOpenOrders(response.data);
+        setLoading(false);
+      }).catch((error) => { setLoading(false); console.log(error) });
+    }
   }, []);
 
   return (

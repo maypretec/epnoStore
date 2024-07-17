@@ -62,6 +62,9 @@ const { Option } = Select;
 export default function OrderInfo(props) {
   const {serviceData, details, reload, setReload, role, token, categorias, unidades } = props;
   // const { id, type } = useParams();
+
+  const userData = JSON.parse(localStorage.getItem('user'))
+
   console.log(role)
   const [service, setService] = useState(serviceData);
   const [user, setUser] = useState({});
@@ -738,6 +741,9 @@ export default function OrderInfo(props) {
       });
   };
 
+  /////////////////////////////////////////////
+  
+
   const sendPoToSupplier = (option, values) => {
     setLoadGenerarClientCot(true);
     setShowPdfCot(false);
@@ -820,19 +826,194 @@ export default function OrderInfo(props) {
       });
   };
 
+  // MAYPRETEC ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  const [proposals, setProposals] = useState([])
+  const [positions, setPositions] = useState([])
+  const [proposalPrice, setProposalPrice] = useState([])
+
   /* USER DATA API CALL*/
   useEffect(() => {
-    UserService.GetUserById({id: service.userId}).then(value => {
-      console.log(value)
-      setUser(value.data)
-      console.log(user)
-    })
+    const fetchData = async () => {
+      try {
+        const userResponse = await UserService.GetUserById({ id: service.userId });
+        setUser(userResponse.data);
 
-    console.log(role)
-    console.log(service)
-    console.log(service.status)
-  }, []) 
-  
+        const proposalsResponse = await OrderService.GetProposalByService({ serviceId: service.id });
+        const filterPositions = proposalsResponse.data.map((prop) => prop.place)
+        const filterPrices = proposalsResponse.data.map((prop) => prop.price_epno)
+
+        setPositions(filterPositions)
+        setProposalPrice(filterPrices)
+
+        if (role === 6) {
+          const filteredProposals = proposalsResponse.data.filter(proposal => proposal.userId === userData.id);
+          setProposals(filteredProposals);
+          
+        } else { setProposals(proposalsResponse.data); }
+
+      } catch (error) {
+        console.error('Error fetching data', error);
+      }
+    };
+
+    fetchData();
+  }, [service.userId, service.id, role, userData.id]);
+
+  // Updates service status -----------------------------------------------
+  const [application, setApplication] = useState({
+		description: '',
+		price: 0,
+		dueDate: '',
+		fileList: [],
+	});
+
+  const onChange = (targetInput) => {
+		setApplication((state) => ({
+			...state,
+			[targetInput.target.name]: targetInput.target.value,
+		}));
+	};
+
+	const onDateChange = (date, dateString) => {
+		setApplication((state) => ({
+			...state,
+			dueDate: dateString,
+		}));
+	};
+
+  const onChangePosition = (i, position) => {
+    setPositions((state) => ({
+      ...state,
+      [i]: position.target.value
+    }));
+  }
+
+  const onChangePropPrice = (i, price) => {
+    setProposalPrice((state) => ({
+      ...state,
+      [i]: price.target.value
+    }));
+  }
+
+  const updateService = (id, status) => {
+    setLoadServiceChangeStep(true);
+
+    OrderService.UpdateService({id: id, status: status}).then(resp => {
+      setLoadServiceChangeStep(false);
+      if (resp.data.success === true) {
+        setReload(!reload);
+        message.success("Actualizacion hecha correctamente").then(() => {
+          window.location.reload();
+        });
+      } else {
+        message.error(resp.data.message);
+      }
+    }).catch((error) => {
+      console.log(error);
+      message.error("Hubo un error al enviar los datos.");
+      setLoadServiceChangeStep(false);
+    });
+  }
+
+  const updateServicePlacement = (id, place, price) => {
+    setLoadServiceChangeStep(true);
+
+    OrderService.UpdateServicePlacement({id: id, place: place, price_epno: price}).then(resp => {
+      console.log(resp)
+      if (resp.data.success === true) {
+        setReload(!reload);
+        message.success("Actualizacion exitosa", 1).then(() => {
+          window.location.reload();
+        });
+      } else {
+        message.error(resp.data.message);
+      }
+    }).catch((error) => {
+      console.log(error);
+      message.error("Hubo un error al enviar los datos.");
+      setLoadServiceChangeStep(false);
+    });
+  }
+
+  const applyToService = () => {
+
+    const apply = {
+      serviceId: service.id,
+      userId: userData.id,
+      name: userData.bussiness,
+      description: application.description,
+      price: application.price,
+      dueDate: application.dueDate,
+      fileBase64: application.fileList
+    }
+
+    console.log(apply)
+    OrderService.ApplyService(apply).then(resp => {
+      if (resp.data.success === true) {
+        message.success("Aplicacion exitosa!", 1).then(() => {
+          window.location.reload();
+        });
+      } else {
+        message.error(resp.data.message);
+      }
+    }).catch((error) => {
+      console.log(error);
+      message.error("Hubo un error al enviar los datos.");
+    });
+  }
+
+  const chooseProposal = (proposalId, supplierId, supplier, price, dueDate, supplierFileUrl) => {
+    const choosenProp = {
+      proposalId: proposalId,
+      serviceId: service.id,
+      supplierId: supplierId,
+      supplier: supplier,
+      price: price,
+      dueDate: dueDate,
+      supplierFileUrl: 'dasdasd'
+    }
+    console.log(choosenProp)
+    OrderService.ChooseProposal(choosenProp).then((resp) => {
+      if (resp.data.success === true) {
+        setReload(!reload);
+        message.success("Eleccion exitosa", 1).then(() => {
+          window.location.reload();
+        });
+      } else {
+        message.error(resp.data.message);
+      }
+    }).catch((error) => {
+      console.log(error);
+      message.error("Hubo un error al enviar los datos.");
+      setLoadServiceChangeStep(false);
+    });
+  }
+
+  // Upload file -------------------------------------------
+  const getBase64 = (file) => {
+		return new Promise((resolve, reject) => {
+			const reader = new FileReader();
+			reader.readAsDataURL(file);
+			reader.onload = () => {
+				const base64String = reader.result.split(',')[1];
+				resolve(base64String);
+			};
+			reader.onerror = (error) => reject(error);
+		});
+	};
+
+  const propsDrag = {
+		beforeUpload: async (file) => {
+			const base64 = await getBase64(file);
+			setApplication((state) => ({
+				...state,
+				fileList: base64,
+			}));
+			return false;
+		},
+		application
+	}; 
+  // ------------------------------------------------------------
   return (
     <Row gutter={[12, 12]} justify="center" align="middle">
       
@@ -863,11 +1044,11 @@ export default function OrderInfo(props) {
           <Col xs={24} md={6} xl={4} style={{ textAlign: "center" }}>
 
           { /* Administrador */
-          role === '1' ? 
+          role === 1 ? 
             service.status === 1 ? // Aprovar 
             <Popconfirm
                 title="¿Seguro que desea enviar a cotizacion?"
-                onConfirm={() => serviceChangeStep(null)}
+                onConfirm={() => updateService(service.id, 2)}
                 okText="Si"
                 cancelText="No"
               >
@@ -877,14 +1058,14 @@ export default function OrderInfo(props) {
                 loading={loadServiceChangeStep}
                 disabled={details.subservices == "" && true}
               >
-                En Cotización
+                En verificacion
               </Button>
             </Popconfirm>
              
             : service.status === 2 ? 
             <Popconfirm
                 title="¿Seguro que la orden esta lista para subir su cotizacion?"
-                onConfirm={() => setCotizacionEpnoToClientModal(true)}
+                onConfirm={() => updateService(service.id, 3)}
                 okText="Si"
                 cancelText="No"
               >
@@ -901,7 +1082,7 @@ export default function OrderInfo(props) {
             : service.status === 5 ?
             <Popconfirm
                 title="¿Seguro que desea confirmar esta orden como lista?"
-                onConfirm={() => setInvoiceFileModal(true)}
+                onConfirm={() => updateService(service.id, 6)}
                 okText="Si"
                 cancelText="No"
               >
@@ -917,9 +1098,9 @@ export default function OrderInfo(props) {
             : <></>
           : <></>
           }
-          { // Supplier
+          { // Industry
             role === 4 ?
-              service.status === 3 ?
+              /*service.status === 3 ?
               <Row gutter={[12, 12]}>
                 <Col xs={24}>
                   <Button
@@ -946,10 +1127,10 @@ export default function OrderInfo(props) {
                 </Col>
               </Row>
 
-              : service.status === 6 ? 
+              : */service.status === 6 ? 
               <Popconfirm
               title="¿Seguro que ha recibido su orden completa?"
-              onConfirm={() => serviceChangeStep(null)}
+              onConfirm={() => updateService(service.id, 7)}
               okText="Si"
               cancelText="No"
               >
@@ -962,6 +1143,26 @@ export default function OrderInfo(props) {
                 </Button>
               </Popconfirm>
 
+              : <></>
+            : <></>
+          }
+          { // Supplier
+            role === 6 ? 
+              service.status === 4 ?
+              <Popconfirm
+              title="¿Seguro que el servicio ha sido elaborado?"
+              onConfirm={() => updateService(service.id, 5)}
+              okText="Si"
+              cancelText="No"
+              >
+                <Button
+                  type="primary"
+                  icon={<CheckCircleOutlined />}
+                  loading={loadServiceChangeStep}
+                >
+                  Servicio elaborado
+                </Button>
+              </Popconfirm>
               : <></>
             : <></>
           }
@@ -1090,7 +1291,7 @@ export default function OrderInfo(props) {
             // Final cost de la orden
             <b>
               
-              {service.price === '' || service.price === null || service.price === undefined ? 'Precio por definir' : service.price + ' $'}
+              {service.price === '' || service.price === null || service.price === undefined ? 'Precio: por definir' : service.price + ' $'}
               {/*role == 4
                 ? details.service.client_cost
                 : (role == 6 ||
@@ -1101,133 +1302,211 @@ export default function OrderInfo(props) {
                   details.service.supplier_cost*/}
             </b>
           }
-          actions={[
-            <Row gutter={[12, 12]}>
-              {(role == 1) &&
-              ( service.status == 1 ||
-                service.status == 2 ||
-                service.status == 4 ||
-                service.status == 3 ||
-                service.status == 8 ||
-                service.status == 11) ? (
-                <Col xs={24} md={12} xl={8}>
-                  <Popconfirm
-                    title="¿Seguro que deseas cancelar esta orden?"
-                    onConfirm={() => SelectCalcelCot("Cancelar orden", true, 2)}
-                    okText="Si"
-                    cancelText="No"
-                  >
-                    <Button
-                      type="primary"
-                      danger
-                      icon={<CheckCircleOutlined />}
-                      loading={loadCancelar}
-                    >
-                      Cancelar {service.id}
-                    </Button>
-                  </Popconfirm>
-                </Col>
-              ) : (
-                role == 4 &&
-                (service.status == 1 ||
-                  service.status == 2 ||
-                  service.status == 4) && (
-                  <Col xs={24} md={12} xl={8}>
-                    <Popconfirm
-                      title="¿Seguro que deseas cancelar esta orden?"
-                      onConfirm={() =>
-                        SelectCalcelCot(
-                          "Solicitar cancelación de la orden",
-                          true,
-                          1
-                        )
-                      }
-                      okText="Si"
-                      cancelText="No"
-                    >
-                      <Button
-                        type="primary"
-                        danger
-                        icon={<CheckCircleOutlined />}
-                        loading={loadCancelar}
-                      >
-                        Solicitar cancelación {service.id}
-                      </Button>
-                    </Popconfirm>
-                  </Col>
-                )
-              )}
-              { /* COTIZACION FINAL */}
-              { /* TODO: Agregar cotizacion final de EPNO */}
-              {role == 4 || role == 3 || role == 5 || role == 2 || role == 1 ? (
-                <Col xs={24} md={12} xl={6}>
-                  <a
-                    href={service.fileUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    download
-                  >
-                    <Button
-                      icon={<DownloadOutlined />}
-                      disabled={details.service.quote_file == "" && true}
-                    >
-                      <i className="fas fa-download" />
-                      &nbsp;Cotización
-                    </Button>
-                  </a>
-                </Col>
-              ) : (
-                details.service.epno_po_file !== "" &&
-                role == 6 && (
-                  <Col xs={24} md={12} xl={6}>
-                    <a
-                      href={`https://api.epno-app.com${details.service.epno_po_file}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      download
-                    >
-                      <Button
-                        icon={<DownloadOutlined />}
-                        disabled={details.service.epno_po_file == "" && true}
-                      >
-                        <i className="fas fa-download" />
-                        &nbsp;PO
-                      </Button>
-                    </a>
-                  </Col>
-                )
-              )}
-            </Row>,
-          ]}
+          actions={[]}
         >
           <Row gutter={[12, 12]} align="middle" justify="center">
-            <Col xs={24} md={18}>
+            <Col xs={24} >
               <Row gutter={[12, 12]}>
-                <Col xs={24} md={16} style={{ textAlign: "center" }}>
+                <Col xs={24} style={{ textAlign: "center" }}>
                   <b>Fecha de entrega:</b>{" "}
                   <b style={{ fontSize: 16 }}>
                     { service.dueDate === '' ? 'Por definir' : moment(service.dueDate).format("DD/MM/YYYY")}
                   </b>
                 </Col>
-                {service.status == 1 && (
-                  <>
-                    <Col xs={24}>
-                      <Paragraph > {service.description} </Paragraph>
-                    </Col>
-                  </>
-                )}
+                <Col xs={24}>
+                  <Paragraph > {service.description} </Paragraph>
+                </Col>
               </Row>
             </Col>
 
             <Col xs={24} md={6} lg={6} style={{ textAlign: "center" }}>
-              <Button onClick={() => setVisible(true)}>Documento</Button>
+              {/*<Button onClick={() => setVisible(true)}>Documento</Button> */}
+              <Button href={service.fileUrl} target="blank">Documento</Button>
             </Col>
           </Row>
         </Card>
       </Col>
 
+      {/* APPLY TO SERVICE ------------------------------------------------------------------- */}
+      {(role === 6  || role === 1) && service.status === 2 && proposals.length === 0 ? 
       <Col xs={24}>
-        {(role == 3 || role == 5 || role == 2 || role == 1) && (
+        <Card
+          headStyle={{ background: "#F4F6F6" }}
+          className="actions-back"
+          title={
+            <Row gutter={[12, 12]}>
+              <Col> <b>Cotiza el servicio</b> </Col>
+            </Row>
+          }
+          actions={[
+            <Row gutter={[12, 12]}>
+              <Col xs={24} md={12} xl={8}>
+                <Popconfirm
+                  title="¿Seguro que deseas enviar la cotizacion?"
+                  onConfirm={() => SelectCalcelCot("Cancelar orden", true, 2)}
+                  okText="Si"
+                  cancelText="No"
+                >
+                  <Button 
+                    type="primary" 
+                    icon={<CheckCircleOutlined />} 
+                    loading={loadCancelar}
+                    disabled={application.fileList.length < 1}
+                    onClick={() => applyToService()}
+                    >
+                    Enviar cotizacion
+                  </Button>
+                </Popconfirm>
+              </Col>
+            </Row>,
+          ]}
+        >
+          <Row>
+            <Col xs={24}>
+              <Form.Item
+                label="Descripcion"
+                rules={[
+                  {
+                    required: true,
+                    message:
+                      "Favor de ingresar un titulo para su proyecto",
+                  },
+                ]}
+              >
+                <Input name="description" onChange={onChange} />
+              </Form.Item>
+              <Form.Item
+                label="Precio"
+                rules={[
+                  {
+                    required: true,
+                    message:
+                      "Favor de ingresar una pequeña descripcion de lo deseado",
+                  },
+                ]}
+              >
+                <Input type="number" name="price"  onChange={onChange} />
+              </Form.Item>
+              <Form.Item
+                label="¿Cuándo espera recibir el servicio?"
+                rules={[
+                  {
+                    required: true,
+                    message: "Selecciona una fecha.",
+                  },
+                ]}
+              >
+                <DatePicker
+                  style={{ width: "100%" }}
+                  placeholder="Seleccionar fecha"
+                  className="login-input"
+                  name="dueDate"
+                  onChange={onDateChange}
+                />
+              </Form.Item>
+              <Upload 
+                {...propsDrag}
+                maxCount={1}
+                name="files"
+                listType='picture'
+                multiple={false}
+                >
+                <Button icon={<UploadOutlined />}>Subir cotizacion</Button>
+              </Upload>
+            </Col>
+          </Row>
+        </Card>
+      </Col>
+      : <></> 
+      }
+
+      {/* PROPOSALS*/}
+      {((role === 6  || role === 1) && service.status >= 2 && proposals.length !== 0) || (userData.role === 4 && service.status >= 3) ? 
+      <Col xs={24}>
+      {proposals.map((sub, i) => (
+        <Collapse bordered={false} className="background-gris">
+          <Panel
+            key="1"
+            extra={
+              <Col xs={24}>
+                <Button
+                  href={sub.fileUrl}
+                  target="blank"
+                  icon={<DownloadOutlined />}
+                >
+                  Documento
+                </Button>
+              </Col>
+            }
+            header={
+              <Row gutter={[6, 12]}>
+                <Col xs={24} md={18} xl={19}>
+                  <b style={{marginRight: '16px'}}> Cotizacion: {sub.name} </b>
+                </Col>
+              </Row>
+            }>
+              <Row style={{backgroundColor: 'white', borderRadius: '8px', padding: '16px'}}>
+                <Col xs={24}>
+                  <p><b>Empresa: </b>{sub.name} </p>
+                </Col>
+                <Col xs={24}>
+                  <p><b>Descripcion del trabajo: </b>{sub.description} </p>
+                </Col>
+                <Col xs={24} >
+                  <p><b>Fecha de entrega: </b>{sub.dueDate} </p>
+                </Col>
+                <Col xs={24} >
+                  <p><b>Precio: 
+                  </b> { role === 4 ? sub.price_epno : sub.price } </p>
+                </Col>
+                {role === 1 ?
+                <Col xs={24} >
+                  <p><b>Precio de EPNO: 
+                  </b> {sub.price_epno} </p>
+                </Col>
+                : <></>}
+                <Col xs={24} >
+                <div style={{display: "flex", alignItems: 'bottom'}}>
+                  {service.status === 2 && userData.role === 1 ? 
+                    <Form.Item label="Posicion: " >
+                      <Input type="number" onChange={(value) => onChangePosition(i, value)} value={positions[i]} />
+                    </Form.Item>
+                  : <></>}
+                  {service.status === 2 && userData.role === 1 ? 
+                    <Form.Item label="Precio" style={{marginLeft: '8px', marginRight: '8px'}}>
+                      <Input type="number" onChange={(value) => onChangePropPrice(i, value)} value={proposalPrice[i]}  />
+                    </Form.Item>
+                  : <></>}
+                  {service.status === 2 && userData.role === 1 ? 
+                    <Button style={{alignSelf: 'bottom'}}
+                      onClick={() => updateServicePlacement(sub.id, positions[i], proposalPrice[i])}
+                    >
+                      Actualizar cambios
+                    </Button>
+                  : <></>}
+                </div>
+                </Col>
+                { role === 4 && service.status === 3 ?
+                  <Col xs={24} >
+                  <Button 
+                    type="primary" 
+                    onClick={() => chooseProposal(sub.id, sub.userId, sub.name, sub.price_epno, sub.dueDate, '')}
+                    >
+                    Aceptar cotizacion</Button>
+                </Col>
+                : <></>}
+                
+              </Row>
+          </Panel>
+        </Collapse>
+      ))}
+      </Col>
+      : <></>
+      }
+      
+
+      {/*<Col xs={24}>
+        {(role === 3 || role === 5 || role === 2 || role === 1) && (
           <Row gutter={[12, 12]} justify="center">
             <Col xs={24} md={12} xl={8}>
               <Badge color="#f50" text="Cotización por primera vez" />
@@ -2323,7 +2602,7 @@ export default function OrderInfo(props) {
             </Col>
           )}
         </Row>
-      </Col>
+      </Col>*/}
 
       <Drawer
         title={"Archivos Disponibles"}

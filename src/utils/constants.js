@@ -72,9 +72,16 @@ export const API = {
             NEW_SERVICE:        'services/new',
             GET_ALL:            'services/getAll',
             GET_BY_USER:        'services/getByUser',
+            GET_BY_CATEGORY:    'services/getByCategory',
 
             //EPNO
-            DETAILS:            'services/id/'
+            DETAILS:            'services/id/',
+            UPDATE:             'services/update',
+            UPDATE_PLACEMENT:   'services/updateProposal',
+            APPLY:              'services/apply',
+            GET_PROP_USER:      'services/getProposalByUser',
+            GET_PROP_SERVICE:   'services/getProposalByService',
+            CHOOSE_PROPOSAL:    'services/chooseProposal'
         },
         SUBSERVICES: {
             ADD:                    '/api/self-service/add_new_subservice',

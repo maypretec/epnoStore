@@ -256,6 +256,14 @@ function GetServicesByUser(body) {
   });
 }
 
+function GetServicesByCategory(body){
+  return request({
+    url: API.ORDERS.SERVICES.GET_BY_CATEGORY,
+    method: requestMethods.POST,
+    data: body
+  })
+}
+
 function GetAll(){
   return request({
     url: API.ORDERS.SERVICES.GET_ALL,
@@ -267,6 +275,54 @@ function ServiceDetails(request_body) {
   return request({
     url: API.ORDERS.SERVICES.DETAILS.concat(request_body),
     method: requestMethods.GET,
+  });
+}
+
+function UpdateService(body) {
+  return request({
+    url: API.ORDERS.SERVICES.UPDATE,
+    method: requestMethods.POST,
+    data: body
+  });
+}
+
+function UpdateServicePlacement(body) {
+  return request({
+    url: API.ORDERS.SERVICES.UPDATE_PLACEMENT,
+    method: requestMethods.POST,
+    data: body
+  });
+}
+
+function ApplyService(body) {
+  return request({
+    url: API.ORDERS.SERVICES.APPLY,
+    method: requestMethods.POST,
+    data: body
+  });
+}
+
+function GetProposalByService(body) {
+  return request({
+    url: API.ORDERS.SERVICES.GET_PROP_SERVICE,
+    method: requestMethods.POST,
+    data: body
+  });
+}
+
+function GetProposalByUser(body) {
+  return request({
+    url: API.ORDERS.SERVICES.GET_PROP_USER,
+    method: requestMethods.POST,
+    data: body
+  });
+}
+
+function ChooseProposal(body) {
+  return request({
+    url: API.ORDERS.SERVICES.CHOOSE_PROPOSAL,
+    method: requestMethods.POST,
+    data: body
   });
 }
 
@@ -292,7 +348,14 @@ const OrderService = {
   NewService,
   GetServicesByUser,
   ServiceDetails,
-  GetAll
+  GetAll,
+  UpdateService,
+  UpdateServicePlacement,
+  GetServicesByCategory,
+  ApplyService,
+  GetProposalByService,
+  GetProposalByUser,
+  ChooseProposal
 };
 
 export default OrderService;
