@@ -152,8 +152,8 @@ export default function LayoutPage(props) {
     })
   }
 
-  const prueba= () => {
-    history('/orders/all/1')
+  const prueba = (route) => {
+    history(route)
   }
 
   const footerContent = <div className="footer_cart">
@@ -188,7 +188,7 @@ export default function LayoutPage(props) {
           >
             {/* <div className="logo" /> */}
             <Menu theme="dark" mode="inline"  >
-              <Menu.Item key="1" icon={<InboxOutlined />} onClick={() => prueba()}>
+              <Menu.Item key="1" icon={<InboxOutlined />} onClick={() => prueba('/orders/all/1')}>
                 Ordenes{/*<a href={`/orders/all/1`}> Ordenes</a>*/}
               </Menu.Item>
               <Menu.Item key="16" icon={<UserOutlined />}>
@@ -217,8 +217,8 @@ export default function LayoutPage(props) {
                 <Menu.Item key="10">Capacitaciones</Menu.Item>
                 <Menu.Item key="11">Metrologia</Menu.Item> */}
               </SubMenu>
-              <Menu.Item key="12" icon={<FundOutlined />}>
-                <Link to='/@f-@c'>Finanzas</Link>
+              <Menu.Item key="12" onClick={() => prueba('/@f-@c')} icon={<FundOutlined />} >
+                Finanzas
               </Menu.Item>
               <Menu.Item key="13" icon={<FileProtectOutlined />} >
                 <Link to='/@q'>Quejas</Link>
