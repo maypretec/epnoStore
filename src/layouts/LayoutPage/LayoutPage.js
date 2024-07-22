@@ -152,6 +152,10 @@ export default function LayoutPage(props) {
     })
   }
 
+  const prueba= () => {
+    history('/orders/all/1')
+  }
+
   const footerContent = <div className="footer_cart">
     <div>
       <p>Subtotal:</p>
@@ -184,8 +188,8 @@ export default function LayoutPage(props) {
           >
             {/* <div className="logo" /> */}
             <Menu theme="dark" mode="inline"  >
-              <Menu.Item key="1" icon={<InboxOutlined />}>
-                <a href={`/orders/all/1`}> Ordenes</a>
+              <Menu.Item key="1" icon={<InboxOutlined />} onClick={() => prueba()}>
+                Ordenes{/*<a href={`/orders/all/1`}> Ordenes</a>*/}
               </Menu.Item>
               <Menu.Item key="16" icon={<UserOutlined />}>
                 <Link to="/@c">Para mi</Link>
