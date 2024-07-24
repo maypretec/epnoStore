@@ -223,8 +223,8 @@ export default function LayoutPage(props) {
               <Menu.Item key="13" icon={<FileProtectOutlined />} >
                 <Link to='/@q'>Quejas</Link>
               </Menu.Item>
-              <Menu.Item key="15" icon={<InboxOutlined />}>
-                <a href={`/orders/all/0`}>Historial</a>
+              <Menu.Item onClick={() => prueba('/orders/all/0')} key="15" icon={<InboxOutlined />}>
+                Historial
               </Menu.Item>
             </Menu>
           </Sider>
