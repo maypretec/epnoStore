@@ -99,7 +99,7 @@ export default function LayoutPage(props) {
                 { fontSize: 20 }} /> : <EyeOutlined style={{ fontSize: 20 }} />
               }
             >
-              <a href={`/orders/details/${ntf.table_id}`} onClick={() => ChangeNotification(ntf.id)}>{ntf.title}-{ntf.description}</a>
+              <a href={`/#/orders/details/${ntf.table_id}`} onClick={() => ChangeNotification(ntf.id)}>{ntf.title}-{ntf.description}</a>
             </Menu.Item>
           ))
         }
@@ -242,7 +242,7 @@ export default function LayoutPage(props) {
                         <Avatar className="avatar" icon={<ShoppingCartOutlined />} />
                       </Badge></Menu.Item>
                     <Menu.Item key="19" >
-                    <a href={notifications.user_id !== '' &&`/@p/${notifications.user_id}`} disabled={notifications.user_id == '' && true}>
+                    <a href={notifications.user_id !== '' &&`/#/@p/${notifications.user_id}`} disabled={notifications.user_id == '' && true}>
                         <Avatar style={{ backgroundColor: '#40a9ff' }} icon={<UserOutlined />} />
                       </a>
                     </Menu.Item>

@@ -53,6 +53,7 @@ import SupplierService from "../../utils/api/suppliers";
 import ComplaintService from "../../utils/api/complaints";
 import ServiceStatus from "../Generals/ServiceStatus";
 import UserService from "../../utils/api/users";
+import { useNavigate } from "react-router-dom";
 
 const { TextArea } = Input;
 const { Panel } = Collapse;
@@ -836,6 +837,8 @@ export default function OrderInfo(props) {
 		fileList: [],
 	});
 
+  let history = useNavigate();
+
   /* USER DATA API CALL*/
   useEffect(() => {
     const fetchData = async () => {
@@ -1022,6 +1025,10 @@ export default function OrderInfo(props) {
 		},
 		application
 	}; 
+
+  const handleNav = (route) => {
+    history(route)
+  }
 
   const propsProp = (i) => ({
     beforeUpload: async (file) => {

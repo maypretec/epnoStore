@@ -91,7 +91,7 @@ export default function LayoutPage(props) {
           notifications.notify.map((ntf) => (
             <Menu.Item key={ntf.id} style={{ backgroundColor: ntf.seen == 0 ? "#F7F7F7" : "", fontWeight: ntf.seen == 0 ? "bold" : "normal" }} icon={ntf.seen == 0 ? <EyeInvisibleOutlined style={{ fontSize: 20 }} /> : <EyeOutlined style={{ fontSize: 20 }} />}>
 
-              <a href={`/orders/details/${ntf.table_id}`} onClick={() => ChangeNotification(ntf.id)}>{ntf.title}-{ntf.description}</a>
+              <a href={`/#/orders/details/${ntf.table_id}`} onClick={() => ChangeNotification(ntf.id)}>{ntf.title}-{ntf.description}</a>
             </Menu.Item>
           ))
         }
@@ -124,7 +124,7 @@ export default function LayoutPage(props) {
         >
           <div className="logo" />
           <Menu theme="dark" mode="inline" >
-            <Menu.Item key="1" icon={<InboxOutlined />}>   <a href={`/orders/all/1`}> Ordenes</a></Menu.Item>
+            <Menu.Item key="1" icon={<InboxOutlined />}><Link to='/orders/all/1'>Ordenes</Link> </Menu.Item>
             {/* 136 en prod */}
             {/* { id == 139 && ( */}
             <Menu.Item key="2" icon={<UnorderedListOutlined />}><Link to="/@p">Números de parte</Link> </Menu.Item>
@@ -132,7 +132,7 @@ export default function LayoutPage(props) {
                 } */}
             <Menu.Item key="12" icon={<FundOutlined />}> <Link to='/@f-@s'>Finanzas</Link></Menu.Item>
             <Menu.Item key="13" icon={<FileProtectOutlined />} > <Link to='/@q'>Quejas</Link></Menu.Item>
-            <Menu.Item key="14" icon={<FileProtectOutlined />}> <a href={`/orders/all/0`}>Historial</a></Menu.Item>
+            <Menu.Item key="14" icon={<FileProtectOutlined />}><Link to='/orders/all/0'>Historial</Link></Menu.Item>
           </Menu>
         </Sider>
         <Layout >
@@ -141,7 +141,7 @@ export default function LayoutPage(props) {
               <Col sm={6} md={24}>
                 <Menu className="site-layout-sub-header-background" mode="horizontal" defaultSelectedKeys={['2']}>
                   <Menu.Item key="19" >
-                  <a href={notifications.user_id !== ''?(`/@p/${notifications.user_id}`):(null)} disabled={notifications.user_id == '' && true}>
+                  <a href={notifications.user_id !== ''?(`/#/@p/${notifications.user_id}`):(null)} disabled={notifications.user_id == '' && true}>
                         <Avatar style={{ backgroundColor: '#40a9ff' }} icon={<UserOutlined />} />
                       </a>
                   </Menu.Item>

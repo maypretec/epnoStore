@@ -78,6 +78,10 @@ export default function AgentTable(props) {
 		setSearchedValue(null);
 	};
 
+	const handleNav = (route) => {
+    history(route)
+  }
+
 	const columns = [
 		{
 			title: "# Orden",
@@ -159,11 +163,9 @@ export default function AgentTable(props) {
 				</Col>
 				{ role == 4 ? 
 				<Col xs={4}>
-					<a href={'/orders/request'}> 
-						<Button type="primary" icon={<PlusOutlined/>} style={{width: '100%', height: '100%'}} >
-							Nueva orden
-						</Button>
-					</a>
+					<Button type="primary" onClick={() => handleNav('/orders/request')} icon={<PlusOutlined/>} style={{width: '100%', height: '100%'}} >
+						Nueva orden
+					</Button>
 				</Col>
 				: <></>}
 				

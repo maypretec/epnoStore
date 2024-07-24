@@ -143,7 +143,7 @@ export default function CPLayout(props) {
   const allNotifications = (
     <Menu >
       <Menu.ItemGroup title="Notificaciones">
-        {notifications.notify == "" ? (
+        {/*notifications.notify == "" ? (
           <Empty description="Sin notificaciones" image={Empty.PRESENTED_IMAGE_SIMPLE} />
         ) :
           notifications.notify.map((ntf) => (
@@ -152,7 +152,7 @@ export default function CPLayout(props) {
               <a href={`/orders/details/${ntf.table_id}`} onClick={() => ChangeNotification(ntf.id)}>{ntf.title}-{ntf.description}</a>
             </Menu.Item>
           ))
-        }
+        */}
         <Row justify="center">
           <Divider className="divider_link" />
           <Col > <Link to={`/@a-@n`}>Ver más</Link></Col>
@@ -185,7 +185,9 @@ export default function CPLayout(props) {
     })
   }
 
-
+  const handleNav = (route) => {
+    history(route)
+  }
 
   if (role == '') {
     return (
@@ -252,8 +254,8 @@ export default function CPLayout(props) {
                 )
               }
 
-              <Menu.Item key="6" icon={<InboxOutlined />}>
-                <a href={`/orders/all/1`}> Ordenes</a>
+              <Menu.Item key="6" icon={<InboxOutlined />} onClick={() => handleNav('/orders/all/1')}>
+                 Ordenes
               </Menu.Item>
               {
                 (role == 1) && (
@@ -286,7 +288,7 @@ export default function CPLayout(props) {
                 <Link to="/@q">Quejas</Link>
               </Menu.Item>
               <Menu.Item key="12" icon={<InboxOutlined />}>
-                <a href={`/orders/all/0`}>Historial</a>
+                <a href={`/#/orders/all/0`}>Historial</a>
               </Menu.Item>
               {/* {
                 (role == 1 || role == 2) && (

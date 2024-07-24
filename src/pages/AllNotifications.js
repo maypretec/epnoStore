@@ -77,7 +77,7 @@ export default function AllNotifications() {
                 order: ntf.title,
                 date: moment(ntf.created_at).format('L'),
                 status: [ntfS],
-                details: (<a href={`/orders/details/id/type`} onClick={() => ChangeNotification(ntf.id)} >Ver</a>),
+                details: (<a href={`/#/orders/details/id/type`} onClick={() => ChangeNotification(ntf.id)} >Ver</a>),
 
             })
         })
