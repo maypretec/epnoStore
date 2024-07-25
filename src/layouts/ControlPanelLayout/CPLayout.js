@@ -213,22 +213,24 @@ export default function CPLayout(props) {
               {
                 (role == 1 || role == 3) &&
                 <SubMenu key="sub1" icon={<UsergroupAddOutlined />} title="Usuarios">
-                  {
+                  {/*
                     role == 1 &&
                     <Menu.Item key="1">
                       <Link to="/@s">Solicitudes</Link>
                     </Menu.Item>
 
-                  }
+                  */}
                   {
                     (role == 1 || role == 3) &&
                     <>
+                      {/*
                       <Menu.Item key="2">
                         <Link to='/@u'>Lista de Usuarios</Link>
                       </Menu.Item>
                       <Menu.Item key="3">
                         <Link to='/@rev'>Reviews</Link>
                       </Menu.Item>
+                      */}
                       <Menu.Item key="21" >
 
                         <Link to='/@a-@u'>Agregar</Link>
@@ -237,22 +239,22 @@ export default function CPLayout(props) {
                   }
                 </SubMenu>
               }
-              {
+              {/*
                 (role == 1 || role == 3 || role == 2) && (
                   <Menu.Item key="4" icon={<MoneyCollectOutlined />}>
                     <Link to='/@cns' >Consumo</Link>
                   </Menu.Item>
                 )
-              }
+              */}
 
 
-              {
+              {/*
                 (role == 1 || role == 5 || role == 2) && (
                   <Menu.Item key="5" icon={<MonitorOutlined />}>
                     <Link to='/@v'>Ventas</Link>
                   </Menu.Item>
                 )
-              }
+              */}
 
               <Menu.Item key="6" icon={<InboxOutlined />} onClick={() => handleNav('/orders/all/1')}>
                  Ordenes
@@ -260,6 +262,7 @@ export default function CPLayout(props) {
               {
                 (role == 1) && (
                   <>
+                    {/*
                     <SubMenu key="sub2" icon={<OrderedListOutlined />} title="Num. de parte">
 
                       <Menu.Item key="10" >
@@ -270,11 +273,12 @@ export default function CPLayout(props) {
                       </Menu.Item>
 
                     </SubMenu>
-
+                    */}
+                    {/*
                     <Menu.Item key="8" icon={<PlusCircleOutlined />}>
                       <Link to="/@c-@a">Catalogo</Link>
-
                     </Menu.Item>
+                    */}
                     {/* <Menu.Item key="8" onClick={() => setIsModalVisibleServicios(true)} icon={<PlusCircleOutlined />}>
                       Alta de servicios
                     </Menu.Item> */}
@@ -283,13 +287,14 @@ export default function CPLayout(props) {
               }
 
 
-
+              {/*
               <Menu.Item key="7" icon={<FileProtectOutlined />} >
                 <Link to="/@q">Quejas</Link>
               </Menu.Item>
               <Menu.Item key="12" icon={<InboxOutlined />}>
                 <a href={`/#/orders/all/0`}>Historial</a>
               </Menu.Item>
+              */}
               {/* {
                 (role == 1 || role == 2) && (
                   <SubMenu key="sub2" icon={<GlobalOutlined />} title="Mapas">
@@ -344,6 +349,7 @@ export default function CPLayout(props) {
                         <Avatar style={{ backgroundColor: '#40a9ff' }} icon={<UserOutlined />} />
                       </a>
                     </Menu.Item> */}
+                    {/*
                     <Menu.Item key="20" >
                       <Dropdown overlay={allNotifications} placement="bottomCenter" >
                         <Badge count={notifications.total} overflowCount={999} style={{ backgroundColor: '#95de64' }}>
@@ -352,6 +358,7 @@ export default function CPLayout(props) {
                         </Badge>
                       </Dropdown>
                     </Menu.Item>
+                    */}
                     <Menu.Item key="21" >
                       <Button onClick={() => logout()} type="text">
                         Salir

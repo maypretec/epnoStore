@@ -86,7 +86,7 @@ export default function LayoutPage(props) {
   const allNotifications = (
     <Menu>
       <Menu.ItemGroup title="Notificaciones">
-        {notifications.notify == '' ? (
+        {/*notifications.notify == '' ? (
           <Empty description="Sin notificaciones" image={Empty.PRESENTED_IMAGE_SIMPLE} />
         ) :notifications.notify.map((ntf) => (
             <Menu.Item key={ntf.id} style={
@@ -102,7 +102,7 @@ export default function LayoutPage(props) {
               <a href={`/#/orders/details/${ntf.table_id}`} onClick={() => ChangeNotification(ntf.id)}>{ntf.title}-{ntf.description}</a>
             </Menu.Item>
           ))
-        }
+        */}
         <Row justify="center">
           <Divider className="divider_link" />
           <Col > <Link to={`/@a-@n`}>Ver más</Link></Col>
@@ -166,7 +166,9 @@ export default function LayoutPage(props) {
 
       }
     </div>
+    {/*
     <Link to={`/@m-@o`}> <Button className="btn btn-info" >Ver carrito <EyeOutlined /></Button> </Link>
+    */}
   </div>;
   if (role == '') {
     return (
@@ -191,23 +193,33 @@ export default function LayoutPage(props) {
               <Menu.Item key="1" icon={<InboxOutlined />} onClick={() => prueba('/orders/all/1')}>
                 Ordenes{/*<a href={`/orders/all/1`}> Ordenes</a>*/}
               </Menu.Item>
+              {/*
               <Menu.Item key="16" icon={<UserOutlined />}>
                 <Link to="/@c">Para mi</Link>
               </Menu.Item>
+              */}
+              {/*
               <Menu.Item key="17" icon={<HeartOutlined />}>
                 <Link to="/@m-@t">Mis cosas</Link>
               </Menu.Item>
+              */}
               {/* <Menu.Item key="2" icon={<FileSearchOutlined />}> Historial</Menu.Item> */}
-              <SubMenu key="sub1" icon={<AppstoreOutlined />} title="Servicios">
+                {/*
+                <SubMenu key="sub1" icon={<AppstoreOutlined />} title="Servicios">
+                */}
+                {/*
                 <Menu.Item key="14">
                   <Link to="/@c">MRO</Link>
                 </Menu.Item>
+                  */}
                 {/* <Menu.Item key="3">
                   <Link to="/solicitud-de-software">Software</Link>
                 </Menu.Item> */}
+                {/*
                 <Menu.Item key="21">
                   <Link to={`/@g-@s`}>General</Link>
                 </Menu.Item>
+                */}
                 {/* <Menu.Item key="4">RH</Menu.Item>
                 <Menu.Item key="5">Cafeteria</Menu.Item>
                 <Menu.Item key="6">Sorteos</Menu.Item>
@@ -216,16 +228,20 @@ export default function LayoutPage(props) {
                 <Menu.Item key="9">Aduanas</Menu.Item>
                 <Menu.Item key="10">Capacitaciones</Menu.Item>
                 <Menu.Item key="11">Metrologia</Menu.Item> */}
-              </SubMenu>
+              {/*</SubMenu>*/}
+              {/*
               <Menu.Item key="12" onClick={() => prueba('/@f-@c')} icon={<FundOutlined />} >
                 Finanzas
               </Menu.Item>
-              <Menu.Item key="13" icon={<FileProtectOutlined />} >
+              */}
+              {/*<Menu.Item key="13" icon={<FileProtectOutlined />} >
                 <Link to='/@q'>Quejas</Link>
-              </Menu.Item>
+              </Menu.Item>*/}
+              {/*
               <Menu.Item onClick={() => prueba('/orders/all/0')} key="15" icon={<InboxOutlined />}>
                 Historial
               </Menu.Item>
+              */}
             </Menu>
           </Sider>
           <Layout >
@@ -236,15 +252,16 @@ export default function LayoutPage(props) {
                 <Col sm={6} md={23}>
 
                   <Menu mode="horizontal" defaultSelectedKeys={['2']} className="site-layout-sub-header-background">
-
+                    <a href={notifications.user_id !== '' &&`/#/@p/${notifications.user_id}`} disabled={notifications.user_id == '' && true}>
+                      <Avatar style={{ backgroundColor: '#40a9ff' }} icon={<UserOutlined />} />
+                    </a>
+                    {/*      
                     <Menu.Item key="18" >
                       <Badge count={products.count} onClick={showDrawer} overflowCount={999}>
                         <Avatar className="avatar" icon={<ShoppingCartOutlined />} />
                       </Badge></Menu.Item>
                     <Menu.Item key="19" >
-                    <a href={notifications.user_id !== '' &&`/#/@p/${notifications.user_id}`} disabled={notifications.user_id == '' && true}>
-                        <Avatar style={{ backgroundColor: '#40a9ff' }} icon={<UserOutlined />} />
-                      </a>
+                    
                     </Menu.Item>
                     <Menu.Item key="20" >
                       <Dropdown overlay={allNotifications} placement="bottomCenter" overflow='scroll' >
@@ -254,6 +271,7 @@ export default function LayoutPage(props) {
                         </Badge>
                       </Dropdown>
                     </Menu.Item>
+                    */}
                     <Menu.Item key="21" >
                       <Button onClick={() => logout()} type="text">
                         Salir

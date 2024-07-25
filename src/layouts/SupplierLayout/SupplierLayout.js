@@ -84,7 +84,7 @@ export default function LayoutPage(props) {
   const allNotifications = (
     <Menu >
       <Menu.ItemGroup title="Notificaciones">
-        {notifications.notify == '' ? (
+        {/*notifications.notify == '' ? (
           <Empty description="Sin notificaciones" image={Empty.PRESENTED_IMAGE_SIMPLE} />
 
         ) :
@@ -94,7 +94,7 @@ export default function LayoutPage(props) {
               <a href={`/#/orders/details/${ntf.table_id}`} onClick={() => ChangeNotification(ntf.id)}>{ntf.title}-{ntf.description}</a>
             </Menu.Item>
           ))
-        }
+        */}
         <Row justify="center">
           <Divider className="divider_link" />
           <Col > <Link to={`/@a-@n`}>Ver más</Link></Col>
@@ -127,12 +127,16 @@ export default function LayoutPage(props) {
             <Menu.Item key="1" icon={<InboxOutlined />}><Link to='/orders/all/1'>Ordenes</Link> </Menu.Item>
             {/* 136 en prod */}
             {/* { id == 139 && ( */}
-            <Menu.Item key="2" icon={<UnorderedListOutlined />}><Link to="/@p">Números de parte</Link> </Menu.Item>
+            {/*
+              <Menu.Item key="2" icon={<UnorderedListOutlined />}><Link to="/@p">Números de parte</Link> </Menu.Item>
+            */}
             {/* ) 
                 } */}
+            {/*
             <Menu.Item key="12" icon={<FundOutlined />}> <Link to='/@f-@s'>Finanzas</Link></Menu.Item>
             <Menu.Item key="13" icon={<FileProtectOutlined />} > <Link to='/@q'>Quejas</Link></Menu.Item>
             <Menu.Item key="14" icon={<FileProtectOutlined />}><Link to='/orders/all/0'>Historial</Link></Menu.Item>
+            */}
           </Menu>
         </Sider>
         <Layout >
@@ -140,6 +144,7 @@ export default function LayoutPage(props) {
             <Row>
               <Col sm={6} md={24}>
                 <Menu className="site-layout-sub-header-background" mode="horizontal" defaultSelectedKeys={['2']}>
+                  {/*
                   <Menu.Item key="19" >
                   <a href={notifications.user_id !== ''?(`/#/@p/${notifications.user_id}`):(null)} disabled={notifications.user_id == '' && true}>
                         <Avatar style={{ backgroundColor: '#40a9ff' }} icon={<UserOutlined />} />
@@ -152,6 +157,7 @@ export default function LayoutPage(props) {
                       </Badge>
                     </Dropdown>
                   </Menu.Item>
+                  */}
                   <Menu.Item key="21" >
                     <Button onClick={() => logout()} type="text">
                       Salir
