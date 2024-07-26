@@ -1,22 +1,16 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Card, Row, Col, Input, Table, Button, Space, Tag } from "antd";
+import React, { useState, useEffect } from "react";
+import {Row, Col} from "antd";
 
 import GeneralTable from "../components/Generals/OrdersTable/GeneralTable";
 import AgentTable from "../components/Generals/OrdersTable/AgentTable";
-// import Layout from "../../views/layouts/LayoutPage";
-// import "../../sass/SeguimientoOrdenes.scss";
 import LayoutPage from "../layouts/LayoutPage";
 import SupplierLayout from "../layouts/SupplierLayout";
 import CPLayout from "../layouts/ControlPanelLayout";
 import OrderService from "../utils/api/orders";
 
-import { Link, useParams } from "react-router-dom";
-
 export default function SeguimientoOrdenes(props) {
-  let { type } = useParams();
   let role_auth = localStorage.getItem("role");
   var Layout = "";
-  let token = localStorage.getItem("token");
   const [openOrders, setOpenOrders] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -51,7 +45,7 @@ export default function SeguimientoOrdenes(props) {
       OrderService.GetServicesByUser({id: user.id}).then(response => {
         setOpenOrders(response.data);
         setLoading(false);
-      }).catch((error) => { setLoading(false); });
+      }).catch((error) => {  setLoading(false); });
     }
 
     if (role_auth === '6') { // GET SERVICES FOR SUPPLIER

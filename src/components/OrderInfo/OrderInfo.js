@@ -1257,7 +1257,7 @@ export default function OrderInfo(props) {
                     : service.cat1 === 2 ? 'Tecnologia'
                     : service.cat1 === 3 ? 'Maquinado'
                     : service.cat1 === 4 ? 'MRO'
-                    : 'MRP'
+                    : service.cat1 === 5 ? 'MRP' : ""
                   }
                   </Tag>
 
@@ -1267,7 +1267,7 @@ export default function OrderInfo(props) {
                     : service.cat2 === 2 ? 'Tecnologia'
                     : service.cat2 === 3 ? 'Maquinado'
                     : service.cat2 === 4 ? 'MRO'
-                    : 'MRP'
+                    : service.cat1 === 5 ? 'MRP' : ""
                   }
                   </Tag>
                 </>

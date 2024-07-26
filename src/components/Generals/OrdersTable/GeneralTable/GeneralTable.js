@@ -13,7 +13,7 @@ export default function AgentTable(props) {
 	const { openOrders, loading } = props;
 	let history = useNavigate();
 	let role = localStorage.getItem("role");
-
+	console.log(props)
 	console.log(openOrders)
 
 	const [tableData, setTableData] = useState(

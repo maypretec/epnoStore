@@ -41,7 +41,7 @@ export default function GeneralServices() {
       title: formValue.title,
       description: formValue.description,
       cat1: formValue.cat1,
-      cat2: formValue.cat2,
+      cat2: formValue.cat2 || '',
 			fileBase64: formValue.fileList
 		}
 
