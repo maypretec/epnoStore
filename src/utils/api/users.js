@@ -94,6 +94,13 @@ function RegisterAdmin(data) {
   });
 }
 
+function GetAll(data){
+  return request({
+    url: API.USER.ALL,
+    method: requestMethods.GET,
+  });
+}
+
 function GetUserById(data){
   return request({
     url: API.USER.GET_USER_BY_ID,
@@ -113,7 +120,8 @@ const UserService = {
   GetNewUserRequest,
 
 	RegisterAdmin,
-  GetUserById
+  GetUserById,
+  GetAll
 };
 
 export default UserService;

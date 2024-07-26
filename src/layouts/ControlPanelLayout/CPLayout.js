@@ -220,13 +220,12 @@ export default function CPLayout(props) {
                     </Menu.Item>
 
                   */}
-                  {
-                    (role == 1 || role == 3) &&
+                  
                     <>
-                      {/*
                       <Menu.Item key="2">
                         <Link to='/@u'>Lista de Usuarios</Link>
                       </Menu.Item>
+                      {/*
                       <Menu.Item key="3">
                         <Link to='/@rev'>Reviews</Link>
                       </Menu.Item>
@@ -236,7 +235,7 @@ export default function CPLayout(props) {
                         <Link to='/@a-@u'>Agregar</Link>
                       </Menu.Item>
                     </>
-                  }
+                  
                 </SubMenu>
               }
               {/*

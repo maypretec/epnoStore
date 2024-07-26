@@ -47,7 +47,8 @@ export const API = {
         SOLICITUD_SOFTWARE: '/api/self-service/solicitudSoftware',
 
         // EPNO --------------------------------------------------------------
-        GET_USER_BY_ID:     'users/getById'
+        GET_USER_BY_ID:     'users/getById',
+        ALL:                'users/'
         
     },
     CUSTOMER:{
