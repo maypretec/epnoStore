@@ -25,6 +25,7 @@ import LocationService from "../../../utils/api/locations";
 import { lowerFirst } from "lodash";
 import ProfileService from "../../../utils/api/profile";
 import RegisterService from "../../../utils/api/register";
+import UserService from "../../../utils/api/users";
 
 const { Title } = Typography;
 const { Text } = Typography;
@@ -36,9 +37,7 @@ export default function ProfileInfo(props) {
   const [form] = Form.useForm();
   const { locations, id } = props;
 
-	const user = JSON.parse(localStorage.getItem('user'))
-
-  const [profile, setProfile] = useState([]);
+  const [profile, setProfile] = useState({});
   const [reload, setReload] = useState(false);
   let token = localStorage.getItem("token");
   const [load, setLoad] = useState({
@@ -47,167 +46,20 @@ export default function ProfileInfo(props) {
 
   // API informacion de perfil
   useEffect(() => {
-		console.log(user)
-		setProfile(user)
-    /*ProfileService.ProfileInfo(id)
-      .then((response) => {
-        return response.json();
-      })
-      .then((profile) => {
-        setProfile(profile);
-      })
-      .catch(console.log);*/
+    UserService.GetUserById({ id: id })
+    .then((response) => {
+      console.log(response.data)
+      return response.data;
+    })
+    .then((user) => {
+      console.log(user)
+      setProfile(user);
+    })
+    .catch(console.log);
+    
   }, [reload]);
 
-  // Deshabilitar campos
-  const [disabled, setDisabled] = useState({
-    stateOrg: true,
-    cityOrg: true,
-    pcOrg: true,
-    colonyOrg: true,
-  });
-
-  // Informacion seleccionada
-  const [formValue, setFormValue] = useState({
-    nombre: "",
-    pais: "",
-    estado: "",
-    ciudad: "",
-    codigo_postal: "",
-    colonia: "",
-    calle: "",
-    numero_exterior: "",
-    numero_interior: "",
-  });
-
-  const [country, setCountry] = useState({
-    countries: [],
-  });
-  const [state, setState] = useState({
-    states: [],
-  });
-  const [city, setCity] = useState({
-    cities: [],
-  });
-  const [pc, setPC] = useState({
-    pcodes: [],
-  });
-  const [colony, setColony] = useState({
-    colonies: [],
-  });
-
   const [show, setShow] = useState(false);
-
-  // API de todos los paises
-  useEffect(() => {
-    RegisterService.Country()
-      .then((response) => {
-        return response.json();
-      })
-      .then((countries) => {
-        setCountry({ countries: countries });
-      })
-      .catch(console.log);
-  }, []);
-
-  // API de estado, habilitar campo
-  const onFormChangePais = (value) => {
-    let id = value;
-    // let tipo=event.target.name;
-    // setFormValue({
-    //     ...formValue,
-    //     [event.target.name]: event.target.value
-    // });
-
-    RegisterService.State(id)
-      .then((response) => {
-        return response.json();
-      })
-      .then((states) => {
-        setState({ states: states });
-        setDisabled({
-          ...disabled,
-          stateOrg: false,
-        });
-      })
-      .catch(console.log);
-  };
-
-  // API de ciudad, habilitar campo
-  const onFormChangeState = (value) => {
-    let id = value;
-    // let tipo=event.target.name;
-    // setFormValue({
-    //     ...formValue,
-    //     [event.target.name]: event.target.value
-    // });
-
-    RegisterService.City(id)
-      .then((response) => {
-        return response.json();
-      })
-      .then((cities) => {
-        setCity({ cities: cities });
-        setDisabled({
-          ...disabled,
-          cityOrg: false,
-        });
-      })
-      .catch(console.log);
-  };
-
-  // API codigo postal, habilitar campo
-  const onFormChangeCity = (value) => {
-    let id = value;
-    // let tipo=event.target.name;
-    // setFormValue({
-    //     ...formValue,
-    //     [event.target.name]: event.target.value
-    // });
-
-    RegisterService.PC(id)
-      .then((response) => {
-        return response.json();
-      })
-      .then((pcodes) => {
-        setPC({ pcodes: pcodes });
-        setDisabled({
-          ...disabled,
-          pcOrg: false,
-        });
-      })
-      .catch(console.log);
-  };
-
-  // API de colonia, habilitar campo
-  const onFormChangeCP = (value) => {
-    let id = value;
-    // let tipo=event.target.name;
-    // setFormValue({
-    //     ...formValue,
-    //     [event.target.name]: event.target.value
-    // });
-
-    RegisterService.Colony(id)
-      .then((response) => {
-        return response.json();
-      })
-      .then((colonies) => {
-        setColony({ colonies: colonies });
-        setDisabled({
-          ...disabled,
-          colonyOrg: false,
-        });
-      })
-      .catch(console.log);
-  };
-
-  const onFormChange = (value) => {
-    // setFormValue({
-    //     ...formValue,
-    //     [value.target.name]: value.target.value
-    // });
-  };
 
   // Envio de datos a la API
   const onFinish = (index) => (values) => {
@@ -268,7 +120,7 @@ export default function ProfileInfo(props) {
   );
   const title = (name, role) => (
     <Row>
-      {profile == "" ? (
+      {profile == {} ? (
         <Skeleton active paragraph={{ rows: 0 }} />
       ) : (
         <Col span={24}>

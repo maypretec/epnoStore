@@ -56,7 +56,7 @@ export default function UsersList(props) {
 						: user.role == 9 ? 'Repartidor' : '',
       vs: [{ id: user.id, data: user.vs_id }],
       status: [userS],
-      details: <Link to={`/@p/${user.id}`}>Ver más</Link>,
+      details: user.role == 4 || user.role == 6 ? <Link to={`/@p/${user.id}`}>Ver más</Link> : "",
     });
   });
 
@@ -280,11 +280,11 @@ export default function UsersList(props) {
         </>
       ),
     */},
-    {/*
+    {
       title: "Detalles",
       dataIndex: "details",
       key: "details",
-    */},
+    },
   ];
   return <Table columns={columns} dataSource={data} scroll={{ x: "100vh" }} />;
 }
