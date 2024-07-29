@@ -34,6 +34,7 @@ const { Meta } = Card;
 export default function LayoutPage(props) {
 
   const { children } = props;
+  const user = JSON.parse(localStorage.getItem('user'))
   const [products, setProducts] = useState({
     productos: [],
     total: 0,
@@ -252,7 +253,7 @@ export default function LayoutPage(props) {
                 <Col sm={6} md={23}>
 
                   <Menu mode="horizontal" defaultSelectedKeys={['2']} className="site-layout-sub-header-background">
-                    <a href={notifications.user_id !== '' &&`/#/@p/${notifications.user_id}`} disabled={notifications.user_id == '' && true}>
+                    <a href={user.id !== '' &&`/#/@p/${user.id}`} disabled={user.id == '' && true}>
                       <Avatar style={{ backgroundColor: '#40a9ff' }} icon={<UserOutlined />} />
                     </a>
                     {/*      

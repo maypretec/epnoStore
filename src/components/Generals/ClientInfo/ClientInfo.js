@@ -81,7 +81,7 @@ export default function ClientInfo(props) {
             <Row gutter={[12, 12]}>
               <Col xs={0} sm={24} style={{ alignItems: "center" }}>
                 <Avatar
-                  src={`https://api.epno-app.com${profile.logo}`}
+                  src={`data:image/png;base64,${profile.logo}`}
                   size={300}
                   shape="square"
                 />

@@ -187,38 +187,6 @@ export default function RegisterX() {
       .catch(console.log);
   };
 
-  const onFormChangeCity = (value) => {
-    //city
-    RegisterService.PC(value)
-      .then((response) => {
-        return response.json();
-      })
-      .then((pcodes) => {
-        setPC({ pcodes: pcodes });
-        setDisabled({
-          ...disabled,
-          pcOrg: false,
-        });
-      })
-      .catch(console.log);
-    // console.log(value);
-  };
-
-  const onFormChangeCP = (value) => {
-    //city
-    RegisterService.Colony(value)
-      .then((response) => {
-        return response.json();
-      })
-      .then((colonies) => {
-        setColony({ colonies: colonies });
-        setDisabled({
-          ...disabled,
-          colonyOrg: false,
-        });
-      })
-      .catch(console.log);
-  };
 
   const { logoList } = logo;
 
@@ -245,6 +213,11 @@ export default function RegisterX() {
   const onFinish = async (values) => {
     setLoad(true)
     console.log(values)
+    let base64Logo = values.logo.fileList[0].thumbUrl
+
+    if (base64Logo.startsWith('data:image')) {
+      base64Logo = base64Logo.split(',')[1];
+    }
     const formData = new FormData();
     formData.append("name", values.name);
     formData.append("email", values.email);
@@ -260,7 +233,7 @@ export default function RegisterX() {
     formData.append("street", values.street);
     formData.append("ext_num", values.ext_num);
     formData.append("int_num", values.int_num);
-    formData.append("logo", values.logo);
+    formData.append("logo", base64Logo);
     formData.append("role", Number(values.role));
 
     let role_data = {};
@@ -285,7 +258,8 @@ export default function RegisterX() {
     });
 
     formDataObject.role_data = role_data;  // Aquí se asegura de que role_data se agregue correctamente
-
+    console.log(formDataObject)
+    setLoad(false);
     AuthService.Register(formDataObject)
       .then((response) => {
         console.log(response)

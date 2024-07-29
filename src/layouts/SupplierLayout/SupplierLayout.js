@@ -32,7 +32,7 @@ export default function LayoutPage(props) {
 
   const [visible, setVisible] = useState(false);
 
-
+  const user = JSON.parse(localStorage.getItem('user'))
   let token = localStorage.getItem('token');
   let role = localStorage.getItem('role');
   let history = useNavigate();
@@ -144,12 +144,12 @@ export default function LayoutPage(props) {
             <Row>
               <Col sm={6} md={24}>
                 <Menu className="site-layout-sub-header-background" mode="horizontal" defaultSelectedKeys={['2']}>
-                  {/*
                   <Menu.Item key="19" >
-                  <a href={notifications.user_id !== ''?(`/#/@p/${notifications.user_id}`):(null)} disabled={notifications.user_id == '' && true}>
+                  <a href={user.id !== ''?(`/#/@p/${user.id}`):(null)} disabled={user.id == '' && true}>
                         <Avatar style={{ backgroundColor: '#40a9ff' }} icon={<UserOutlined />} />
                       </a>
                   </Menu.Item>
+                  {/*
                   <Menu.Item key="20" >
                     <Dropdown menu={allNotifications} placement="bottom" overflow='scroll' >
                       <Badge count={notifications.total} overflowCount={999} style={{ backgroundColor: '#95de64' }}>
