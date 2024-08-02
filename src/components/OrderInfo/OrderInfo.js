@@ -837,7 +837,7 @@ export default function OrderInfo(props) {
 		fileList: [],
 	});
 
-  let history = useNavigate();
+  const [industryPO, setIndustryPO] = useState()
 
   /* USER DATA API CALL*/
   useEffect(() => {
@@ -1026,9 +1026,6 @@ export default function OrderInfo(props) {
 		application
 	}; 
 
-  const handleNav = (route) => {
-    history(route)
-  }
 
   const propsProp = (i) => ({
     beforeUpload: async (file) => {
@@ -1041,6 +1038,18 @@ export default function OrderInfo(props) {
     },
     application
   });
+
+  const propsPOIndustry = {
+    beforeUpload: async (file) => {
+      console.log(file)
+      const base64 = await getBase64(file);
+      console.log(base64)
+      setIndustryPO(base64)
+      console.log(base64)
+      return false;
+    },
+    application
+  };
   // ------------------------------------------------------------
   return (
     <Row gutter={[12, 12]} justify="center" align="middle">
@@ -1206,7 +1215,7 @@ export default function OrderInfo(props) {
           <Row gutter={[12, 12]} align="middle">
             <Col xs={24} md={6} style={{ textAlign: "center" }}>
               <Avatar
-                src="https://joeschmoe.io/api/v1/random"
+                src={`data:image/png;base64,${user.logo}`}
                 size={{ xs: 150, md: 120, lg: 100, xl: 100, xxl: 150 }}
               />
             </Col>
@@ -1274,76 +1283,53 @@ export default function OrderInfo(props) {
                 }
                 
               </Col>
-
-              {/* PRIORIDAD */}
-              {/*(role == 3 || role == 5 || role == 1 || role == 2) && (
-                <Col>
-                  <b>Prioridad: </b>
-                  {details.service.prioridad == "" ? (
-                    <Select
-                      showSearch
-                      placeholder="Prioridad del servicio"
-                      optionFilterProp="children"
-                      onChange={(value) => onChangeService(3, value)}
-                      style={{ width: 180 }}
-                      filterOption={(input, option) =>
-                        option.children
-                          .toLowerCase()
-                          .indexOf(input.toLowerCase()) >= 0
-                      }
-                      disabled={details.service.step_id == 9 && true}
-                    >
-                      <Option value="Alta">Alta</Option>
-                      <Option value="Media">Media</Option>
-                      <Option value="Baja">Baja</Option>
-                    </Select>
-                  ) : (
-                    <Tag
-                      color={
-                        details.service.prioridad == "Alta"
-                          ? "#f5222d"
-                          : details.service.prioridad == "Media"
-                          ? "#d4b106"
-                          : details.service.prioridad == "Baja" && "#a0d911"
-                      }
-                      icon={<FieldTimeOutlined />}
-                    >
-                      {details.service.prioridad}
-                    </Tag>
-                  )}
-                </Col>
-              )*/}
             </Row>
           }
-          extra={
-            // Final cost de la orden
-            <b>
-              
-              {service.price === '' || service.price === null || service.price === undefined ? 'Precio: por definir' : service.price + ' $'}
-              {/*role == 4
-                ? details.service.client_cost
-                : (role == 6 ||
-                    role == 3 ||
-                    role == 5 ||
-                    role == 1 ||
-                    role == 2) &&
-                  details.service.supplier_cost*/}
-            </b>
-          }
+          extra={ <b> {service.price === '' || service.price === null || service.price === undefined ? 'Precio: por definir' : service.price + ' $'} </b> }
           actions={[]}
         >
           <Row gutter={[12, 12]} align="middle" justify="center">
             <Col xs={24} >
               <Row gutter={[12, 12]}>
-                <Col xs={24} style={{ textAlign: "center" }}>
-                  <b>Fecha de entrega:</b>{" "}
-                  <b style={{ fontSize: 16 }}>
-                    { service.dueDate === '' ? 'Por definir' : moment(service.dueDate).format("DD/MM/YYYY")}
-                  </b>
-                </Col>
                 <Col xs={24}>
+                  <b>Descripcion del servicio: </b>
                   <Paragraph > {service.description} </Paragraph>
                 </Col>
+                <Col xs={12} >
+                  <b>Archivo adjunto:</b> <br></br>
+                  <Button href={service.fileUrl} target="blank">Documento</Button>
+                </Col>
+                <Col xs={12} >
+                  <b>Fecha de entrega:</b>{" "}
+                  <p style={{ fontSize: 16, margin: 0 }}>
+                    { service.dueDate === '' ? 'Por definir' : moment(service.dueDate).format("DD/MM/YYYY")}
+                  </p>
+                </Col>
+                { service.status == 4 ? 
+                <>
+                  <Divider />
+                  <Col xs={24}>
+                    <b>Subir orden de compra</b>
+                  </Col>
+                  <Col xs={24}>
+                    <Upload {...propsPOIndustry}>
+                      <Button icon={<UploadOutlined />}>Selecciona tu Orden de compra</Button>
+                    </Upload>
+                  </Col>
+                  <Col xs={24}>
+                    <Button type="primary" onClick={() => {console.log(industryPO)}} >Subir orden de compra </Button>
+                  </Col>
+                </>
+                : service.status > 4 ? 
+                <>
+                  <Divider />
+                  <Col xs={24}>
+                    <b>Ver orden de compra</b><br></br>
+                    <Button href={service.fileUrl} target="blank">Documento</Button>
+                  </Col>
+                </>
+                : <></>}
+                
               </Row>
             </Col>
 

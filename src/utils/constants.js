@@ -1,5 +1,5 @@
-export const BASE_URL = 'https://us-central1-app-epno.cloudfunctions.net/app/api/';
-//export const BASE_URL = 'http://localhost:5000/app-epno/us-central1/app/api/';
+//export const BASE_URL = 'https://us-central1-app-epno.cloudfunctions.net/app/api/';
+export const BASE_URL = 'http://localhost:5000/app-epno/us-central1/app/api/';
 
 //export const BASE_URL = 'https://dev.gw.client.epno.app';
 
