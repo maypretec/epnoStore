@@ -974,6 +974,26 @@ export default function OrderInfo(props) {
     });
   }
 
+  const uploadIndustryPO = () => {
+    const body = {
+      userId: userData.id,
+      serviceId: service.id,
+      fileBase64: industryPO
+    }
+
+    OrderService.UploadIndustryPO(body).then(resp => {
+      if (resp.data.success === true) {
+        message.success("Actualizacion de datos exitoso!", 0.5).then(() => {
+          window.location.reload();
+        });
+      } else {
+        message.error(resp.data.message);
+      }
+    }).catch((error) => {
+      console.log(error);
+      message.error("Hubo un error al enviar los datos.");
+    });
+  }
   const chooseProposal = (proposalId, supplierId, supplier, price, dueDate, supplierFileUrl) => {
     const choosenProp = {
       proposalId: proposalId,
@@ -982,7 +1002,7 @@ export default function OrderInfo(props) {
       supplier: supplier,
       price: price,
       dueDate: dueDate,
-      supplierFileUrl: 'dasdasd'
+      supplierFileUrl: supplierFileUrl
     }
     console.log(choosenProp)
     OrderService.ChooseProposal(choosenProp).then((resp) => {
@@ -1305,7 +1325,7 @@ export default function OrderInfo(props) {
                     { service.dueDate === '' ? 'Por definir' : moment(service.dueDate).format("DD/MM/YYYY")}
                   </p>
                 </Col>
-                { service.status == 4 ? 
+                { service.status == 3 && service.supplier !== ""? 
                 <>
                   <Divider />
                   <Col xs={24}>
@@ -1317,10 +1337,10 @@ export default function OrderInfo(props) {
                     </Upload>
                   </Col>
                   <Col xs={24}>
-                    <Button type="primary" onClick={() => {console.log(industryPO)}} >Subir orden de compra </Button>
+                    <Button type="primary" onClick={() => {uploadIndustryPO()}} >Subir orden de compra </Button>
                   </Col>
                 </>
-                : service.status > 4 ? 
+                : service.status > 3 ? 
                 <>
                   <Divider />
                   <Col xs={24}>
@@ -1434,7 +1454,7 @@ export default function OrderInfo(props) {
       }
 
       {/* PROPOSALS*/}
-      {((role === 6  || role === 1) && service.status >= 2 && proposals.length !== 0) || (userData.role === 4 && service.status >= 3) ? 
+      {((role === 6  || role === 1) && service.status >= 2 && proposals.length !== 0) || (userData.role === 4 && (service.status >= 3 && service.supplier === "")) ? 
       <Col xs={24}>
       {proposals.map((sub, i) => (
         <Collapse bordered={false} className="background-gris">
@@ -1515,7 +1535,7 @@ export default function OrderInfo(props) {
                   <Col xs={24} >
                   <Button 
                     type="primary" 
-                    onClick={() => chooseProposal(sub.id, sub.userId, sub.name, sub.price_epno, sub.dueDate, '')}
+                    onClick={() => chooseProposal(sub.id, sub.userId, sub.name, sub.price_epno, sub.dueDate, sub.fileUrl_epno)}
                     >
                     Aceptar cotizacion</Button>
                 </Col>

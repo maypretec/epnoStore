@@ -326,6 +326,14 @@ function ChooseProposal(body) {
   });
 }
 
+function UploadIndustryPO(body) {
+  return request({
+    url: API.ORDERS.SERVICES.UPLOAD_INDUSTRY_PO,
+    method: requestMethods.POST,
+    data: body
+  });
+}
+
 const OrderService = {
   OpenOrders,
   AddRequest,
@@ -355,7 +363,8 @@ const OrderService = {
   ApplyService,
   GetProposalByService,
   GetProposalByUser,
-  ChooseProposal
+  ChooseProposal,
+  UploadIndustryPO
 };
 
 export default OrderService;

@@ -82,7 +82,8 @@ export const API = {
             APPLY:              'services/apply',
             GET_PROP_USER:      'services/getProposalByUser',
             GET_PROP_SERVICE:   'services/getProposalByService',
-            CHOOSE_PROPOSAL:    'services/chooseProposal'
+            CHOOSE_PROPOSAL:    'services/chooseProposal',
+            UPLOAD_INDUSTRY_PO: 'services/uploadIndustryPO'
         },
         SUBSERVICES: {
             ADD:                    '/api/self-service/add_new_subservice',
