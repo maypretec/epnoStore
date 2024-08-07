@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Col, Row, Alert, Avatar } from 'antd';
+import { Form, Input, Button, Col, Row, Alert, Avatar, Space } from 'antd';
 import { UserOutlined, LockOutlined, ThunderboltTwoTone, EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import Layout from '../layouts/NavBar';
 import { Link, useNavigate } from 'react-router-dom';
@@ -16,13 +16,18 @@ export default function Login() {
     msg: ''
   });
 
+  const [inactiveAccount, setInactiveAccount] = useState(false)
+
 
   const onFinish = (values) => {
     setLoading(true);
     AuthService.LoginEpno(values)
       .then(response => {
         console.log(response)
-        if (response.status === 200) {
+        if (response.data.status === false) {
+          setInactiveAccount(true)
+          setLoading(false);
+        } else if (response.status === 200) {
           
           localStorage.setItem('role', response.data.role); 
           localStorage.setItem('user', JSON.stringify(response.data));
@@ -89,7 +94,18 @@ export default function Login() {
                 />
               </Col>
             )
-
+          }
+          {
+            inactiveAccount == true ? 
+              <Col xs={24} style={{ marginTop: 16, marginBottom: 16, textAlign: 'center' }}>
+              <Alert
+                message="Tu cuenta esta temporalmente inactiva, estamos verificando tus datos."
+                type="warning"
+                closable
+                afterClose={() => {setInactiveAccount(false)}}
+              />
+              </Col>
+              : <></>
           }
           <Form
             name='normal_login'

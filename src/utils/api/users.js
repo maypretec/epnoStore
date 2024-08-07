@@ -109,6 +109,14 @@ function GetUserById(data){
   });
 }
 
+function UpdateStatus(data){
+  return request({
+    url: API.USER.UPDATE_STATUS,
+    method: requestMethods.POST,
+    data: data
+  });
+}
+
 const UserService = {
   All,
   Change_User,
@@ -121,7 +129,8 @@ const UserService = {
 
 	RegisterAdmin,
   GetUserById,
-  GetAll
+  GetAll,
+  UpdateStatus
 };
 
 export default UserService;

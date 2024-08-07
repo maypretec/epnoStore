@@ -334,6 +334,14 @@ function UploadIndustryPO(body) {
   });
 }
 
+function UploadSupplierPO(body) {
+  return request({
+    url: API.ORDERS.SERVICES.UPLOAD_SUPPLIER_PO,
+    method: requestMethods.POST,
+    data: body
+  });
+}
+
 const OrderService = {
   OpenOrders,
   AddRequest,
@@ -364,7 +372,8 @@ const OrderService = {
   GetProposalByService,
   GetProposalByUser,
   ChooseProposal,
-  UploadIndustryPO
+  UploadIndustryPO,
+  UploadSupplierPO
 };
 
 export default OrderService;

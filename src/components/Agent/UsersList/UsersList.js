@@ -34,9 +34,9 @@ export default function UsersList(props) {
   users.map((user) => {
     var status = user.status;
     var userS;
-    if (status == 0) {
+    if (status == false) {
       userS = "INACTIVO";
-    } else if (status == 1) {
+    } else if (status == true) {
       userS = "ACTIVO";
     } else if (status == 2) {
       userS = "PENDIENTE";
@@ -140,7 +140,7 @@ export default function UsersList(props) {
   };
 
   const chageStatus = (id) => (checked) => {
-    UserService.UpdownUser({
+    UserService.UpdateStatus({
       id: id,
       status: checked,
     })
@@ -156,6 +156,7 @@ export default function UsersList(props) {
         message.error("Hubo un problema al actualizar el usuario.");
       });
   };
+  
   const onChangeVs = (id) => (value) => {
     UserService.Change_User({
       id: id,
@@ -263,7 +264,7 @@ export default function UsersList(props) {
         )),
     */},
 
-    {/*
+    {
       title: "Alta/Baja",
       dataIndex: "updown",
       key: "updown",
@@ -279,7 +280,7 @@ export default function UsersList(props) {
           ))}
         </>
       ),
-    */},
+    },
     {
       title: "Detalles",
       dataIndex: "details",

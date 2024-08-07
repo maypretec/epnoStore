@@ -48,7 +48,8 @@ export const API = {
 
         // EPNO --------------------------------------------------------------
         GET_USER_BY_ID:     'users/getById',
-        ALL:                'users/'
+        ALL:                'users/',
+        UPDATE_STATUS:      'users/updateStatus'
         
     },
     CUSTOMER:{
@@ -83,7 +84,8 @@ export const API = {
             GET_PROP_USER:      'services/getProposalByUser',
             GET_PROP_SERVICE:   'services/getProposalByService',
             CHOOSE_PROPOSAL:    'services/chooseProposal',
-            UPLOAD_INDUSTRY_PO: 'services/uploadIndustryPO'
+            UPLOAD_INDUSTRY_PO: 'services/uploadIndustryPO',
+            UPLOAD_SUPPLIER_PO: 'services/uploadSupplierPO'
         },
         SUBSERVICES: {
             ADD:                    '/api/self-service/add_new_subservice',

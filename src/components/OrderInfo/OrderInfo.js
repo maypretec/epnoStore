@@ -838,6 +838,7 @@ export default function OrderInfo(props) {
 	});
 
   const [industryPO, setIndustryPO] = useState()
+  const [supplierPO, setSupplierPO] = useState()
 
   /* USER DATA API CALL*/
   useEffect(() => {
@@ -994,6 +995,28 @@ export default function OrderInfo(props) {
       message.error("Hubo un error al enviar los datos.");
     });
   }
+
+  const uploadSupplierPO = () => {
+    const body = {
+      userId: userData.id,
+      serviceId: service.id,
+      fileBase64: supplierPO
+    }
+
+    OrderService.UploadSupplierPO(body).then(resp => {
+      if (resp.data.success === true) {
+        message.success("Actualizacion de datos exitoso!", 0.5).then(() => {
+          window.location.reload();
+        });
+      } else {
+        message.error(resp.data.message);
+      }
+    }).catch((error) => {
+      console.log(error);
+      message.error("Hubo un error al enviar los datos.");
+    });
+  }
+
   const chooseProposal = (proposalId, supplierId, supplier, price, dueDate, supplierFileUrl) => {
     const choosenProp = {
       proposalId: proposalId,
@@ -1066,6 +1089,15 @@ export default function OrderInfo(props) {
       console.log(base64)
       setIndustryPO(base64)
       console.log(base64)
+      return false;
+    },
+    application
+  };
+
+  const propsPOSupplier = {
+    beforeUpload: async (file) => {
+      const base64 = await getBase64(file);
+      setSupplierPO(base64)
       return false;
     },
     application
@@ -1325,7 +1357,8 @@ export default function OrderInfo(props) {
                     { service.dueDate === '' ? 'Por definir' : moment(service.dueDate).format("DD/MM/YYYY")}
                   </p>
                 </Col>
-                { service.status == 3 && service.supplier !== ""? 
+                { /* INDUSTRY ----------------------------------------------- */}
+                { role == 4 && (service.status == 3 && service.supplier !== '') ? 
                 <>
                   <Divider />
                   <Col xs={24}>
@@ -1340,22 +1373,84 @@ export default function OrderInfo(props) {
                     <Button type="primary" onClick={() => {uploadIndustryPO()}} >Subir orden de compra </Button>
                   </Col>
                 </>
-                : service.status > 3 ? 
+                : role == 4 && service.status > 3 ? 
                 <>
                   <Divider />
                   <Col xs={24}>
                     <b>Ver orden de compra</b><br></br>
-                    <Button href={service.fileUrl} target="blank">Documento</Button>
+                    <Button href={service.supplier.industryPOFileUrl} target="blank">Documento</Button>
                   </Col>
                 </>
                 : <></>}
-                
-              </Row>
-            </Col>
+                {
+                role == 4 && service.status == 3 && service.supplier.industryPOFileUrl != '' ? 
+                <>
+                  <Divider />
+                  <Col xs={24}>
+                    <b>Ver orden de compra</b><br></br>
+                    <Button href={service.industryPOFileUrl} target="blank">Documento</Button>
+                  </Col>
+                </>
+                : <></>}
 
-            <Col xs={24} md={6} lg={6} style={{ textAlign: "center" }}>
-              {/*<Button onClick={() => setVisible(true)}>Documento</Button> */}
-              <Button href={service.fileUrl} target="blank">Documento</Button>
+                {/* ADMIN ---------------------------------------------------- */}
+                {
+                role == 1 && service.status == 3 && service.industryPOFileUrl != '' ? 
+                <>
+                  <Divider />
+                  <Col xs={24}>
+                    <b>Ver orden de compra del cliente</b><br></br>
+                    <Button href={service.industryPOFileUrl} target="blank">Documento</Button>
+                  </Col>
+                </>
+                : <></>}
+                { role == 1 && (service.status == 3 && (service.supplierPOFileUrl !== '')) ? 
+                <>
+                  <Divider />
+                  <Col xs={24}>
+                    <b>Subir orden de compra para provedor</b>
+                  </Col>
+                  <Col xs={24}>
+                    <Upload {...propsPOSupplier}>
+                      <Button icon={<UploadOutlined />}>Selecciona tu Orden de compra</Button>
+                    </Upload>
+                  </Col>
+                  <Col xs={24}>
+                    <Button type="primary" onClick={() => {uploadSupplierPO()}} >Subir orden de compra </Button>
+                  </Col>
+                </>
+                : role == 1 && service.status > 3 ? 
+                <>
+                  <Divider />
+                  <Col xs={24}>
+                    <b>Ver orden de compra del cliente</b><br></br>
+                    <Button href={service.supplierPOFileUrl} target="blank">Documento</Button>
+                  </Col>
+                </>
+                : <></>}
+                {
+                (role == 1 && service.status >= 3 && service.supplierPOFileUrl !== '') ? 
+                <>
+                  <Divider />
+                  <Col xs={24}>
+                    <b>Ver orden de compra para provedor</b><br></br>
+                    <Button href={service.supplier.supplierPOFileUrl} target="blank">Documento</Button>
+                  </Col>
+                </>
+                : <></>}
+
+                {/* ADMIN ---------------------------------------------------- */}
+                {
+                role == 6 && service.status >= 3 ? 
+                <>
+                  <Divider />
+                  <Col xs={24}>
+                    <b>Ver orden de compra</b><br></br>
+                    <Button href={service.supplierPOFileUrl} target="blank">Documento</Button>
+                  </Col>
+                </>
+                : <></>}
+              </Row>
             </Col>
           </Row>
         </Card>
