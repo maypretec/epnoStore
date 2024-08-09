@@ -1,5 +1,5 @@
-//export const BASE_URL = 'https://us-central1-app-epno.cloudfunctions.net/app/api/';
-export const BASE_URL = 'http://localhost:5000/app-epno/us-central1/app/api/';
+export const BASE_URL = 'https://us-central1-app-epno.cloudfunctions.net/app/api/';
+//export const BASE_URL = 'http://localhost:5000/app-epno/us-central1/app/api/';
 
 //export const BASE_URL = 'https://dev.gw.client.epno.app';
 
@@ -85,7 +85,8 @@ export const API = {
             GET_PROP_SERVICE:   'services/getProposalByService',
             CHOOSE_PROPOSAL:    'services/chooseProposal',
             UPLOAD_INDUSTRY_PO: 'services/uploadIndustryPO',
-            UPLOAD_SUPPLIER_PO: 'services/uploadSupplierPO'
+            UPLOAD_SUPPLIER_PO: 'services/uploadSupplierPO',
+            SERVICE_LOGS:       '/services/logs/'
         },
         SUBSERVICES: {
             ADD:                    '/api/self-service/add_new_subservice',

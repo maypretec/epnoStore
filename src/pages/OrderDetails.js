@@ -381,6 +381,7 @@ export default function OrderDetails() {
   //const [order, setOrder] = useState([]);
 
   const [service, setService] = useState({});
+  const [serviceLogs, setServiceLogs] = useState([])
 
   const [reload, setReload] = useState(false);
 
@@ -399,8 +400,6 @@ export default function OrderDetails() {
   useEffect(() => {
     OrderService.ServiceDetails(id)
     .then((response) => {
-      console.log(response)
-      console.log((response.data))
       setService(response.data)
       console.log(service) 
       //setOrder(response.data);
@@ -417,6 +416,9 @@ export default function OrderDetails() {
       console.log(error);
       setLoading(false);
     });
+    OrderService.ServiceLogs(id).then(value => {
+      setServiceLogs(value.data)
+    })
     /*OrderService.OrderDetails(id)
       .then((response) => {
         setOrder(response.data);
@@ -465,7 +467,7 @@ export default function OrderDetails() {
           <Empty description="No hay informacion sobre esta orden." />
         ) : (
           <Row gutter={[12, 12]}>
-            <Col xs={24} >
+            <Col xs={16} >
               <OrderInfo
                 serviceData = {service}
                 details={order}
@@ -478,16 +480,19 @@ export default function OrderDetails() {
               />
             </Col>
             {/* TODO: ADD THIS FUNCTIONS*/}
-            {/* 
-            <Col xs={24} md={24} lg={8} xl={8}>
+            {
+            <Col xs={8} md={8} lg={8} xl={8}>
               <Row gutter={[12, 12]}>
+                {/*
                 <Col xs={24}>
                   <OrderUsers data={order} token={token} op={1} />
                 </Col>
+                */}
                 <Col xs={24}>
-                  <StepsGeneral steps={order.service_logs} />
+                  <StepsGeneral steps={serviceLogs} />
                 </Col>
 
+                {/* 
                 <Col xs={24}>
                   {role === 4 &&
                     order.service.step_id >= 7 &&
@@ -503,9 +508,10 @@ export default function OrderDetails() {
                       />
                     )}
                 </Col>
+                */}
               </Row>
             </Col>
-            */}
+            }
           </Row>
         )}
         <BackTop />

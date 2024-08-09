@@ -342,6 +342,13 @@ function UploadSupplierPO(body) {
   });
 }
 
+function ServiceLogs(body) {
+  return request({
+    url: API.ORDERS.SERVICES.SERVICE_LOGS.concat(body),
+    method: requestMethods.GET,
+  });
+}
+
 const OrderService = {
   OpenOrders,
   AddRequest,
@@ -373,7 +380,8 @@ const OrderService = {
   GetProposalByUser,
   ChooseProposal,
   UploadIndustryPO,
-  UploadSupplierPO
+  UploadSupplierPO,
+  ServiceLogs
 };
 
 export default OrderService;
