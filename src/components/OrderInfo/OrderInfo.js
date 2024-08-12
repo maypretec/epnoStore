@@ -858,11 +858,12 @@ export default function OrderInfo(props) {
         if (service.status >= 4 && (role == 1 || role == 4)){
           const filteredProposalsDo = proposalsResponse.data.filter(proposal => proposal.status === true);
           setProposals(filteredProposalsDo);
+          console.log(proposals)
         } else if (role === 6) {
           const filteredProposals = proposalsResponse.data.filter(proposal => proposal.userId === userData.id);
           setProposals(filteredProposals);
           
-        } else { setProposals(proposalsResponse.data); }
+        } else { setProposals(proposalsResponse.data); console.log(proposals) } 
 
       } catch (error) {
         console.error('Error fetching data', error);
@@ -1102,6 +1103,36 @@ export default function OrderInfo(props) {
     },
     application
   };
+
+  const statusLogs = [
+    'Nuestro equipo esta verificando que el servicio sea valido para su elaboracion',
+    'Tu servicio se encuentra en cotizacion',
+    'Selecciona el servicio que se adecue mejor a tus necesesidades',
+    'Tu servicio se encuentra en elaboracion',
+    'Estamos inspeccionando tu pedido para aseguranos que sea lo que solicitaste',
+    'Tu pedido se encuentra en camino o listo para recoger. Por favor confirmanos cuando lo tengas en tu posesion.',
+    'Gracias por confiar en EPNO! Cualquier duda o aclaracion, comunicate con nuestro equipo'
+  ]
+
+  const adminStatusLogs = [
+    'Verifica que el cliente haya subido correctamente los datos de cotizacion. Si fue asi, envia a cotizacion el servicio.',
+    'Espere a que los provedores cotizen el servicio. Una vez se tengan las cotizaciones deseadas, asigna un lugar a los provedores, actualiza el precio y archivo de cotizacion a cada uno. Al finalizar envia las cotizaciones a el cliente.',
+    'El cliente se encuentra seleccionando la cotizacion. Una vez seleccione la cotizacion deseada y el cliente envie la orden de compra, debes de generar una orden de compra para enviar al provedor.',
+    'El provedor se encuentra elaborando el servicio',
+    'Verifica que el servicio solicitado sea el correcto para el cliente.',
+    'El servicio se encuentra en camino o listo para recoger. Espera a que el cliente confirme que el pedido ya ha sido entregado.',
+    'El servicio a concluido.'
+  ]
+
+  const supplierStatusLogs = [
+    'Envia tu cotizacion con los datos requeridos.',
+    'El cliente se encuentra seleccionando la cotizacion.',
+    'Felicidades, tu cotizacion ha sido aceptada! Elabora el servicio solicitado. Una vez terminado, actualiza el estatus para que EPNO inspeccione el producto.',
+    'EPNO se encuentra inspeccionando el serivicio.',
+    'Puedes entregar al servicio a tu cliente.',
+    'El servicio a concluido. Cualquier duda o aclaracion, contacta a EPNO.'
+  ]
+
   // ------------------------------------------------------------
   return (
     <Row gutter={[12, 12]} justify="center" align="middle">
@@ -1127,6 +1158,7 @@ export default function OrderInfo(props) {
                
               </Col>
             </Row>
+            
           </Col>
 
           {/* BOTON DE SEGUIMIENTO DE PROCESOS */}        
@@ -1265,6 +1297,31 @@ export default function OrderInfo(props) {
       <Col xs={24}>
         <Card className="background-gris">
           <Row gutter={[12, 12]} align="middle">
+            <Col xs={24}>
+              <Row gutter={[12, 12]}>
+                <Col xs={24}>
+                  <label className="gris-bold">Estatus del servicio: {} </label> <br />
+                  {
+                    userData.role == 1 ?
+                    <b>{adminStatusLogs[service.status - 1]} </b>
+                    : userData.role == 4 ? 
+                    <b>{statusLogs[service.status - 1]}</b>
+                    : userData.role == 6 ? 
+                    <b>{supplierStatusLogs[service.status - 2]} </b>
+                    : ''
+                  }
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Card>
+      </Col>
+
+      {/* PROFILE INFO DIV --------------------------------------------------------------- */}
+      {/* TODO: Show profile picture */}
+      <Col xs={24}>
+        <Card className="background-gris">
+          <Row gutter={[12, 12]} align="middle">
             <Col xs={24} md={6} style={{ textAlign: "center" }}>
               <Avatar
                 src={`data:image/png;base64,${user.logo}`}
@@ -1383,7 +1440,7 @@ export default function OrderInfo(props) {
                 </>
                 : <></>}
                 {
-                role == 4 && service.status == 3 && service.supplier.industryPOFileUrl != '' ? 
+                role == 4 && service.status == 3 && service.industryPOFileUrl != '' ? 
                 <>
                   <Divider />
                   <Col xs={24}>
@@ -1404,7 +1461,7 @@ export default function OrderInfo(props) {
                   </Col>
                 </>
                 : <></>}
-                { role == 1 && (service.status == 3 && (service.supplierPOFileUrl !== '')) ? 
+                { role == 1 && (service.status == 3 && (service.industryPOFileUrl != '')) ? 
                 <>
                   <Divider />
                   <Col xs={24}>
@@ -1439,9 +1496,9 @@ export default function OrderInfo(props) {
                 </>
                 : <></>}
 
-                {/* ADMIN ---------------------------------------------------- */}
+                {/* SUPPLIER ---------------------------------------------------- */}
                 {
-                role == 6 && service.status >= 3 ? 
+                role == 6 && service.status > 3 ? 
                 <>
                   <Divider />
                   <Col xs={24}>
@@ -1549,12 +1606,12 @@ export default function OrderInfo(props) {
       }
 
       {/* PROPOSALS*/}
-      {((role === 6  || role === 1) && service.status >= 2 && proposals.length !== 0) || (userData.role === 4 && (service.status >= 3 && service.supplier === "")) ? 
+      {((role === 6  || role === 1) && service.status >= 2 && proposals.length !== 0) || (role === 4 && (service.status >= 3)) ? 
       <Col xs={24}>
       {proposals.map((sub, i) => (
         <Collapse bordered={false} className="background-gris">
           <Panel
-            key="1"
+            key={i}
             extra={
               <Col xs={24}>
                 <Button
@@ -1569,7 +1626,7 @@ export default function OrderInfo(props) {
             header={
               <Row gutter={[6, 12]}>
                 <Col xs={24} md={18} xl={19}>
-                  <b style={{marginRight: '16px'}}> Cotizacion: {sub.name} </b>
+                  <b style={{marginRight: '16px'}}> Cotizacion: </b>
                 </Col>
               </Row>
             }>
@@ -1626,8 +1683,8 @@ export default function OrderInfo(props) {
                   : <></>}
                 </div>
                 </Col>
-                { role === 4 && service.status === 3 ?
-                  <Col xs={24} >
+                { role == 4 && service.status == 3 && service.supplier === '' ?
+                <Col xs={24} >
                   <Button 
                     type="primary" 
                     onClick={() => chooseProposal(sub.id, sub.userId, sub.name, sub.price_epno, sub.dueDate, sub.fileUrl_epno)}

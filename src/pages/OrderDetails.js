@@ -418,6 +418,7 @@ export default function OrderDetails() {
     });
     OrderService.ServiceLogs(id).then(value => {
       setServiceLogs(value.data)
+      console.log(value.data)
     })
     /*OrderService.OrderDetails(id)
       .then((response) => {
