@@ -2,7 +2,7 @@ import React from 'react';
 import { Table } from 'antd';
 import { Link } from 'react-router-dom';
 
-export default function OrderByEmployee(props) {
+export default function UsersTable(props) {
   const { ordenesPro, type } = props;
   console.log(ordenesPro)
 
@@ -15,12 +15,12 @@ export default function OrderByEmployee(props) {
 
     },
     {
-      title: 'Ordenes',
+      title: 'Empresa',
       dataIndex: 'order',
       responsive: ['md'],
     },
     {
-      title: 'Precio',
+      title: 'Rol',
       dataIndex: 'price',
       responsive: ['md'],
     },
@@ -37,9 +37,9 @@ export default function OrderByEmployee(props) {
     data.push(
       {
         key: ord.id,
-        name: ord.userName,
-        order: ord.id,
-        price: ord.price != '' ? ord.price : 'Sin definir',
+        name: ord.name,
+        order: ord.bussiness,
+        price: ord.role,
         details: (
 
           type == 2 ? (

@@ -72,13 +72,15 @@ export default function step_idsLogs(props) {
             }
 
             return (
-              <Timeline.Item dot={iconStatus} label={moment(s.updatedAt).format("DD/MM/YYYY H:ss")} key={s.id}>
+              <Timeline.Item dot={iconStatus} label={moment(s.updatedAt).format("DD/MM/YYYY H:mm")} key={s.id}>
                 <Row gutter={[12, 2]} >
                   <Col xs={24}>
                     {statusLabel}
                   </Col>
                   <Col xs={24}>
+                  {/* 
                     <Badge color='green' /> <label style={{ fontSize: 12, color: 'gray' }}>{s.user_name}</label>
+                  */}
                   </Col>
                 </Row>
 

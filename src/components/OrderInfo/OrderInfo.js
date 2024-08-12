@@ -855,10 +855,9 @@ export default function OrderInfo(props) {
         setProposalPrice(filterPrices)
         setProposalFilesUrl(filterFiles)
 
-        if (service.status >= 4 && (role == 1 || role == 4)){
+        if ((service.status >= 4 && (role == 1 || role == 4)) || (service.status == 3 && (role == 1 || role == 4))) {
           const filteredProposalsDo = proposalsResponse.data.filter(proposal => proposal.status === true);
           setProposals(filteredProposalsDo);
-          console.log(proposals)
         } else if (role === 6) {
           const filteredProposals = proposalsResponse.data.filter(proposal => proposal.userId === userData.id);
           setProposals(filteredProposals);
@@ -1300,15 +1299,15 @@ export default function OrderInfo(props) {
             <Col xs={24}>
               <Row gutter={[12, 12]}>
                 <Col xs={24}>
-                  <label className="gris-bold">Estatus del servicio: {} </label> <br />
+                  <label className="gris-bold">Estatus del servicio: </label> <br />
                   {
-                    userData.role == 1 ?
-                    <b>{adminStatusLogs[service.status - 1]} </b>
-                    : userData.role == 4 ? 
+                    role == 1 ?
+                    <b>{adminStatusLogs[service.status - 1]}</b>
+                    : role == 4 ? 
                     <b>{statusLogs[service.status - 1]}</b>
-                    : userData.role == 6 ? 
+                    : role == 6 ? 
                     <b>{supplierStatusLogs[service.status - 2]} </b>
-                    : ''
+                    : <b>{adminStatusLogs[service.status]}</b>
                   }
                 </Col>
               </Row>
@@ -1626,7 +1625,7 @@ export default function OrderInfo(props) {
             header={
               <Row gutter={[6, 12]}>
                 <Col xs={24} md={18} xl={19}>
-                  <b style={{marginRight: '16px'}}> Cotizacion: </b>
+                  <b style={{marginRight: '16px'}}> Cotizacion: {sub.name} </b>
                 </Col>
               </Row>
             }>
@@ -1675,7 +1674,7 @@ export default function OrderInfo(props) {
                   </Upload>
                   : <></>}
                   {service.status === 2 && userData.role === 1 ? 
-                    <Button style={{alignSelf: 'bottom', marginLeft: '8px'}}
+                    <Button style={{alignSelf: 'bottom', marginLeft: '8px'}} type="primary"
                       onClick={() => updateServicePlacement(sub.id, positions[i], proposalPrice[i], proposalFiles[i])}
                     >
                       Actualizar cambios

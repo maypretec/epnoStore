@@ -14,18 +14,23 @@ import OrderByEmployee from "../components/Clients/OrderByEmployee";
 import { isEmpty } from 'lodash';
 import { Link, useParams } from 'react-router-dom';
 import UserService from '../utils/api/users';
+import OrderService from '../utils/api/orders';
 
 const { TabPane } = Tabs;
 const { Title } = Typography;
 const { Panel } = Collapse;
 
 export default function Profile(props) {
-  let {id } = useParams();
+  let {id} = useParams();
   const [locations, setLocations] = useState([]);
   const [gastosMes, setGastosMes] = useState([]);
   const [ordenesPro, setOrdenesPro] = useState([]);
   const [revAgent, setRevAgent] = useState([]);
   const [reviewsMro, setReviewsMro] = useState([])
+
+  const [openOrders, setOpenOrders] = useState([]);
+	const user = JSON.parse(localStorage.getItem('user'))
+
   let token = localStorage.getItem('token');
   let role = localStorage.getItem('role');
   var Layout = '';
@@ -40,8 +45,32 @@ export default function Profile(props) {
     Layout = SupplierLayout;
   } else {
     Layout = CPLayout;
-
   }
+
+  useEffect(() => {
+    
+    if (role == 1) { // GET SERVICES FOR ADMIN
+      OrderService.GetAll().then(response => {
+        setOpenOrders(response.data);
+      }).catch((error) => {});
+    }
+
+    if (role == 4) { // GET SERVICES FOR INDUSTRY
+      OrderService.GetServicesByUser({id: id}).then(response => {
+        setOpenOrders(response.data);
+      }).catch((error) => { });
+    }
+
+    if (role == 6) { // GET SERVICES FOR SUPPLIER
+      const categories = { cat1: user.role_data.cat1, cat2: user.role_data.cat2 }
+      OrderService.GetServicesByCategory(categories).then(response => {
+        const serviceUser1 = response.data.filter(ser => ser.status == 2)
+        const serviceUser2 = response.data.filter(ser => ser.status > 3 && ser.supplierId == user.id)
+        const combinedServiceUsers = [...serviceUser1, ...serviceUser2];
+        setOpenOrders(combinedServiceUsers);
+      }).catch((error) => { });
+    }
+  }, []);
 
   return (
     <Layout>
@@ -53,32 +82,32 @@ export default function Profile(props) {
       <Row>
         <Col span={24}>
           <Collapse accordion defaultActiveKey={1} expandIcon={({ isActive }) => <RightOutlined style={{ color: "white" }} rotate={isActive ? 90 : 0} />}>
-            {/* <Panel header={panelHeader("Grafica de Ahorros")} key={1} style={{ ...panelStyle }}>
-                            <Tabs defaultActiveKey={1} tabPosition='top'>
-                                <TabPane tab="Ahorro" key={1}>
-                                    <SavingsChart 
-                                      ahorroMes = {gastosMes}
-                                    />
-                                </TabPane>
-                                <TabPane tab="Gastos" key={2}>
-                                    <SpentChart
-                                      gastosMes = {gastosMes}
-                                    />
-                                </TabPane>
-                                <TabPane tab="Contraste" key={3}>
-                                    <ComparisonCharts 
-                                      contrasteMes = {gastosMes}
-                                    />
-                                </TabPane>
-                                <TabPane tab="Tipo" key={4}>
-                                </TabPane>
-                            </Tabs>
-                        </Panel> */}
+          {/* <Panel header={panelHeader("Grafica de Ahorros")} key={1} style={{ ...panelStyle }}>
+                <Tabs defaultActiveKey={1} tabPosition='top'>
+                    <TabPane tab="Ahorro" key={1}>
+                        <SavingsChart 
+                          ahorroMes = {gastosMes}
+                        />
+                    </TabPane>
+                    <TabPane tab="Gastos" key={2}>
+                        <SpentChart
+                          gastosMes = {gastosMes}
+                        />
+                    </TabPane>
+                    <TabPane tab="Contraste" key={3}>
+                        <ComparisonCharts 
+                          contrasteMes = {gastosMes}
+                        />
+                    </TabPane>
+                    <TabPane tab="Tipo" key={4}>
+                    </TabPane>
+                </Tabs>
+            </Panel> */}
             {/* Holis */}
             <Panel header={panelHeader("Ordenes")} style={{ ...panelStyle }} key={2}>
-              <OrderByEmployee ordenesPro={ordenesPro} role={role} type={2} />
+              <OrderByEmployee ordenesPro={openOrders} role={role} type={2} />
             </Panel>
-
+            {/* 
             <Panel header={panelHeader("Reviews")} style={{ ...panelStyle }} key={3}>
               <Card bordered={false}
                 bodyStyle={{
@@ -102,6 +131,7 @@ export default function Profile(props) {
                 }
               </Card>
             </Panel>
+            */}
           </Collapse>
         </Col>
       </Row>

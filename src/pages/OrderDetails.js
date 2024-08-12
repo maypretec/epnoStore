@@ -403,14 +403,7 @@ export default function OrderDetails() {
       setService(response.data)
       console.log(service) 
       //setOrder(response.data);
-      setLoading(false);
-      if (
-        // response.data.order.rate.calificacion == 0 &&
-        // response.data.order.rate.comentario == "" &&
-        response.data.service.step_id === 7
-      ) {
-        setDisabled({ disabled: false });
-      }
+      setLoading(false)
     })
     .catch((error) => {
       console.log(error);
@@ -420,41 +413,8 @@ export default function OrderDetails() {
       setServiceLogs(value.data)
       console.log(value.data)
     })
-    /*OrderService.OrderDetails(id)
-      .then((response) => {
-        setOrder(response.data);
-        setLoading(false);
-        if (
-          // response.data.order.rate.calificacion == 0 &&
-          // response.data.order.rate.comentario == "" &&
-          response.data.service.step_id === 7
-        ) {
-          setDisabled({ disabled: false });
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        setLoading(false);
-      });*/
-  }, [reload, id]);
+  }, []); 
 
-  useEffect(() => {
-    /*CategoryService.All()
-      .then((response) => {
-        setCategories(response.data);
-      })
-      .catch((error) => {
-        console.log(error.response.data.errors);
-      });
-
-    SupplierService.GetUnit()
-      .then((response) => {
-        setUnits(response.data);
-      })
-      .catch((error) => {
-        console.log(error.response.data.errors);
-      });*/
-  }, []);
     return (
       <Layout>
         {loading === true ? (

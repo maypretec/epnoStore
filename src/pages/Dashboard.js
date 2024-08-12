@@ -11,6 +11,8 @@ import OrderByEmployee from "../components/Clients/OrderByEmployee";
 import Review from "../components/Generals/Review";
 // import StatusPieChart from '../components/Agent/StatusPieChart';
 import { isEmpty } from 'lodash';
+import OrderService from '../utils/api/orders';
+import UserService from '../utils/api/users';
 
 
 const { Meta } = Card;
@@ -36,7 +38,26 @@ export default function Dashboard(props) {
   let role = localStorage.getItem('role');
   var type = role;
 
+  const [openOrders, setOpenOrders] = useState([]);
+  const [users, setUsers] = useState([]);
+
   useEffect(() => {
+
+    if (role === '1') { // GET SERVICES FOR ADMIN
+      OrderService.GetAll().then(response => {
+        setOpenOrders(response.data);
+      }).catch((error) => {});
+    }
+
+    UserService.GetAll()
+    .then((response) => {
+      return response.data;
+    })
+    .then((users) => {
+      console.log(users)
+      setUsers(users);
+    })
+    .catch(console.log);
 
     // fetch('/api/consumo_clientesAgent', {
     //   headers: {
@@ -367,7 +388,7 @@ export default function Dashboard(props) {
         <Col lg={14} xs={24} style={{ marginTop: 16 }}>
           <Card headStyle={{ backgroundColor: "#002140", color: "white" }} title="Productos y servicios" >
             <Meta description="Revisa los productos y servicios mas usados." />
-            <OrderByEmployee ordenesPro={productosAgentClient} type={1} style={{ marginTop: 16 }} />
+            <OrderByEmployee ordenesPro={openOrders} type={1} style={{ marginTop: 16 }} />
           </Card>
         </Col>
         {/* <Col lg={10} xs={24} style={{ marginTop: 16 }}>
@@ -382,7 +403,7 @@ export default function Dashboard(props) {
         <Col lg={11} xs={24} style={{ marginTop: 16 }}>
           <Card headStyle={{ backgroundColor: "#002140", color: "white" }} title="Usuarios" >
             <Meta description="Revisa los usuarios mas activos." />
-            <OrderByEmployee ordenesPro={usuariosAgentClient} type={2} role={role} style={{ marginTop: 16 }} />
+            <OrderByEmployee ordenesPro={users} type={2} role={role} style={{ marginTop: 16 }} />
           </Card>
         </Col>
         <Col lg={13} xs={24} style={{ marginTop: 16 }}>

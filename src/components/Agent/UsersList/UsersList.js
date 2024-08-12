@@ -52,7 +52,7 @@ export default function UsersList(props) {
 					  : user.role == 3 ? 'VS Manager'
 						: user.role == 4 ? 'Industria'
 						: user.role == 5 ? 'Comprador'
-						: user.role == 6 ? 'Provedor'
+						: user.role == 6 ? 'Proveedor'
 						: user.role == 9 ? 'Repartidor' : '',
       vs: [{ id: user.id, data: user.vs_id }],
       status: [userS],

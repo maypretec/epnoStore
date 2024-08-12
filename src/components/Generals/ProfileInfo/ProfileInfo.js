@@ -43,7 +43,7 @@ export default function ProfileInfo(props) {
               : role == 3 ? "VS Manager"
               : role == 5 ? "Buyer"
               : role == 4 ? "Industria"
-              : role == 6 ? "Provedor"
+              : role == 6 ? "Proveedor"
               : "Estandar"}
             </Tag>
             {role == 6 && cat1 !== '' ? <Tag color="green">
