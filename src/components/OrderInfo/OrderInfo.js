@@ -855,7 +855,7 @@ export default function OrderInfo(props) {
         setProposalPrice(filterPrices)
         setProposalFilesUrl(filterFiles)
 
-        if ((service.status >= 4 && (role == 1 || role == 4)) || (service.status == 3 && (role == 1 || role == 4))) {
+        if ((service.status >= 4 && (role == 1 || role == 4)) || (service.status == 3 && (role == 1 || role == 4) && service.supplier != '')) {
           const filteredProposalsDo = proposalsResponse.data.filter(proposal => proposal.status === true);
           setProposals(filteredProposalsDo);
         } else if (role === 6) {
