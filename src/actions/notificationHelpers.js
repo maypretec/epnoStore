@@ -6,4 +6,7 @@ export const toastNotification = ({ title, description, status }) => {
 export const sendNativeNotification = ({ title, body }) => {
   // Implement your native notification logic
   console.log(`Native Notification: ${title} - ${body}`);
+  alert('Necesito que funcioneeeeeeeee')
 };
+
+// TODO: NOTIFICATIONS LOGIC

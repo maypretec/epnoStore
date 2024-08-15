@@ -45,38 +45,8 @@ import NewMerchant from "./pages/Merchants/POST";
 
 import store from "./store";
 import { Provider } from "react-redux";
-import useVisibilityChange from "./utils/hooks/useVisibilityChange";
-import { setupNotifications } from "./utils/services/firebase";
-import {
-  sendNativeNotification,
-  toastNotification,
-} from "./actions/notificationHelpers";
 
 function App() {
-  const isForeground = useVisibilityChange();
-
-  useEffect(() => {
-		
-    setupNotifications((message) => {
-      if (isForeground) {
-        // App is in the foreground, show toast notification
-        toastNotification({
-          // eslint-disable-next-line no-undef
-          title,
-          // eslint-disable-next-line no-undef
-          description: body,
-          status: "info",
-        });
-      } else {
-        // App is in the background, show native notification
-        sendNativeNotification({
-          title,
-          body,
-        });
-      }
-    });
-  }, []);
-
   return (
     <Provider store={store}>
       <Router>

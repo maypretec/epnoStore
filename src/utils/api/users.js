@@ -117,6 +117,14 @@ function UpdateStatus(data){
   });
 }
 
+function SaveToken(data) {
+  return request({
+    url: API.USER.SAVE_TOKEN,
+    method: requestMethods.POST,
+    data: data
+  });
+}
+
 const UserService = {
   All,
   Change_User,
@@ -130,7 +138,8 @@ const UserService = {
 	RegisterAdmin,
   GetUserById,
   GetAll,
-  UpdateStatus
+  UpdateStatus,
+   SaveToken
 };
 
 export default UserService;

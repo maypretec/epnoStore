@@ -1,5 +1,7 @@
 import { initializeApp } from '@firebase/app';
 import { getMessaging, getToken, onMessage } from '@firebase/messaging';
+import UserService from '../api/users';
+import { message as antdMessage } from 'antd'; // Import AntD message for notifications
 
 const firebaseConfig = {
   apiKey: "AIzaSyBljKN8_1nd7bf89I95QoZdtDA1ncG5Fks",
@@ -14,27 +16,48 @@ const firebaseConfig = {
 
 const firebaseApp = initializeApp(firebaseConfig);
 const messaging = getMessaging(firebaseApp);
-const setupNotifications = async () => {
+
+const setupNotifications = async (foregroundNotificationCallback) => {
   try {
-    // Request permission for notifications
+    // Request notification permission
     const permission = await Notification.requestPermission();
     
     if (permission === 'granted') {
       console.log('Notification permission granted.');
-      // Get the FCM token
+      // Retrieve the FCM token
       const token = await getToken(messaging);
-      localStorage.setItem("fcm", token)
+      localStorage.setItem("fcm", token);
       console.log('FCM Token:', token);
+      
+      const user = JSON.parse(localStorage.getItem('user'));
+      UserService.SaveToken({ token, userId: user.id })
+        .then(response => {
+          console.log('Token saved:', response);
+        })
+        .catch(error => console.error('Error saving the token:', error));
     } else {
       console.log('Notification permission denied.');
     }
-    // Handle foreground notifications
+
+    // Handle foreground messages
     onMessage(messaging, (payload) => {
-      console.log('Foreground Message:', payload);
-      // Handle the notification or update your UI
+      console.log('Foreground message received:', payload);
+      
+      // Use the callback passed to the function to handle the foreground notification
+      if (foregroundNotificationCallback) {
+        foregroundNotificationCallback(payload);
+      }
+
+      // Optionally, show a toast message using AntD
+      antdMessage.info({
+        content: `${payload.data.title}: ${payload.data.body}`, // Customize based on your notification structure
+        duration: 2, // Duration in seconds for the message
+        style: { marginTop: '10vh' }, // Optional: Custom style for the message
+      });
     });
   } catch (error) {
     console.error('Error setting up notifications:', error);
   }
 };
+
 export { messaging, setupNotifications };

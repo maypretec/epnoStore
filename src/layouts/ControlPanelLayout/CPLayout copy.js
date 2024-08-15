@@ -67,28 +67,72 @@ export default function CPLayout(props) {
   const isForeground = useVisibilityChange();
 
   useEffect(() => {
-    // Setup notifications and define how to handle foreground notifications
+		
     setupNotifications((message) => {
-      // Check if app is in the foreground or background
       if (isForeground) {
-        // Foreground: Use the toast notification
+        // App is in the foreground, show toast notification
         toastNotification({
-          title: message.data.title || 'Notification', // Ensure title is accessible from message.data
-          description: message.data.body || 'You have a new notification', // Ensure body is accessible
+          title: message.title,
+          description: message.body,
           status: "info",
         });
-        console.log('Foreground notification:', message);
+        alert('ealeeeee')
       } else {
-        // Background: Use native notification
+        // App is in the background, show native notification
         sendNativeNotification({
-          title: message.data.title || 'Notification', // Ensure title is accessible from message.data
-          body: message.data.body || 'You have a new notification',
+          title: message.title,
+          body: message.body,
         });
-        console.log('Background notification:', message);
       }
     });
-  }, [isForeground]);
-  
+  }, []);
+
+
+
+  // useEffect(() => {
+  //   //notificaciones
+  //   fetch(`https://api.epno-app.com/api/get_notifications/1`, {
+  //     headers: {
+  //       'Accept': 'application/json',
+  //       'Authorization': `Bearer ${token}`,
+  //     }
+  //   })
+  //     .then((response) => {
+  //       return response.json()
+
+  //     })
+  //     .then((data) => {
+  //       setNotifications({
+  //         notify: data.notificaciones,
+  //         total: data.total,
+  //         user_id: data.user,
+  //       });
+  //     }).catch(console.log)
+
+
+  // }, [stateNotificaciones])
+
+
+
+
+  // useEffect(() => {
+
+  //   fetch('https://api.epno-app.com/api/new_user_request_notification')
+  //     .then((response) => {
+  //       return response.json()
+
+  //     })
+  //     .then((newUserNotifications) => {
+
+  //       setNewUserNotifications({
+  //         user: newUserNotifications.userNotification,
+  //         count: newUserNotifications.countNotification
+  //       });
+  //     }).catch(console.log)
+
+  // }, [stateNotifications])
+
+
 
   let history = useNavigate();
 
