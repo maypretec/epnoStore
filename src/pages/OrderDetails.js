@@ -428,7 +428,7 @@ export default function OrderDetails() {
           <Empty description="No hay informacion sobre esta orden." />
         ) : (
           <Row gutter={[12, 12]}>
-            <Col xs={16} >
+            <Col xs={24} md={16} >
               <OrderInfo
                 serviceData = {service}
                 details={order}
@@ -442,7 +442,7 @@ export default function OrderDetails() {
             </Col>
             {/* TODO: ADD THIS FUNCTIONS*/}
             {
-            <Col xs={8} md={8} lg={8} xl={8}>
+            <Col xs={24} md={8} lg={8} xl={8}>
               <Row gutter={[12, 12]}>
                 {/*
                 <Col xs={24}>

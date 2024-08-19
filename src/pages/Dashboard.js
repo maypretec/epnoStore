@@ -13,6 +13,7 @@ import Review from "../components/Generals/Review";
 import { isEmpty } from 'lodash';
 import OrderService from '../utils/api/orders';
 import UserService from '../utils/api/users';
+import UsersTable from '../components/Tables/Dashboard/Users/UsersTable';
 
 
 const { Meta } = Card;
@@ -30,7 +31,7 @@ export default function Dashboard(props) {
   const [consumoAgentSupplier, setConsumoAgentSupplier] = useState([]);
   const [productosAgentClient, setProductosAgentClient] = useState([]);
   const [usuariosAgentClient, setUsuariosAgentClient] = useState([]);
-  const [req_foll, setReq_foll] = useState([])
+  const [req_foll, setReq_foll] = useState(0)
   const [total_users, setTotal_users] = useState([])
   const [reviewsMro, setReviewsMro] = useState([])
   const [consumoAgentStd, setConsumoAgentStd] = useState([])
@@ -46,7 +47,11 @@ export default function Dashboard(props) {
     if (role === '1') { // GET SERVICES FOR ADMIN
       OrderService.GetAll().then(response => {
         setOpenOrders(response.data);
-      }).catch((error) => {});
+        
+      }).then(value => {
+        setReq_foll(openOrders.length)
+      })
+      .catch((error) => {});
     }
 
     UserService.GetAll()
@@ -54,8 +59,8 @@ export default function Dashboard(props) {
       return response.data;
     })
     .then((users) => {
-      console.log(users)
       setUsers(users);
+      setTotal_users(users.length)
     })
     .catch(console.log);
 
@@ -337,55 +342,52 @@ export default function Dashboard(props) {
   return (
     <Layout>
 
-      <Tabs defaultActiveKey={1} tabPosition='top'>
+      {/*<Tabs defaultActiveKey={1} tabPosition='top'>
         {
           type == 3 ? (
             <TabPane tab="Clientes" key={1}>
-              {/* <Summary consumo={consumoAgentClient} title="Consumo de clientes" description="Reporte del consumo mes con mes."
-                column1="Consumo" column2="Ahorro" column3="Costo en el mercado" role={role} /> */}
+              {<Summary consumo={consumoAgentClient} title="Consumo de clientes" description="Reporte del consumo mes con mes."
+                column1="Consumo" column2="Ahorro" column3="Costo en el mercado" role={role} /> 
             </TabPane>
           ) : type == 5 ? (
             <TabPane tab="Proveedores" key={2}>
               {/* <Summary consumo={consumoAgentSupplier} title="Ventas de proveedores" description="Reporte del ventas de los proveedores mes con mes."
-                column1="Ventas" column2="#Ordenes" column3="Costo del servicio" role={role} /> */}
+                column1="Ventas" column2="#Ordenes" column3="Costo del servicio" role={role} /> 
             </TabPane>
           ) : (type == 1 || type == 2) && (
             <>
               <TabPane tab="Clientes" key={1}>
                 {/* <Summary consumo={consumoAgentClient} title="Consumo de clientes" description="Reporte del consumo mes con mes."
-                  column1="Consumo" column2="Ahorro" column3="Costo en el mercado" role={role} /> */}
+                  column1="Consumo" column2="Ahorro" column3="Costo en el mercado" role={role} /> 
               </TabPane>
               <TabPane tab="Proveedores" key={2}>
                 {/* <VentasSummaryAgente consumo={consumoAgentSupplier} title="Ventas de proveedores" description="Reporte del ventas de los proveedores por orden."
-                  role={role} /> */}
+                  role={role} /> 
               </TabPane>
             </>
           )
         }
-
-
-      </Tabs>
-
+      </Tabs>*/}
 
 
       <Row gutter={24}>
-        <Col md={12} xs={24} lg={6}>
-          <SummaryOrders title={`Total: ${req_foll}`} text="Ordenes en transito" description="Revisa las ordenes actuales." avatarColor={ordenActual} icon={<FileDoneOutlined />} />
+        <Col md={12} xs={24} lg={12}>
+          <SummaryOrders title={`Total: ${openOrders.length}`} text="Ordenes en transito" description="Revisa las ordenes actuales." avatarColor={ordenActual} icon={<FileDoneOutlined />} />
         </Col>
-        <Col md={12} xs={24} lg={6}>
+        {/*<Col md={12} xs={24} lg={6}>
           <SummaryOrders title="Total: 0" text="Garantias en transito" description="Revisa las garantias actuales." avatarColor={ordenFinalizada} icon={<FileProtectOutlined />} />
-        </Col>
-        <Col md={12} xs={24} lg={6}>
+        </Col>*/}
+        <Col md={12} xs={24} lg={12}>
           <SummaryOrders title={`Total: ${total_users}`} text="Total de usuarios" description="Revisa los usuaros de tu app." avatarColor={totalClientes} icon={<UserOutlined />} />
         </Col>
-        <Col md={12} xs={24} lg={6}>
+        {/*<Col md={12} xs={24} lg={6}>
           <SummaryOrders title="Score: 78 " text="Calificación de la aplicación" description={calificacion} avatarColor={score} icon={<StarOutlined />} />
-        </Col>
+        </Col>*/}
 
       </Row>
       <Row gutter={24}>
 
-        <Col lg={14} xs={24} style={{ marginTop: 16 }}>
+        <Col lg={24} xs={24} style={{ marginTop: 16 }}>
           <Card headStyle={{ backgroundColor: "#002140", color: "white" }} title="Productos y servicios" >
             <Meta description="Revisa los productos y servicios mas usados." />
             <OrderByEmployee ordenesPro={openOrders} type={1} style={{ marginTop: 16 }} />
@@ -399,13 +401,15 @@ export default function Dashboard(props) {
         </Col> */}
 
       </Row>
+
       <Row gutter={24}>
-        <Col lg={11} xs={24} style={{ marginTop: 16 }}>
+        <Col lg={24} xs={24} style={{ marginTop: 16 }}>
           <Card headStyle={{ backgroundColor: "#002140", color: "white" }} title="Usuarios" >
             <Meta description="Revisa los usuarios mas activos." />
-            <OrderByEmployee ordenesPro={users} type={2} role={role} style={{ marginTop: 16 }} />
+            <UsersTable users={users} type={2} role={role} style={{ marginTop: 16 }} />
           </Card>
         </Col>
+        {/*         
         <Col lg={13} xs={24} style={{ marginTop: 16 }}>
           <Card headStyle={{ backgroundColor: "#002140", color: "white" }} title="Total de comentarios"
             bodyStyle={{
@@ -430,6 +434,7 @@ export default function Dashboard(props) {
             }
           </Card>
         </Col>
+        */}
       </Row>
 
     </Layout>

@@ -861,7 +861,6 @@ export default function OrderInfo(props) {
         } else if (role === 6) {
           const filteredProposals = proposalsResponse.data.filter(proposal => proposal.userId === userData.id);
           setProposals(filteredProposals);
-          
         } else { setProposals(proposalsResponse.data); console.log(proposals) } 
 
       } catch (error) {
@@ -1017,13 +1016,14 @@ export default function OrderInfo(props) {
     });
   }
 
-  const chooseProposal = (proposalId, supplierId, supplier, price, dueDate, supplierFileUrl) => {
+  const chooseProposal = (proposalId, supplierId, supplier, price, sup_price, dueDate, supplierFileUrl) => {
     const choosenProp = {
       proposalId: proposalId,
       serviceId: service.id,
       supplierId: supplierId,
       supplier: supplier,
       price: price,
+      sup_price: sup_price,
       dueDate: dueDate,
       supplierFileUrl: supplierFileUrl
     }
@@ -1127,7 +1127,7 @@ export default function OrderInfo(props) {
     'Envia tu cotizacion con los datos requeridos.',
     'El cliente se encuentra seleccionando la cotizacion.',
     'Felicidades, tu cotizacion ha sido aceptada! Elabora el servicio solicitado. Una vez terminado, actualiza el estatus para que EPNO inspeccione el producto.',
-    'EPNO se encuentra inspeccionando el serivicio.',
+    'EPNO se encuentra inspeccionando el servicio.',
     'Puedes entregar al servicio a tu cliente.',
     'El servicio a concluido. Cualquier duda o aclaracion, contacta a EPNO.'
   ]
@@ -1391,10 +1391,13 @@ export default function OrderInfo(props) {
                 }
                 
               </Col>
-            </Row>
+            </Row> 
           }
-          extra={ <b> {service.price === '' || service.price === null || service.price === undefined ? 'Precio: por definir' : service.price + ' $'} </b> }
-          actions={[]}
+          extra={ <b> {
+            role == 6 ? (!service.sup_price ? 'Precio: por definir' : service.sup_price) 
+            : !service.price ? 'Precio: por definir' : service.price
+             
+          } </b> }
         >
           <Row gutter={[12, 12]} align="middle" justify="center">
             <Col xs={24} >
@@ -1686,7 +1689,7 @@ export default function OrderInfo(props) {
                 <Col xs={24} >
                   <Button 
                     type="primary" 
-                    onClick={() => chooseProposal(sub.id, sub.userId, sub.name, sub.price_epno, sub.dueDate, sub.fileUrl_epno)}
+                    onClick={() => chooseProposal(sub.id, sub.userId, sub.name, sub.price_epno, sub.price, sub.dueDate, sub.fileUrl_epno)}
                     >
                     Aceptar cotizacion</Button>
                 </Col>

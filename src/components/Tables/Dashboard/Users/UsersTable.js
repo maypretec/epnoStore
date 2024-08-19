@@ -3,8 +3,8 @@ import { Table } from 'antd';
 import { Link } from 'react-router-dom';
 
 export default function UsersTable(props) {
-  const { ordenesPro, type } = props;
-  console.log(ordenesPro)
+  const { users, type } = props;
+  console.log(users)
 
   const columns = [
     {
@@ -15,13 +15,18 @@ export default function UsersTable(props) {
 
     },
     {
+      title: 'Correo electronico',
+      dataIndex: 'email',
+      responsive: ['md'],
+    },
+    {
       title: 'Empresa',
-      dataIndex: 'order',
+      dataIndex: 'org',
       responsive: ['md'],
     },
     {
       title: 'Rol',
-      dataIndex: 'price',
+      dataIndex: 'role',
       responsive: ['md'],
     },
     {
@@ -33,18 +38,24 @@ export default function UsersTable(props) {
 
   const data = [];
 
-  ordenesPro.map((ord) => {
+  users.map((user) => {
     data.push(
       {
-        key: ord.id,
-        name: ord.name,
-        order: ord.bussiness,
-        price: ord.role,
+        key: user.id,
+        name: user.name,
+        email: user.email,
+        org: user.bussiness,
+        role:  user.role == 1 ? 'Administrador' 
+        : user.role == 3 ? 'VS Manager'
+        : user.role == 4 ? 'Industria'
+        : user.role == 5 ? 'Comprador'
+        : user.role == 6 ? 'Proveedor'
+        : user.role == 9 ? 'Repartidor' : '',
         details: (
 
           type == 2 ? (
-            <Link to={`/orders/details/${ord.id}`}>Ver más</Link>
-          ) : type == 1 && (<Link to={`/orders/details/${ord.id}`}>Ver más</Link>)
+            <Link to={`/@p/${user.id}`}>Ver más</Link>
+          ) : type == 1 && (<Link to={`/@p/${user.id}`}>Ver más</Link>)
 
         )
       }

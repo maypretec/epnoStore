@@ -37,7 +37,7 @@ export default function CPLayout(props) {
   const [form] = Form.useForm();
   const { children } = props;
 
-
+  const user = JSON.parse(localStorage.getItem('user'))
   let role = localStorage.getItem('role');
   // TODO: change to dynamic role reading
 
@@ -67,6 +67,14 @@ export default function CPLayout(props) {
   const isForeground = useVisibilityChange();
 
   useEffect(() => {
+    NotificationService.GetNotifications(user.id).then(resp => {
+      console.log(resp.data)
+      setNotifications({
+        notify: resp.data,
+        total: resp.data.length,
+        user_id: user.id
+      })
+    })
     // Setup notifications and define how to handle foreground notifications
     setupNotifications((message) => {
       // Check if app is in the foreground or background
@@ -125,7 +133,7 @@ export default function CPLayout(props) {
   const allNotifications = (
     <Menu >
       <Menu.ItemGroup title="Notificaciones">
-        {/*notifications.notify == "" ? (
+        {notifications.notify == "" ? (
           <Empty description="Sin notificaciones" image={Empty.PRESENTED_IMAGE_SIMPLE} />
         ) :
           notifications.notify.map((ntf) => (
@@ -134,7 +142,7 @@ export default function CPLayout(props) {
               <a href={`/orders/details/${ntf.table_id}`} onClick={() => ChangeNotification(ntf.id)}>{ntf.title}-{ntf.description}</a>
             </Menu.Item>
           ))
-        */}
+        }
         <Row justify="center">
           <Divider className="divider_link" />
           <Col > <Link to={`/@a-@n`}>Ver más</Link></Col>
@@ -292,9 +300,9 @@ export default function CPLayout(props) {
 
             </Menu>
           </Sider>
+
           <Layout>
             <Header className="header" >
-
               <Row>
                 {/* <Col sm={0} lg={1} >
                   {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
@@ -314,14 +322,12 @@ export default function CPLayout(props) {
                     </Menu.Item> */}
                     {
                       role == 1 && (
-
                         <Menu.Item key="3" >
                           {/* <Dropdown overlay={userNotifications} placement="bottomCenter" overflow='scroll' >
                             <Badge count={newUserNotifications.count} overflowCount={999} style={{ backgroundColor: '#ff4d4f' }}>
                               <Link to={`/@s/`}><UserAddOutlined /></Link>
                             </Badge>
                           </Dropdown> */}
-
                         </Menu.Item>
                       )
                     }
@@ -333,9 +339,8 @@ export default function CPLayout(props) {
                     {
                     <Menu.Item key="20" >
                       <Dropdown overlay={allNotifications} placement="bottomCenter" >
-                        <Badge count={3} overflowCount={999} style={{ backgroundColor: '#95de64' }}>
+                        <Badge count={notifications.total} overflowCount={999} style={{ backgroundColor: '#95de64' }}>
                           <NotificationTwoTone twoToneColor="#ff4d4f" />
-
                         </Badge>
                       </Dropdown>
                     </Menu.Item>

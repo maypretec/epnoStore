@@ -52,7 +52,7 @@ export default function SeguimientoOrdenes(props) {
       const categories = { cat1: user.role_data.cat1, cat2: user.role_data.cat2 }
       OrderService.GetServicesByCategory(categories).then(response => {
         const serviceUser1 = response.data.filter(ser => ser.status == 2)
-        const serviceUser2 = response.data.filter(ser => ser.status > 3 && ser.supplierId == user.id)
+        const serviceUser2 = response.data.filter(ser => ser.status >= 3 && ser.supplierId == user.id)
         const combinedServiceUsers = [...serviceUser1, ...serviceUser2];
         setOpenOrders(combinedServiceUsers);
         setLoading(false);

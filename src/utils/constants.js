@@ -1,4 +1,4 @@
-//export const BASE_URL = 'https://us-central1-app-epno.cloudfunctions.net/app/api/';
+//+export const BASE_URL = 'https://us-central1-app-epno.cloudfunctions.net/app/api/';
 export const BASE_URL = 'http://localhost:5000/app-epno/us-central1/app/api/';
 
 //export const BASE_URL = 'https://dev.gw.client.epno.app';
@@ -52,6 +52,12 @@ export const API = {
         UPDATE_STATUS:      'users/updateStatus',
         SAVE_TOKEN:         'users/save-token'
         
+    },
+    NOTIFICATIONS:{
+        CHANGE_STATUS:      '/api/self-service/change_notification_status',
+        MARK_AS_READ:       '/api/self-service/marcar_como_leido',
+        GET_NOTIFICATION:   '/api/self-service/get_notifications/1',
+        GET_NOTIFICATIONS:  'notifications/',
     },
     CUSTOMER:{
         ADD:                '/api/self-service/perfilCustomer',
@@ -172,12 +178,6 @@ export const API = {
     },
     RATES:{
         SEND:               '/api/self-service/send_rate',
-    },
-    NOTIFICATIONS:{
-        CHANGE_STATUS:      '/api/self-service/change_notification_status',
-        MARK_AS_READ:       '/api/self-service/marcar_como_leido',
-        GET_NOTIFICATION:   '/api/self-service/get_notifications/1',
-        GET_NOTIFICATIONS:  '/api/self-service/get_notifications/2',
     },
     CATALOGUE:{
         ADD:                '/api/self-service/new_catalogo',

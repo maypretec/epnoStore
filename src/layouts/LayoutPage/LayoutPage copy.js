@@ -24,9 +24,6 @@ import { useSelector } from 'react-redux';
 import Forbidden from "../../components/Forbidden";
 import NotificationService from '../../utils/api/notifications';
 import ProductService from '../../utils/api/products';
-import { setupNotifications } from '../../utils/services/firebase';
-import useVisibilityChange from '../../utils/hooks/useVisibilityChange';
-import { sendNativeNotification, toastNotification } from '../../actions/notificationHelpers';
 
 
 const { Header, Sider, Content, Footer } = Layout;
@@ -45,7 +42,6 @@ export default function LayoutPage(props) {
     user_id: ''
   });
 
-  const [isNotificationEnabled, setNotificationEnabled] = useState(Notification.permission === 'granted');
   const [notifications, setNotifications] = useState({
     notify: [],
     total: 0,
@@ -58,46 +54,28 @@ export default function LayoutPage(props) {
   const showDrawer = () => {
     setVisible(true);
   };
-
-  const isForeground = useVisibilityChange();
+  const stateNotificaciones = useSelector(state => state.notifications.stateNotificacionesTotal);
 
   useEffect(() => {
-    // Setup notifications and define how to handle foreground notifications
-    setupNotifications((message) => {
-      // Check if app is in the foreground or background
-      if (isForeground) {
-        // Foreground: Use the toast notification
-        toastNotification({
-          title: message.data.title || 'Notification', // Ensure title is accessible from message.data
-          description: message.data.body || 'You have a new notification', // Ensure body is accessible
-          status: "info",
-        });
-        console.log('Foreground notification:', message);
-      } else {
-        // Background: Use native notification
-        sendNativeNotification({
-          title: message.data.title || 'Notification', // Ensure title is accessible from message.data
-          body: message.data.body || 'You have a new notification',
-        });
-        console.log('Background notification:', message);
+    //notificaciones
+    NotificationService.GetNotification()
+    .then((response) => {
+      const test={
+        notificaciones: [],
+        total: 0,
+        user_id: 0
       }
-    });
-  }, [isForeground]);
+    })
+    .then((data) => {
+      setNotifications({
+        notify: data.notificaciones,
+        total: data.total,
+        user_id: data.user,
+      });
+    }).catch(console.log)
 
-  const handleEnableNotifications = () => {
-    console.log('click')
-    if (Notification.permission === 'denied') {
-      alert('You have blocked notifications. Please enable them from your browser settings.');
-      return;
-    }
-    
-    Notification.requestPermission().then(permission => {
-      if (permission === 'granted') {
-        setNotificationEnabled(true);
-        console.log('Notifications enabled');
-      }
-    });
-  };
+
+  }, [stateNotificaciones])
 
 
   const logout = () => {
@@ -137,7 +115,9 @@ export default function LayoutPage(props) {
 
   );
 
+
   const stateProducts = useSelector(state => state.products.stateShowProducts);
+
 
   useEffect(() => {
     console.log(role)
@@ -293,13 +273,6 @@ export default function LayoutPage(props) {
                       </Dropdown>
                     </Menu.Item>
                     */}
-                    <Button
-                      type="primary"
-                      onClick={handleEnableNotifications}
-                      style={{ backgroundColor: isNotificationEnabled ? '#52c41a' : '#1890ff' }}
-                    >
-                      {isNotificationEnabled ? 'Notificaciones habilitadas' : 'Habilitar notificaciones'}
-                    </Button>
                     <Menu.Item key="21" >
                       <Button onClick={() => logout()} type="text">
                         Salir
