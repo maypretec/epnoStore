@@ -10,7 +10,7 @@ import OrderService from '../utils/api/orders';
 export default function GeneralServices() {
 	const { Step } = Steps;
 	const user = JSON.parse(localStorage.getItem('user'))
-
+	const userFcm = localStorage.getItem('fcm')
 	const [loading, setLoading] = useState(false);
 
 	const [current, setCurrent] = React.useState(0);
@@ -37,6 +37,7 @@ export default function GeneralServices() {
 		let service = {
 			userId: user.id,
 			userName: user.name,
+			userFcm: userFcm,
       enterprise: user.bussiness,
       title: formValue.title,
       description: formValue.description,
@@ -44,8 +45,6 @@ export default function GeneralServices() {
       cat2: formValue.cat2 || '',
 			fileBase64: formValue.fileList
 		}
-
-		console.log(service)
 
 		OrderService.NewService(service)
 			.then((response) => {

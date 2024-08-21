@@ -16,7 +16,6 @@ import SupplierService from '../utils/api/suppliers';
 export default function OrderDetails() {
   const { id } = useParams();
   const role = Number(localStorage.getItem("role"));
-  console.log(role)
 
   const [disabled, setDisabled] = useState({
     disabled: true,
@@ -401,17 +400,14 @@ export default function OrderDetails() {
     OrderService.ServiceDetails(id)
     .then((response) => {
       setService(response.data)
-      console.log(service) 
       //setOrder(response.data);
       setLoading(false)
     })
     .catch((error) => {
-      console.log(error);
       setLoading(false);
     });
     OrderService.ServiceLogs(id).then(value => {
       setServiceLogs(value.data)
-      console.log(value.data)
     })
   }, []); 
 

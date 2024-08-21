@@ -63,6 +63,7 @@ export default function LayoutPage(props) {
 
   useEffect(() => {
     // Setup notifications and define how to handle foreground notifications
+    console.log('aaaaaaaaaaaa')
     setupNotifications((message) => {
       // Check if app is in the foreground or background
       if (isForeground) {

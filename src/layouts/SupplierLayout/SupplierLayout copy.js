@@ -19,9 +19,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import Forbidden from "../../components/Forbidden"
 import { useSelector } from 'react-redux';
 import NotificationService from '../../utils/api/notifications';
-import { setupNotifications } from '../../utils/services/firebase';
-import useVisibilityChange from '../../utils/hooks/useVisibilityChange';
-import { sendNativeNotification, toastNotification } from '../../actions/notificationHelpers';
 
 const { Header, Sider, Content, Footer } = Layout;
 const { Search } = Input;
@@ -45,39 +42,27 @@ export default function LayoutPage(props) {
     user_id: ''
   });
   // const [notificationTotal, setNotificationTotal] = useState();
-
-  const isForeground = useVisibilityChange();
+  const stateNotificaciones = useSelector(state => state.notifications.stateNotificacionesTotal);
 
   useEffect(() => {
-    NotificationService.GetNotifications(user.id).then(resp => {
-      console.log(resp.data)
-      setNotifications({
-        notify: resp.data,
-        total: resp.data.length,
-        user_id: user.id
-      })
+    //notificaciones
+    NotificationService.GetNotification()
+    .then((response) => {
+      return response.json()
+
     })
-    // Setup notifications and define how to handle foreground notifications
-    setupNotifications((message) => {
-      // Check if app is in the foreground or background
-      if (isForeground) {
-        // Foreground: Use the toast notification
-        toastNotification({
-          title: message.data.title || 'Notification', // Ensure title is accessible from message.data
-          description: message.data.body || 'You have a new notification', // Ensure body is accessible
-          status: "info",
-        });
-        console.log('Foreground notification:', message);
-      } else {
-        // Background: Use native notification
-        sendNativeNotification({
-          title: message.data.title || 'Notification', // Ensure title is accessible from message.data
-          body: message.data.body || 'You have a new notification',
-        });
-        console.log('Background notification:', message);
-      }
-    });
-  }, [isForeground]);
+    .then((data) => {
+      setNotifications({
+        notify: data.notificaciones,
+        total: data.total,
+        user_id: data.user,
+      });
+    }).catch(console.log)
+
+
+  }, [stateNotificaciones])
+
+ 
 
   const logout = () => {
     history('/')

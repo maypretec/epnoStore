@@ -65,8 +65,7 @@ export default function OrderInfo(props) {
   // const { id, type } = useParams();
 
   const userData = JSON.parse(localStorage.getItem('user'))
-
-  console.log(role)
+  const userFcm = localStorage.getItem('fcm') 
   const [service, setService] = useState(serviceData);
   const [user, setUser] = useState({});
   const [form] = Form.useForm();
@@ -191,7 +190,6 @@ export default function OrderInfo(props) {
       .catch((error) => {
         message.error("Hubo un error al enviar la cotización");
 
-        console.log(error);
       });
   };
 
@@ -245,7 +243,6 @@ export default function OrderInfo(props) {
         }
       })
       .catch((error) => {
-        console.log(error.response.data.errors);
         setLoadSubservice(false);
       });
   };
@@ -267,7 +264,6 @@ export default function OrderInfo(props) {
         setLoadAgregarSupp(false);
       })
       .catch((error) => {
-        console.log(error);
         setLoadAgregarSupp(false);
       });
   };
@@ -339,7 +335,6 @@ export default function OrderInfo(props) {
         }
       })
       .catch((error) => {
-        console.log(error.response.data.errors);
         message.error("Error al actualizar servicio");
       });
   };
@@ -394,7 +389,6 @@ export default function OrderInfo(props) {
     })
     .catch((error) => {
       message.error("Hubo en error al hacer los cambios deseados");
-      console.log(error);
     });
   };
 
@@ -409,7 +403,6 @@ export default function OrderInfo(props) {
       })
       .catch((error) => {
         message.error("Hubo al mostrar las cotizaciones de cada servicio.");
-        console.log(error);
       });
   };
 
@@ -433,7 +426,6 @@ export default function OrderInfo(props) {
         setLoadCotizarNuevamente(false);
 
         message.error("Hubo al actualizar este subservicio.");
-        console.log(error);
       });
   };
 
@@ -483,7 +475,6 @@ export default function OrderInfo(props) {
       }
     },
     onDrop(e) {
-      console.log("Dropped files", e.dataTransfer.files);
     },
 
     beforeUpload: (file) => {
@@ -532,7 +523,6 @@ export default function OrderInfo(props) {
       }
     },
     onDrop(e) {
-      console.log("Dropped files", e.dataTransfer.files);
     },
 
     beforeUpload: (file) => {
@@ -602,7 +592,6 @@ export default function OrderInfo(props) {
       }
     },
     onDrop(e) {
-      console.log("Dropped files", e.dataTransfer.files);
     },
   };
   const sendClientInvoice = {
@@ -650,7 +639,6 @@ export default function OrderInfo(props) {
       }
     },
     onDrop(e) {
-      console.log("Dropped files", e.dataTransfer.files);
     },
   };
 
@@ -680,7 +668,6 @@ export default function OrderInfo(props) {
       }
     })
     .catch((error) => {
-      console.log(error.response.data.errors);
       message.error("Hubo un error al enviar los datos.");
       setLoadGenerarClientCot(false);
     });
@@ -713,7 +700,6 @@ export default function OrderInfo(props) {
         }
       })
       .catch((error) => {
-        console.log(error.response.data.errors);
         message.error("Hubo un error al enviar los datos.");
         setLoadCancelar(false);
       });
@@ -736,7 +722,6 @@ export default function OrderInfo(props) {
         }
       })
       .catch((error) => {
-        console.log(error.response.data.errors);
         message.error("Hubo un error al enviar los datos.");
         setLoadServiceChangeStep(false);
       });
@@ -861,10 +846,9 @@ export default function OrderInfo(props) {
         } else if (role === 6) {
           const filteredProposals = proposalsResponse.data.filter(proposal => proposal.userId === userData.id);
           setProposals(filteredProposals);
-        } else { setProposals(proposalsResponse.data); console.log(proposals) } 
+        } else { setProposals(proposalsResponse.data); } 
 
       } catch (error) {
-        console.error('Error fetching data', error);
       }
     };
 
@@ -910,7 +894,16 @@ export default function OrderInfo(props) {
   const updateService = (id, status) => {
     setLoadServiceChangeStep(true);
 
-    OrderService.UpdateService({id: id, status: status}).then(resp => {
+    OrderService.UpdateService({
+      id: id, 
+      status: status, 
+      clientId: service.userId || null,
+      clientFcm: service.userFcm || null,
+      supplierId: service.supplierId || null,
+      supplierFcm: service.supplierFcm || null,
+      cat1: service.cat1 || null,
+      cat2: service.cat2 || null
+    }).then(resp => {
       setLoadServiceChangeStep(false);
       if (resp.data.success === true) {
         setReload(!reload);
@@ -921,17 +914,14 @@ export default function OrderInfo(props) {
         message.error(resp.data.message);
       }
     }).catch((error) => {
-      console.log(error);
       message.error("Hubo un error al enviar los datos.");
       setLoadServiceChangeStep(false);
     });
   }
 
   const updateServicePlacement = (id, place, price, file) => {
-    //setLoadServiceChangeStep(true);
-    console.log(file)
+    setLoadServiceChangeStep(true);
     OrderService.UpdateServicePlacement({id: id, place: place, price_epno: price, fileUrl_epno: file, userId: userData.id}).then(resp => {
-      console.log(resp)
       if (resp.data.success === true) {
         setReload(!reload);
         message.success("Actualizacion exitosa", 1).then(() => {
@@ -941,7 +931,6 @@ export default function OrderInfo(props) {
         message.error(resp.data.message);
       }
     }).catch((error) => {
-      console.log(error);
       message.error("Hubo un error al enviar los datos.");
       setLoadServiceChangeStep(false);
     });
@@ -952,6 +941,7 @@ export default function OrderInfo(props) {
     const apply = {
       serviceId: service.id,
       userId: userData.id,
+      userFcm: userFcm,
       name: userData.bussiness,
       description: application.description,
       price: application.price,
@@ -959,7 +949,6 @@ export default function OrderInfo(props) {
       fileBase64: application.fileList
     }
 
-    console.log(apply)
     OrderService.ApplyService(apply).then(resp => {
       if (resp.data.success === true) {
         message.success("Aplicacion exitosa!", 1).then(() => {
@@ -969,7 +958,6 @@ export default function OrderInfo(props) {
         message.error(resp.data.message);
       }
     }).catch((error) => {
-      console.log(error);
       message.error("Hubo un error al enviar los datos.");
     });
   }
@@ -990,7 +978,6 @@ export default function OrderInfo(props) {
         message.error(resp.data.message);
       }
     }).catch((error) => {
-      console.log(error);
       message.error("Hubo un error al enviar los datos.");
     });
   }
@@ -999,6 +986,8 @@ export default function OrderInfo(props) {
     const body = {
       userId: userData.id,
       serviceId: service.id,
+      clientId: service.userId,
+      supplierId: service.supplierId,
       fileBase64: supplierPO
     }
 
@@ -1011,7 +1000,6 @@ export default function OrderInfo(props) {
         message.error(resp.data.message);
       }
     }).catch((error) => {
-      console.log(error);
       message.error("Hubo un error al enviar los datos.");
     });
   }
@@ -1038,7 +1026,6 @@ export default function OrderInfo(props) {
         message.error(resp.data.message);
       }
     }).catch((error) => {
-      console.log(error);
       message.error("Hubo un error al enviar los datos.");
       setLoadServiceChangeStep(false);
     });
@@ -1084,11 +1071,8 @@ export default function OrderInfo(props) {
 
   const propsPOIndustry = {
     beforeUpload: async (file) => {
-      console.log(file)
       const base64 = await getBase64(file);
-      console.log(base64)
       setIndustryPO(base64)
-      console.log(base64)
       return false;
     },
     application
@@ -1703,1105 +1687,6 @@ export default function OrderInfo(props) {
       : <></>
       }
       
-
-      {/*<Col xs={24}>
-        {(role === 3 || role === 5 || role === 2 || role === 1) && (
-          <Row gutter={[12, 12]} justify="center">
-            <Col xs={24} md={12} xl={8}>
-              <Badge color="#f50" text="Cotización por primera vez" />
-            </Col>
-            <Col xs={24} md={12} xl={8}>
-              <Badge color="#d3adf7" text="Se ha cotizado más de una vez" />
-            </Col>
-          </Row>
-        )}
-
-        <h1>Servicios</h1>
-        <Row gutter={[12, 12]} justify="center">
-          {details.subservices == "" ? (
-            <Col xs={24}>
-              <Empty
-                image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
-                description={<span>No tienes ningun servicio agregado.</span>}
-              ></Empty>
-            </Col>
-          ) : (
-            <Col xs={24}>
-              {details.subservices.map((sub) => (
-                <Collapse bordered={false} className="background-gris">
-                  <Panel
-                    extra={
-                      details.subservices.length == 1 &&
-                      details.files.spec_files.length > 1 ? (
-                        <Col xs={24}>
-                          <Button
-                            icon={<DownloadOutlined />}
-                            onClick={(event) => {
-                              // If you don't want click extra trigger collapse, you can prevent this:
-                              event.stopPropagation();
-                              setVisible(true);
-                            }}
-                          >
-                            Specs
-                          </Button>
-                        </Col>
-                      ) : (
-                        <Row gutter={[12, 12]} align="middle" justify="center">
-                          <Col xs={24}>
-                            <a
-                              href={`https://api.epno-app.com${sub.specs_file}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              download
-                              style={{ fontWeight: "bold" }}
-                              onClick={(event) => {
-                                // If you don't want click extra trigger collapse, you can prevent this:
-                                event.stopPropagation();
-                              }}
-                            >
-                              <Button
-                                icon={<DownloadOutlined />}
-                                disabled={sub.specs_file == null && true}
-                              >
-                                Specs
-                              </Button>
-                            </a>
-                          </Col>
-                        </Row>
-                      )
-                    }
-                    header={
-                      <Row gutter={[6, 12]}>
-                        <Col xs={24} md={18} xl={19}>
-                          <b>
-                            Servicio: {sub.name} | Categoria:{" "}
-                            {sub.category_name} | Cant:{sub.qty}
-                          </b>
-                        </Col>
-                        <Col
-                          xs={24}
-                          md={6}
-                          xl={5}
-                          style={{ textAlign: "center" }}
-                        >
-                          <Tag
-                            color={
-                              sub.step_id == 1
-                                ? "purple"
-                                : sub.step_id == 2
-                                ? "brown"
-                                : sub.step_id == 3
-                                ? "default"
-                                : sub.step_id == 4
-                                ? "processing"
-                                : sub.step_id == 5
-                                ? "cyan"
-                                : sub.step_id == 6
-                                ? "geekblue"
-                                : sub.step_id == 7
-                                ? "success"
-                                : sub.step_id == 8 ||
-                                  sub.step_id == 9 ||
-                                  sub.step_id == 12
-                                ? "#ff0000"
-                                : sub.step_id == 10
-                                ? "#52c41a"
-                                : sub.step_id == 11 && "#000"
-                              // sub.step_id == 12 && '#f5222d'
-                            }
-                          >
-                            {sub.step_name}
-                          </Tag>
-                        </Col>
-                      </Row>
-                    }
-                    key="1"
-                  >
-                    {
-                    role == 6 && sub.step_id == 1 ? (
-                      <Row justify="center">
-                        <Col xs={24} style={{ textAlign: "center" }}>
-                          <Text type="danger">
-                            Lo sentimos, aun no tienes permitido cotizar este servicio.
-                          </Text>
-                        </Col>
-                      </Row>
-                    )
-                      :
-                    role == 6 && sub.step_id == 8 ? (
-                      <Row justify="center">
-                        <Col xs={24} style={{ textAlign: "center" }}>
-                          <Text type="danger">
-                            Ya no puedes cotizar este subservicio debido a que
-                            ya ha sido rechazado.
-                          </Text>
-                        </Col>
-                      </Row>
-                    ) : role == 6 && sub.supp_quote !== "" ? (
-                      // anterior
-                      // ) : role == 6 && (sub.step_id > 2 || sub.supp_quote !== "") ? (
-                      <Card>
-                        <Descriptions
-                          title="Cotización"
-                          bordered
-                          style={{ textAlign: "center" }}
-                          column={{ xl: 3, lg: 2, md: 2, sm: 1, xs: 1 }}
-                        >
-                          <Descriptions.Item label="Cantidad">
-                            {sub.supp_qty}{" "}
-                          </Descriptions.Item>
-                          <Descriptions.Item label="Precio (C/U)">
-                            ${sub.supp_unitary_subtotal}{" "}
-                          </Descriptions.Item>
-                          <Descriptions.Item label="Unidad">
-                            {sub.unit_name}
-                          </Descriptions.Item>
-                          <Descriptions.Item label="Fecha entrega">
-                            {sub.supp_deadline}{" "}
-                          </Descriptions.Item>
-                          <Descriptions.Item label="Cotización">
-                            <Row gutter={[12, 12]} justify="center">
-                              <Col>
-                                <a
-                                  href={`https://api.epno-app.com${sub.supp_quote}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  download
-                                >
-                                  <Button
-                                    icon={<DownloadOutlined />}
-                                    onClick={(event) => {
-                                      // If you don't want click extra trigger collapse, you can prevent this:
-                                      event.stopPropagation();
-                                    }}
-                                    disabled={sub.supp_quote == "" && true}
-                                  >
-                                    <i className="fas fa-download" />
-                                    &nbsp;Cotización
-                                  </Button>
-                                </a>
-                              </Col>
-                              {sub.step_id == 4 && role == 6 && (
-                                //Falta aqui validar que exista la po para mostrar este boton de inspeccion
-                                <Col>
-                                  <Popconfirm
-                                    title="¿Seguro que desea solicitar una auditoria?"
-                                    onConfirm={() => serviceChangeStep(sub.id)}
-                                    okText="Si"
-                                    cancelText="No"
-                                  >
-                                    <Button
-                                      type="primary"
-                                      icon={<CheckCircleOutlined />}
-                                      loading={loadServiceChangeStep}
-                                      disabled={sub.epno_po == "" && true}
-                                    >
-                                      Inspección
-                                    </Button>
-                                  </Popconfirm>
-                                </Col>
-                              )}
-                            </Row>
-                          </Descriptions.Item>
-                        </Descriptions>
-                      </Card>
-                    ) : role == 6 &&
-                      sub.step_id == 2 &&
-                      sub.supp_quote == "" ? (
-                      <Row gutter={[12, 12]} justify="center" align="middle">
-                        <Col xs={24}>
-                          <Form
-                            name="nest-messages"
-                            method="POST"
-                            // layout='vertical'
-                            onFinish={onFinish(sub.id, sub.name)}
-                            form={form}
-                          >
-                            <Row
-                              gutter={[12, 12]}
-                              justify="center"
-                              align="middle"
-                            >
-                              <Col xs={24} md={12}>
-                                <Form.Item
-                                  name="cost"
-                                  label="Costo por unidad"
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message:
-                                        "Ingresa el costo por unidad del producto",
-                                    },
-                                  ]}
-                                >
-                                  <Input
-                                    name="cost"
-                                    placeholder="Ingrese el costo unitario"
-                                    // onChange={onFormChange}
-                                    // value={formValue.cost}
-                                    min={1}
-                                    step={0.1}
-                                    precision={2}
-                                    type="number"
-                                    suffix={
-                                      <Tooltip
-                                        placement="top"
-                                        title="Recuerda que el precio que debes ingresar es por unidad y LIBRE de iva."
-                                      >
-                                        <QuestionCircleOutlined />
-                                      </Tooltip>
-                                    }
-                                  />
-                                </Form.Item>
-                              </Col>
-                              <Col xs={24} md={12}>
-                                <Form.Item
-                                  name="qty"
-                                  label="Cantidad"
-                                  initialValue={sub.qty}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message:
-                                        "Ingresa la cantidad que puede surtir",
-                                    },
-                                  ]}
-                                >
-                                  <InputNumber
-                                    style={{ width: "100%" }}
-                                    name="qty"
-                                    min={1}
-                                    placeholder="Ingresa la cantidad que puede surtir"
-                                  />
-                                </Form.Item>
-                              </Col>
-                              <Col xs={24} md={12}>
-                                <Form.Item
-                                  label="Fecha de entrega"
-                                  name="date"
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message:
-                                        "Debes seleccionar la fecha de entrega.",
-                                    },
-                                  ]}
-                                >
-                                  <DatePicker
-                                    name="date"
-                                    style={{ width: "100%" }}
-                                    placeholder="Seleccionar fecha"
-                                    className="login-input"
-                                    onChange={onChangeDate}
-                                  />
-                                </Form.Item>
-                              </Col>
-                              <Col
-                                xs={24}
-                                md={12}
-                                style={{ textAlign: "center" }}
-                              >
-                                <Form.Item
-                                  name="quote_file"
-                                  label="Cotización"
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: "Favor de subir la cotización.",
-                                    },
-                                  ]}
-                                >
-                                  <Upload
-                                    {...propsCotizacion}
-                                    name="quote_file"
-                                    maxCount={1}
-                                    listType="picture-card"
-                                  >
-                                    <div>
-                                      <PlusOutlined />
-                                      <div style={{ marginTop: 8 }}>Upload</div>
-                                    </div>
-                                  </Upload>
-                                </Form.Item>
-                              </Col>
-                              <Col
-                                xs={24}
-                                md={6}
-                                style={{ textAlign: "center" }}
-                              >
-                                <Form.Item name="rechazar_cot">
-                                  <Popconfirm
-                                    title="¿Seguro que deseas rechazar esta cotización?"
-                                    onConfirm={() => {
-                                      setRechazarCotSupplierModal(true);
-                                      setSubserviceId(sub.id);
-                                    }}
-                                    okText="Si"
-                                    cancelText="No"
-                                  >
-                                    <Button
-                                      type="primary"
-                                      danger
-                                      icon={<CloseCircleOutlined />}
-                                      loading={loadRechazarCotSupp}
-                                    >
-                                      Rechazar
-                                    </Button>
-                                  </Popconfirm>
-                                </Form.Item>
-                              </Col>
-                              <Col
-                                xs={24}
-                                md={6}
-                                style={{ textAlign: "center" }}
-                              >
-                                <Form.Item name="subir_cot">
-                                  <Button
-                                    htmlType="submit"
-                                    type="primary"
-                                    icon={<CheckCircleOutlined />}
-                                    loading={loadAddSuppCot}
-                                  >
-                                    Subir cotización
-                                  </Button>
-                                </Form.Item>
-                              </Col>
-                            </Row>
-                          </Form>
-                        </Col>
-                      </Row>
-                    ) : (role == 3 ||
-                        role == 5 ||
-                        role == 4 ||
-                        role == 2 ||
-                        role == 1 ||
-                        role == 10) &&
-                      sub.proposals == ""  ? (
-                      <Row gutter={[12, 12]} justify="center">
-                        <Col xs={24}>
-                          <Empty
-                            image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
-                            imageStyle={{
-                              height: 60,
-                            }}
-                            description={
-                              <span>
-                               No hay proveedores para este servicio
-                              </span>
-                            }
-                          >
-                            {role != 4 && (sub.step_id <= 2) &&  (
-                              <Button
-                                type="dashed"
-                                danger
-                                loading={loadAgregarSupp}
-                                onClick={() =>
-                                  AddSuppliers(sub.id, sub.category_id)
-                                }
-                              >
-                                Agregar
-                              </Button>
-                            )}
-                          </Empty>
-                        </Col>
-                      </Row>
-                    ) : role == 4 &&
-                      (sub.step_id < 3 ||
-                        sub.step_id == 11 ||
-                        sub.step_id == 9) ? (
-                      <Empty description="Aun no hay cotizaciones para revisar" />
-                    ) : (
-                      role != 6 &&
-                      sub.proposals.map((sp) => {
-                        var info = {
-                          service_id: sp.service_id,
-                          subservice_id: sp.subservice_id,
-                          supplier_id: sp.id,
-                          email: sp.user_email,
-                          order_num: details.service.order_num,
-                          desc: sp.desc,
-                          order_id: details.service.order_id,
-                        };
-                        return role == 3 ||
-                          role == 5 ||
-                          role == 2 ||
-                          role == 1 ||
-                          role == 10 ? (
-                          <Collapse defaultActiveKey="1">
-                            <Panel
-                              collapsible="header"
-                              extra={
-                                <>
-                                  <Row
-                                    gutter={[12, 12]}
-                                    justify="center"
-                                    align="middle"
-                                  >
-                                    <Col
-                                      xs={24}
-                                      md={12}
-                                      style={{ textAlign: "center" }}
-                                    >
-                                      Costo (C/U):{" "}
-                                      <b>${sp.unitary_subtotal} mxn</b>
-                                    </Col>
-                                    <Col
-                                      xs={24}
-                                      md={12}
-                                      style={{ textAlign: "center" }}
-                                    >
-                                      Entrega:{" "}
-                                      <b>
-                                        {sp.supp_deadline == null
-                                          ? "S/F"
-                                          : moment(sp.supp_deadline).format(
-                                              "DD/MM/YYYY"
-                                            )}
-                                      </b>
-                                    </Col>
-                                    <Col
-                                      xs={24}
-                                      md={12}
-                                      style={{ textAlign: "center" }}
-                                    >
-                                      Cantidad: <b>{sp.qty}</b>
-                                    </Col>
-                                    <Col
-                                      xs={24}
-                                      md={12}
-                                      style={{ textAlign: "center" }}
-                                    >
-                                      <a
-                                        href={`https://api.epno-app.com${sp.quote}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        download
-                                      >
-                                        <Button
-                                          icon={<DownloadOutlined />}
-                                          onClick={(event) => {
-                                            // If you don't want click extra trigger collapse, you can prevent this:
-                                            event.stopPropagation();
-                                          }}
-                                          disabled={sp.quote == "" && true}
-                                        >
-                                          <i className="fas fa-download" />
-                                          &nbsp;Cotización
-                                        </Button>
-                                      </a>
-                                    </Col>
-                                  </Row>
-                                  {sub.step_id == 2 &&
-                                    sp.status_supp !== "Pendiente" && (
-                                      <Row
-                                        gutter={[12, 12]}
-                                        style={{ marginTop: 15 }}
-                                      >
-                                        <SelectSupplierComponent
-                                          service={details.service.id}
-                                          subservice={sub.id}
-                                          sub_step={sub.step_id}
-                                          supplier={sp}
-                                          reload={reload}
-                                          setReload={setReload}
-                                          token={token}
-                                        />
-                                      </Row>
-                                    )}
-                                </>
-                              }
-                              header={
-                                <Row
-                                  gutter={[12, 12]}
-                                  justify="center"
-                                  align="middle"
-                                >
-                                  <Col
-                                    xs={24}
-                                    md={8}
-                                    xl={4}
-                                    style={{ textAlign: "center" }}
-                                  >
-                                    <Avatar
-                                      src="https://joeschmoe.io/api/v1/random"
-                                      size={{ xs: 60, md: 60, lg: 60, xl: 60 }}
-                                    />
-                                  </Col>
-                                  <Col
-                                    xs={24}
-                                    md={16}
-                                    xl={20}
-                                    style={{ textAlign: "center" }}
-                                  >
-                                    <Row gutter={[12, 12]} justify="center">
-                                      <Col xs={24}>
-                                        <b>{sp.org_name}</b>
-                                      </Col>
-                                      <Col xs={24}>
-                                        <Tag
-                                          color={
-                                            (sp.status_supp == "Pendiente" &&
-                                              sp.rev > 0) ||
-                                            sp.rev > 1
-                                              ? "#d3adf7"
-                                              : "#f50"
-                                          }
-                                        >
-                                          {sp.status_supp}
-                                        </Tag>
-                                      </Col>
-                                    </Row>
-                                  </Col>
-                                </Row>
-                              }
-                            >
-                              <Row
-                                gutter={[12, 12]}
-                                justify="center"
-                                align="middle"
-                              >
-                                <Col xs={24} md={18} lg={18} xl={20}>
-                                  <Row gutter={[12, 12]} justify="center">
-                                    <Col xs={24} md={12}>
-                                      <label className="gris-bold">
-                                        Contacto
-                                      </label>{" "}
-                                      <br />
-                                      <b>{sp.user_name} </b>
-                                    </Col>
-                                    <Col xs={24} md={12}>
-                                      <label className="gris-bold">
-                                        Dirección
-                                      </label>{" "}
-                                      <br />
-                                      <b>{sp.address} </b>
-                                    </Col>
-                                    <Col xs={24} md={12}>
-                                      <label className="gris-bold">
-                                        Teléfono
-                                      </label>{" "}
-                                      <br />
-                                      <a
-                                        href={`tel:${sp.user_phone}`}
-                                        style={{ fontWeight: 600 }}
-                                      >
-                                        {sp.user_phone}{" "}
-                                      </a>
-                                    </Col>
-                                    <Col xs={24} md={12}>
-                                      <label className="gris-bold">
-                                        Correo
-                                      </label>{" "}
-                                      <br />
-                                      <a
-                                        href={`mailto:${sp.user_email}`}
-                                        style={{ fontWeight: 600 }}
-                                      >
-                                        {sp.user_email}{" "}
-                                      </a>
-                                    </Col>
-                                  </Row>
-                                </Col>
-                                <Col xs={24} md={6} lg={6} xl={4}>
-                                  <label className="gris-bold">Total</label>{" "}
-                                  <br />
-                                  <b>${sp.total_cost}</b>
-                                </Col>
-                                {sub.step_id == 4 &&
-                                sp.epno_po == "" &&
-                                (role == 3 || role == 5) ? (
-                                  <Col xs={24} style={{ textAlign: "center" }}>
-                                    <Button
-                                      icon={<UploadOutlined />}
-                                      loading={loadGenerarClientCot}
-                                      onClick={() => sendPoToSupplier(1, sp)}
-                                    >
-                                      Subir PO
-                                    </Button>
-                                  </Col>
-                                ) : sub.step_id == 4 &&
-                                  sp.epno_po !== "" &&
-                                  (role == 3 || role == 5) ? (
-                                  <Col
-                                    xs={24}
-                                    md={12}
-                                    style={{ textAlign: "center" }}
-                                  >
-                                    <a
-                                      href={`https://api.epno-app.com${sp.epno_po}`}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      download
-                                    >
-                                      <Button
-                                        icon={<DownloadOutlined />}
-                                        style={{ width: "65%" }}
-                                      >
-                                        &nbsp; PO
-                                      </Button>
-                                    </a>
-                                  </Col>
-                                ) : sub.step_id == 7 &&
-                                  (role == 3 || role == 5) ? (
-                                  <Col xs={24} md={18}>
-                                    <Rate
-                                      rate={sp.rate}
-                                      order={info}
-                                      reload={reload}
-                                      setReload={setReload}
-                                      step={sub.step_id}
-                                      title="Calificar proveedor"
-                                    />
-                                  </Col>
-                                ) : (
-                                  (sub.step_id == 11 || sub.step_id == 8) &&
-                                  (role == 3 || role == 5) && (
-                                    <Col
-                                      xs={24}
-                                      style={{ textAlign: "center" }}
-                                    >
-                                      <Button
-                                        type="primary"
-                                        danger
-                                        loading={loadCotizarNuevamente}
-                                        onClick={() =>
-                                          SuppCotizarNuevamente(
-                                            sp,
-                                            details.service,
-                                            sub.id
-                                          )
-                                        }
-                                      >
-                                        Cotizar de nuevo
-                                      </Button>
-                                    </Col>
-                                  )
-                                )}
-                              </Row>
-                            </Panel>
-                          </Collapse>
-                        ) : (
-                          role == 4 && (
-                            <Row gutter={[12, 12]} justify="center">
-                              <Col xs={24}>
-                                <Card>
-                                  <Descriptions
-                                    bordered
-                                    size="small"
-                                    title={sp.code}
-                                    column={{
-                                      xl: 3,
-                                      lg: 3,
-                                      md: 3,
-                                      sm: 1,
-                                      xs: 1,
-                                    }}
-                                  >
-                                    <Descriptions.Item
-                                      label="Descripción"
-                                      span={3}
-                                    >
-                                      {sp.desc}{" "}
-                                    </Descriptions.Item>
-                                    <Descriptions.Item label="$ C/U">
-                                      ${sp.epno_cost}{" "}
-                                    </Descriptions.Item>
-                                    <Descriptions.Item label="Cant.">
-                                      {sp.qty}{" "}
-                                    </Descriptions.Item>
-                                    <Descriptions.Item label="Fecha">
-                                      {sp.deadline}{" "}
-                                    </Descriptions.Item>
-                                    <Descriptions.Item
-                                      label="Opciones"
-                                      span={3}
-                                    >
-                                      <Row gutter={[12, 12]} justify="center">
-                                        <Col
-                                          xs={24}
-                                          md={12}
-                                          style={{ textAlign: "center" }}
-                                        >
-                                          <a
-                                            href={`https://api.epno-app.com${details.service.quote_file}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            download
-                                          >
-                                            <DownloadOutlined />{" "}
-                                            &nbsp;Cotizacion
-                                          </a>
-                                        </Col>
-                                        {
-                                          sp.is_winner == 2 &&
-                                            sp.status == 1 &&
-                                            sub.step_id == 3 && (
-                                              <Col
-                                                xs={24}
-                                                md={12}
-                                                style={{ textAlign: "center" }}
-                                              >
-                                                <Checkbox
-                                                  defaultChecked={
-                                                    sp.check == 1 ? true : false
-                                                  }
-                                                  onChange={(e) =>
-                                                    aceptSuppPropListClient(
-                                                      e,
-                                                      sp.id,
-                                                      sub.id,
-                                                      details.service.id,
-                                                      sp.desc,
-                                                      sp.code,
-                                                      sub.name
-                                                    )
-                                                  }
-                                                >
-                                                  <b>Aceptar</b>
-                                                </Checkbox>
-                                              </Col>
-                                            )
-                                          // Ya no se mostrara por que el step de entregado sera general y no individual
-                                          //  : (
-                                          //   <Col
-                                          //     xs={24}
-                                          //     md={12}
-                                          //     style={{ textAlign: "center" }}
-                                          //   >
-                                          //     <Button
-                                          //       type="primary"
-                                          //       danger
-                                          //       disabled={
-                                          //         sub.step_id == 6 ? false : true
-                                          //       }
-                                          //     >
-                                          //       Entregado
-                                          //     </Button>
-                                          //   </Col>
-                                          // )
-                                        }
-                                      </Row>
-                                    </Descriptions.Item>
-                                  </Descriptions>
-                                </Card>
-                              </Col>
-                            </Row>
-                          )
-                        );
-                      })
-                    )}
-                  </Panel>
-                </Collapse>
-              ))}
-            </Col>
-          )}
-          {(role == 3 || role == 5) && details.service.step_id == 1 && (
-            <>
-              <Col xs={24} md={6} style={{ textAlign: "center" }}>
-                <Button
-                  type="primary"
-                  onClick={() => {
-                    setAddService(!addService);
-                    setAddUnicService(false);
-                  }}
-                  disabled={loadSubservice}
-                >
-                  Añadir subservicio
-                </Button>
-              </Col>
-              {details.subservices.length == 0 && (
-                <Col xs={24} md={6} style={{ textAlign: "center" }}>
-                  <Button
-                    type="default"
-                    onClick={() => {
-                      setAddUnicService(!addUnicService);
-                      setAddService(false);
-                    }}
-                    disabled={loadSubservice}
-                  >
-                    Servicio unico
-                  </Button>
-                </Col>
-              )}
-            </>
-          )}
-          {addService && (
-            <Col xs={24} style={{ textAlign: "center" }}>
-              <Form
-                name="dynamic_form_nest_item"
-                onFinish={(values) => addSubservice(1, values)}
-                layout="vertical"
-                form={form}
-                autoComplete="off"
-              >
-                <Form.List name="services">
-                  {(fields, { add, remove }) => (
-                    <>
-                      {fields.map(({ key, name, ...restField }) => (
-                        <Row gutter={[12, 12]} align="middle" justify="center">
-                          <Col xs={24} md={14}>
-                            <Form.Item
-                              {...restField}
-                              name={[name, "name"]}
-                              label="Nombre"
-                              rules={[
-                                {
-                                  required: true,
-                                  message:
-                                    "Falta agregar el nombre del servicio.",
-                                },
-                              ]}
-                            >
-                              <Input placeholder="Nombre" />
-                            </Form.Item>
-                          </Col>
-                          <Col xs={24} md={10}>
-                            <Form.Item
-                              {...restField}
-                              label="Categoria"
-                              name={[name, "category"]}
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "Debes seleccionar una categoria.",
-                                },
-                              ]}
-                            >
-                              <Select
-                                showSearch
-                                placeholder="Seleccionar categoría"
-                                optionFilterProp="children"
-                                // onChange={onChange}
-                                // onSearch={onSearch}
-                                filterOption={(input, option) =>
-                                  option.children
-                                    .toLowerCase()
-                                    .indexOf(input.toLowerCase()) >= 0
-                                }
-                              >
-                                {categorias.map((c) => (
-                                  <Option value={c.id}>{c.name} </Option>
-                                ))}
-                              </Select>
-                            </Form.Item>
-                          </Col>
-                          <Col xs={24} md={8}>
-                            <Form.Item
-                              {...restField}
-                              label="Cantidad"
-                              name={[name, "qty"]}
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "Ingresa la cantidad deseada.",
-                                },
-                              ]}
-                            >
-                              <Input
-                                placeholder="Cantidad"
-                                min={1}
-                                type="number"
-                              />
-                            </Form.Item>
-                          </Col>
-
-                          <Col xs={24} md={8}>
-                            <Form.Item
-                              {...restField}
-                              label="Archivo"
-                              name={[name, "file"]}
-                              rules={[
-                                {
-                                  required: true,
-                                  message:
-                                    "Selecciona un archivo de especificación.",
-                                },
-                              ]}
-                            >
-                              <Select
-                                showSearch
-                                placeholder="Seleccionar archivo"
-                                optionFilterProp="children"
-                                // onChange={onChange}
-                                // onSearch={onSearch}
-                              >
-                                {details.files.spec_files.map((file) => {
-                                  return (
-                                    <Option value={file.file_path}>
-                                      <Tooltip title={file.file_name}>
-                                        <FileOutlined /> {file.file_name}
-                                      </Tooltip>
-                                    </Option>
-                                  );
-                                })}
-                              </Select>
-                            </Form.Item>
-                          </Col>
-                          <Col xs={22} md={7}>
-                            <Form.Item
-                              {...restField}
-                              label="Unidad"
-                              name={[name, "unit"]}
-                              rules={[
-                                {
-                                  required: true,
-                                  message:
-                                    "Debes seleccionar un tipo de unidad.",
-                                },
-                              ]}
-                            >
-                              <Select
-                                showSearch
-                                placeholder="Seleccionar una unidad"
-                                optionFilterProp="children"
-                                // onChange={onChange}
-                                // onSearch={onSearch}
-                                filterOption={(input, option) =>
-                                  option.children
-                                    .toLowerCase()
-                                    .indexOf(input.toLowerCase()) >= 0
-                                }
-                              >
-                                {unidades.map((u) => (
-                                  <Option value={u.id}>{u.name} </Option>
-                                ))}
-                              </Select>
-                            </Form.Item>
-                          </Col>
-                          {fields.length > 1 && (
-                            <Col xs={2} md={1}>
-                              <MinusCircleOutlined
-                                onClick={() => remove(name)}
-                              />
-                            </Col>
-                          )}
-                        </Row>
-                      ))}
-                      <Form.Item>
-                        <Button
-                          type="dashed"
-                          onClick={() => add()}
-                          block
-                          icon={<PlusOutlined />}
-                        >
-                          Add field
-                        </Button>
-                      </Form.Item>
-                    </>
-                  )}
-                </Form.List>
-                <Form.Item>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    loading={loadSubservice}
-                  >
-                    Enviar
-                  </Button>
-                </Form.Item>
-              </Form>
-            </Col>
-          )}
-          {addUnicService && (
-            <Col xs={24} style={{ textAlign: "center" }}>
-              <Form
-                name="unic_service"
-                onFinish={(values) => addSubservice(2, values)}
-                layout="vertical"
-                form={form}
-                autoComplete="off"
-              >
-                <Row gutter={[12, 12]} align="middle" justify="center">
-                  <Col xs={24} md={8}>
-                    <Form.Item
-                      label="Cantidad"
-                      name="qty"
-                      rules={[
-                        {
-                          required: true,
-                          message:
-                            "Ingresa la cantidad de unidades que tendra este servicio.",
-                        },
-                      ]}
-                    >
-                      <Input placeholder="Cantidad" min={1} type="number" />
-                    </Form.Item>
-                  </Col>
-                  <Col xs={24} md={8}>
-                    <Form.Item
-                      label="Categoria"
-                      name="category"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Debes seleccionar una categoria.",
-                        },
-                      ]}
-                    >
-                      <Select
-                        showSearch
-                        placeholder="Seleccionar categoría"
-                        optionFilterProp="children"
-                        // onChange={onChange}
-                        // onSearch={onSearch}
-                        filterOption={(input, option) =>
-                          option.children
-                            .toLowerCase()
-                            .indexOf(input.toLowerCase()) >= 0
-                        }
-                      >
-                        {categorias.map((c) => (
-                          <Option value={c.id}>{c.name} </Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                  </Col>
-
-                  <Col xs={24} md={8}>
-                    <Form.Item
-                      label="Unidad"
-                      name="unit"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Debes seleccionar un tipo de unidad.",
-                        },
-                      ]}
-                    >
-                      <Select
-                        showSearch
-                        placeholder="Seleccionar una unidad"
-                        optionFilterProp="children"
-                        // onChange={onChange}
-                        // onSearch={onSearch}
-                        filterOption={(input, option) =>
-                          option.children
-                            .toLowerCase()
-                            .indexOf(input.toLowerCase()) >= 0
-                        }
-                      >
-                        {unidades.map((u) => (
-                          <Option value={u.id}>{u.name} </Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                  </Col>
-                </Row>
-
-                <Form.Item>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    loading={loadSubservice}
-                  >
-                    Enviar
-                  </Button>
-                </Form.Item>
-              </Form>
-            </Col>
-          )}
-        </Row>
-      </Col>*/}
 
       <Drawer
         title={"Archivos Disponibles"}
@@ -4010,7 +2895,6 @@ function SelectSupplierComponent(props) {
       .catch((error) => {
         message.error("Hubo un error al actualizar el proveedor");
 
-        console.log(error);
       });
   };
 
@@ -4065,8 +2949,6 @@ function SelectSupplierComponent(props) {
 
           .catch((error) => {
             message.error("Hubo un error al eliminar el proveedor");
-
-            console.log(error);
           });
       }
     }
