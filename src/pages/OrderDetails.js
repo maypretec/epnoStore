@@ -440,11 +440,11 @@ export default function OrderDetails() {
             {
             <Col xs={24} md={8} lg={8} xl={8}>
               <Row gutter={[12, 12]}>
-                {/*
+                {
                 <Col xs={24}>
                   <OrderUsers data={order} token={token} op={1} />
                 </Col>
-                */}
+                }
                 <Col xs={24}>
                   <StepsGeneral steps={serviceLogs} />
                 </Col>
