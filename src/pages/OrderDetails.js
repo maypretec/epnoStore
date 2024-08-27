@@ -12,6 +12,7 @@ import OrderUsers from "../components/Generals/OrderUsers/OrderUsers";
 import OrderService from '../utils/api/orders';
 import CategoryService from '../utils/api/categories';
 import SupplierService from '../utils/api/suppliers';
+import ChatService from "../utils/api/chat";
 
 export default function OrderDetails() {
   const { id } = useParams();
@@ -384,6 +385,8 @@ export default function OrderDetails() {
 
   const [reload, setReload] = useState(false);
 
+  const [chats, setChats] = useState([]);
+
   let token = localStorage.getItem("token");
   var type = role;
   var Layout = "";
@@ -409,6 +412,21 @@ export default function OrderDetails() {
     OrderService.ServiceLogs(id).then(value => {
       setServiceLogs(value.data)
     })
+
+    ChatService.ServiceChats(id).then(resp => {
+      let filteredChats = [];
+    
+      if (role == 1) {
+        filteredChats = resp.data.data.filter(chat => chat.type === 1);
+      } else if (role == 4) {
+        filteredChats = resp.data.data.filter(chat => chat.type === 2);
+      } else if (role == 6) {
+        filteredChats = resp.data.data; // No filtramos, ya que se quieren ambos tipos.
+      }
+      console.log(filteredChats)
+      setChats(filteredChats);
+    })
+    
   }, []); 
 
     return (
@@ -442,7 +460,7 @@ export default function OrderDetails() {
               <Row gutter={[12, 12]}>
                 {
                 <Col xs={24}>
-                  <OrderUsers data={order} token={token} op={1} />
+                  <OrderUsers chats={chats} data={order} token={token} op={1} />
                 </Col>
                 }
                 <Col xs={24}>

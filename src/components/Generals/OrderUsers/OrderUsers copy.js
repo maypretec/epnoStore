@@ -14,29 +14,22 @@ export default function OrderUsers(props) {
   });
   const goBottom = useRef(null);
   const [reloadChat, setReloadChat] = useState(false);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState({});
   const [load, setLoad] = useState(false);
 
-	const role = localStorage.getItem('role')
-
-  const showMessages = (chatId, type, userId, userName ) => {
+  const showMessages = (order, user, name, email) => {
     setUser({
-      id: 'userId',
-      name: 'dasdasdsa',
-			email: 'sdadsad'
+      id: user,
+      name: name,
+      email: email,
     });
     setVisible(true);
     setLoad(true);
-    callApi(chatId, type);
+    callApi(order, user);
   };
 
-  function callApi(chatId, type) {
-		ChatService.GetMessages(chatId).then(resp => {
-			console.log(resp.data)
-			setMessages(resp.data.data);
-			setLoad(false);
-		})
-    /*ChatService.ChatMessages({ type: user })
+  function callApi(order, user) {
+    ChatService.ChatMessages({ order: order, user: user })
       .then((response) => {
         setLoad(false);
         setMessages(response.data);
@@ -45,11 +38,13 @@ export default function OrderUsers(props) {
       .catch((error) => {
         setLoad(false);
         console.log(error);
-      });*/
+      });
   }
 
 	useEffect(() => {
 		console.log(chats)
+	
+
 	}, [])
 	
 
@@ -64,15 +59,20 @@ export default function OrderUsers(props) {
       {/* TODO: validar usuarios. Si agente; todos. Si cliente; agente. Si proveedor; agente */}
       <List
         dataSource={chats}
-        renderItem={(chat) => (
-          <List.Item key={chat.id}>
+        renderItem={(item) => (
+          <List.Item key={item.id}>
             <List.Item.Meta
+              avatar={<Avatar src={`https://api.epno-app.com${item.logo}`} />}
               title={
-                <a onClick={() => showMessages(chat.id, chat.type, 'ewqe', 'qeqwe') } >
-									{chat.type === 2 ? chat.users[0].user_name : 'Administrador'}
+                <a
+                  onClick={() =>
+                    showMessages(service, item.id, item.user_name, item.email)
+                  }
+                >
+                  {item.org_name}
                 </a>
               }
-              description={chat.type === 2 && role == 4 ? 'Proovedor' : chat.type === 2 && role == 6 ? 'Industria' :  'EPNO'}
+              description={item.user_name}
             />
           </List.Item>
         )}
@@ -96,7 +96,7 @@ export default function OrderUsers(props) {
           ) : (
             <Col xs={24}>
               <Chat
-								chat = {chats}
+							chat = {chats}
                 data={data}
                 conversation={messages}
                 callApi={callApi}

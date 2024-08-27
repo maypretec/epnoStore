@@ -1013,7 +1013,10 @@ export default function OrderInfo(props) {
       price: price,
       sup_price: sup_price,
       dueDate: dueDate,
-      supplierFileUrl: supplierFileUrl
+      supplierFileUrl: supplierFileUrl,
+      clientId: service.userId,
+      clientName: service.userName,
+      clientFcm: service.userFcm
     }
     console.log(choosenProp)
     OrderService.ChooseProposal(choosenProp).then((resp) => {
@@ -1662,6 +1665,7 @@ export default function OrderInfo(props) {
                   : <></>}
                   {service.status === 2 && userData.role === 1 ? 
                     <Button style={{alignSelf: 'bottom', marginLeft: '8px'}} type="primary"
+                    disabled={!positions[i] || !proposalPrice[i] || !proposalFiles[i]}
                       onClick={() => updateServicePlacement(sub.id, positions[i], proposalPrice[i], proposalFiles[i])}
                     >
                       Actualizar cambios

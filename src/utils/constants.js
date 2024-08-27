@@ -59,6 +59,13 @@ export const API = {
         GET_NOTIFICATION:   '/api/self-service/get_notifications/1',
         GET_NOTIFICATIONS:  'notifications/',
     },
+    CHAT: {
+        //GET_MESSAGES:       '/api/self-service/get_conversation_messages',
+
+        // EPNO -----------------------------------------------------------
+        GET_SERVICE_CHATS:  'chats/',
+        GET_MESSAGES:       'messages/'
+    },
     CUSTOMER:{
         ADD:                '/api/self-service/perfilCustomer',
         CLIENT_CONSUME:     '/api/self-service/gastos_perfil',
@@ -137,9 +144,6 @@ export const API = {
         COT:                    '/api/self-service/po_to_supplier',
         SELECT_SUPPLIERS:       '/api/self-service/epno_select_suppliers',
         EDIT_SUPPLIER_PARTNO:   '/api/self-service/edit_supplier_partno'
-    },
-    CHAT: {
-        GET_MESSAGES:       '/api/self-service/get_conversation_messages',
     },
     COMPLAINTS:{
         CHANGE_TYPE:            '/api/self-service/change_complaint_type',

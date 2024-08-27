@@ -1,17 +1,25 @@
 import request from "../services/HTTPClient";
 import { requestMethods, API } from "../constants";
 
-function ChatMessages(request_body) {
-    return request({
-        url: API.CHAT.GET_MESSAGES,
-        method: requestMethods.POST,
-        data: {
-            order:  request_body.order,
-            user:   request_body.user,
-        }
-    })
+// MAYPRETEC --------------------------------------------------------
+function ServiceChats(service_id) {
+  return request({
+    url: API.CHAT.GET_SERVICE_CHATS.concat(service_id),
+    method: requestMethods.GET,
+  });
 }
 
-const ChatService = { ChatMessages };
+function GetMessages(chat_id) {
+  return request({
+    url: API.CHAT.GET_MESSAGES.concat(chat_id),
+    method: requestMethods.GET,
+  });
+}
+
+
+const ChatService = { 
+	ServiceChats,
+	GetMessages
+ };
 
 export default ChatService;
