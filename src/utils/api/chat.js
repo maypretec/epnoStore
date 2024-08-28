@@ -16,10 +16,18 @@ function GetMessages(chat_id) {
   });
 }
 
+function SendMessage(data) {
+  return request({
+    url: API.CHAT.SEND_MESSAGES,
+    method: requestMethods.POST,
+    data: data
+  });
+}
 
 const ChatService = { 
 	ServiceChats,
-	GetMessages
+	GetMessages,
+  SendMessage
  };
 
 export default ChatService;

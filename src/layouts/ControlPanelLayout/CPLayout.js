@@ -70,8 +70,8 @@ export default function CPLayout(props) {
     NotificationService.GetNotifications(user.id).then(resp => {
       console.log(resp.data)
       setNotifications({
-        notify: resp.data,
-        total: resp.data.length,
+        notify: resp.data || [],
+        total: resp.data.length || 0,
         user_id: user.id
       })
     })
@@ -122,7 +122,6 @@ export default function CPLayout(props) {
     })
   };
 
-
   const logout = () => {
     history('/')
     localStorage.removeItem('token');
@@ -133,7 +132,7 @@ export default function CPLayout(props) {
   const allNotifications = (
     <Menu >
       <Menu.ItemGroup title="Notificaciones">
-        {notifications.notify == "" ? (
+        {notifications.total == 0 ? (
           <Empty description="Sin notificaciones" image={Empty.PRESENTED_IMAGE_SIMPLE} />
         ) :
           notifications.notify.map((ntf) => (

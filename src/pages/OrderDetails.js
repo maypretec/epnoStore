@@ -425,6 +425,8 @@ export default function OrderDetails() {
       }
       console.log(filteredChats)
       setChats(filteredChats);
+    }).catch(e => {
+      console.log(e)
     })
     
   }, []); 

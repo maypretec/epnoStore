@@ -4,7 +4,8 @@ import Chat from "../../Chat";
 import ChatService from "../../../utils/api/chat";
 
 export default function OrderUsers(props) {
-  const { data, token, op, chats } = props;
+  const { data, op, chats } = props;
+  console.log((props))
   let service = op == 1 ? data.service.id : data.queja.service_id;
   const [visible, setVisible] = useState(false);
   const [user, setUser] = useState({
@@ -16,51 +17,38 @@ export default function OrderUsers(props) {
   const [reloadChat, setReloadChat] = useState(false);
   const [messages, setMessages] = useState([]);
   const [load, setLoad] = useState(false);
+  const [chatId, setChatId] = useState('')
 
 	const role = localStorage.getItem('role')
 
-  const showMessages = (chatId, type, userId, userName ) => {
+  const showMessages = (chatId, type, userName, userId, serviceId ) => {
+    setChatId(chatId)
     setUser({
-      id: 'userId',
-      name: 'dasdasdsa',
-			email: 'sdadsad'
+      id: userId,
+      name: userName,
+      type: type,
+      serviceId: serviceId,
+      chatId: chatId
     });
     setVisible(true);
     setLoad(true);
-    callApi(chatId, type);
+    callApi(chatId);
   };
 
-  function callApi(chatId, type) {
+  function callApi(chatId) {
 		ChatService.GetMessages(chatId).then(resp => {
-			console.log(resp.data)
-			setMessages(resp.data.data);
 			setLoad(false);
-		})
-    /*ChatService.ChatMessages({ type: user })
-      .then((response) => {
-        setLoad(false);
-        setMessages(response.data);
-        goBottom.current.focus();
-      })
-      .catch((error) => {
-        setLoad(false);
-        console.log(error);
-      });*/
+			setMessages(resp.data.data);
+      goBottom.current.focus();
+		}).catch((error) => {
+      setLoad(false);
+      console.log(error);
+    });
   }
 
-	useEffect(() => {
-		console.log(chats)
-	}, [])
-	
 
   return (
-    <Card
-      title="Usuarios"
-      style={{
-        height: 260,
-        overflow: "auto",
-      }}
-    >
+    <Card title="Usuarios" style={{ height: 260, overflow: "auto", }} >
       {/* TODO: validar usuarios. Si agente; todos. Si cliente; agente. Si proveedor; agente */}
       <List
         dataSource={chats}
@@ -68,8 +56,24 @@ export default function OrderUsers(props) {
           <List.Item key={chat.id}>
             <List.Item.Meta
               title={
-                <a onClick={() => showMessages(chat.id, chat.type, 'ewqe', 'qeqwe') } >
-									{chat.type === 2 ? chat.users[0].user_name : 'Administrador'}
+                // eslint-disable-next-line jsx-a11y/anchor-is-valid
+                <a  onClick={() => showMessages(
+                  chat.id, 
+                  chat.type, 
+                  chat.type === 1 && role == 1 ? chat.users[0].user_name : 
+                  chat.type === 2 && role == 4 ? chat.users[0].user_name : 
+                  chat.type === 2 && role == 6 ? chat.users[1].user_name : 'Administrador', 
+                  chat.type === 1 && role != 1 ? chat.users[0].user_id : 
+                  chat.type === 2 && role == 6 ? chat.users[0].user_id : 
+                  chat.type === 2 && role == 4 ? chat.users[1].user_id : 'Administrador',
+                  chat.serviceId
+                    )} >
+                  {
+                  chat.type === 1 && role == 1 ? chat.users[0].user_name : 
+                  chat.type === 2 && role == 4 ? chat.users[0].user_name : 
+                  chat.type === 2 && role == 6 ? chat.users[1].user_name : 'Administrador' 
+                  }
+									
                 </a>
               }
               description={chat.type === 2 && role == 4 ? 'Proovedor' : chat.type === 2 && role == 6 ? 'Industria' :  'EPNO'}
@@ -78,7 +82,7 @@ export default function OrderUsers(props) {
         )}
       />
       <Modal
-        visible={visible}
+        open={visible}
         footer=""
         closable
         width={600}

@@ -35,19 +35,16 @@ import {
 import "./Chat.scss";
 import { BASE_URL } from "../../utils/constants";
 import OrderService from "../../utils//api/orders";
+import ChatService from "../../utils/api/chat";
 export default function Chat(props) {
   const { data, reloadChat, setReloadChat, goBottom, user, callApi, op } = props;
 
   const userData = JSON.parse(localStorage.getItem('user'))
 
-  let service = op == 1 ? data.service.id : data.queja.service_id;
-  let order = op == 1 ? data.order.id : data.queja.order_id;
-  let order_num = op == 1 ? data.service.order_num : data.queja.order_num;
-  let step = op == 1 ? data.service.step_id : data.queja.step_id;
 
-  // useEffect(() => {
-  //   goBottom.current.focus();
-  // }, []);
+  useEffect(() => {
+    goBottom.current.focus();
+  }, []);
 
   const { Text } = Typography;
 
@@ -57,100 +54,39 @@ export default function Chat(props) {
   let dateNow = moment();
   var datePublication = 0;
   var fecha = 0;
-  const [state, setState] = useState({
-    fileList: [],
-    uploading: false,
-  });
-
-  const conversation = {
-    messages: [
-      {
-        id: 1,
-        created_at: "2024-08-25T14:30:00Z",
-        user: {
-          name: "John Doe",
-          organization: {
-            logo: null,
-          },
-        },
-        my_comment: "false",
-        comment:
-          "El proyecto está en construcción y se completará en dos semanas.",
-      },
-      {
-        id: 2,
-        created_at: "2024-08-26T09:45:00Z",
-        user: {
-          name: "Jane Smith",
-          organization: {
-            logo: "/logos/company-logo.png",
-          },
-        },
-        my_comment: "true",
-        step_id: 7,
-        comment: "La entrega ha sido exitosa, gracias por su colaboración.",
-      },
-      
-    ],
-  };
+  const [loading, setLoading] = useState(false);
 
   const onFinish = () => {
-    if (fileList.length > 5) {
-      message.error("Solo puedes enviar maximo 5 archivos adjuntos.");
-    } else if (fileList.length === 0 && inputValue == "") {
-      message.error("Debes enviar un comentario o archivo.");
+    if ( inputValue == "") {
+      message.error("Debes enviar un comentario.", 1);
     } else {
-      let exist_conversation;
-      if (Object.entries(conversation).length === 0) {
-        exist_conversation = false;
-      } else {
-        exist_conversation = conversation.id;
+      const data_message = {
+        user_id: user.id,
+        service_id: user.serviceId, 
+        comment: inputValue,
+        type: user.type
       }
 
-      const { fileList } = state;
+      setLoading(true)
+      console.log(message)
 
-      const formData = new FormData();
-      fileList.forEach((file) => {
-        formData.append("files[]", file);
-      });
-      formData.append("comment", inputValue);
-      formData.append("service_id", service);
-      formData.append("step_id", step);
-      formData.append("order_num", order_num);
-      formData.append("order_id", order);
-      formData.append("receptor", user.id);
-      formData.append("receptor_mail", user.email);
-      formData.append("conversacion", exist_conversation);
+      ChatService.SendMessage(data_message).then(resp => {
+        setInputValue("");
+        setLoading(false)
+        setReloadChat(!reloadChat)
+        console.log(resp.data)
 
-      setState({
-        ...state,
-        uploading: true,
-      });
-
-      OrderService.SendOrderComment(formData)
-        .then((response) => {
-          setInputValue("");
-          setState({
-            fileList: [],
-            uploading: false,
-          });
-          setReloadChat(!reloadChat);
-          if (response.data.success == true) {
-            callApi(service, user.id);
-            message.success("Mensaje enviado correctamente.");
-          } else {
-            message.error(response.data.message);
-          }
-        })
-        .catch((error) => {
-          // console.log(error.response.data.errors)
-          setInputValue("");
-          setState({
-            fileList: [],
-            uploading: false,
-          });
-          message.error(error);
-        });
+        if (resp.data.success === true) {
+          callApi(user.chatId, user.id);
+          message.success("Mensaje enviado correctamente.");
+        } else {
+          message.error(resp.data.message);
+        }
+      }).catch(e => {
+        setInputValue("");
+        setLoading(false)
+        console.log(e);
+      })
     }
   };
   const keyPress = (e) => {
@@ -159,55 +95,14 @@ export default function Chat(props) {
     }
   };
 
-  const { uploading, fileList } = state;
-  const propsUp = {
-    onRemove: (file) => {
-      setState((state) => {
-        const index = state.fileList.indexOf(file);
-        const newFileList = state.fileList.slice();
-        newFileList.splice(index, 1);
-        return {
-          fileList: newFileList,
-        };
-      });
-    },
-    beforeUpload: (file) => {
-      const isLt2M = file.size / 1024 / 1024 < 9;
-      if (!isLt2M) {
-        message.error("¡El archivo no puede pesar mas de 9MB!");
-      } else {
-        setState((state) => ({
-          fileList: [...state.fileList, file],
-        }));
-        return false;
-      }
-    },
-    fileList,
-    // beforeUpload: file => {
-    //   setState(state => ({
-    //     fileList: [...state.fileList, file],
-    //   }));
-    //   return false;
-    // },
-  };
   const suffix = (
     <>
       <Button
         type="link"
-        disabled={
-          role == 6 && service == 11
-            ? true
-            : (service == 9 || service == 7) && true
-        }
-        loading={uploading}
+        loading={loading}
       >
         <SendOutlined
           onClick={onFinish}
-          disabled={
-            role == 6 && service == 11
-              ? true
-              : (service == 9 || service == 7) && true
-          }
           style={{
             fontSize: 20,
             color: "#1890ff",
@@ -253,18 +148,14 @@ export default function Chat(props) {
             bordered={false}
             suffix={suffix}
             placeholder="Agregar comentario"
-            disabled={
-              role == 6 && service == 11
-                ? true
-                : (service == 9 || service == 7) && true
-            }
+            
           />
         </Form>,
       ]}
     >
       {Object.entries(props.conversation).length === 0 ? (
         <Empty
-          description={`Aun no has iniciado una conversacion con ${'user.name'}, envia un mensaje para iniciar una.`}
+          description={`Aun no has iniciado una conversacion con ${user.name}, envia un mensaje para iniciar una.`}
         />
       ) : (
         props.conversation.map(
@@ -274,7 +165,7 @@ export default function Chat(props) {
             <Text
               key={cm.id}
               author={cm.user_id}
-              className={cm.user_id == userData.id ? 'my_comment' : 'user_comment'}
+              className={cm.user_id == userData.id ? 'my_comment' : userData.role == 1 && cm.user_id == 'Administrador' ? 'my_comment' : 'user_comment'}
               actions={
                 [<span >
                   <ClockCircleOutlined />
@@ -299,7 +190,7 @@ export default function Chat(props) {
                   xs={24}
                   style={{
                     display:"flex",
-                    justifyContent: cm.user_id == userData.id ? 'right' : 'left'
+                    justifyContent: cm.user_id == userData.id ? 'right' : userData.role == 1 && cm.user_id == 'Administrador' ? 'right' : 'left'
                   }}
                 >
                   <span className="span-comment"> {cm.comment} </span>

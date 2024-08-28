@@ -64,7 +64,8 @@ export const API = {
 
         // EPNO -----------------------------------------------------------
         GET_SERVICE_CHATS:  'chats/',
-        GET_MESSAGES:       'messages/'
+        GET_MESSAGES:       'messages/',
+        SEND_MESSAGES:      'messages'
     },
     CUSTOMER:{
         ADD:                '/api/self-service/perfilCustomer',
