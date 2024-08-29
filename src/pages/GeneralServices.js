@@ -43,6 +43,7 @@ export default function GeneralServices() {
       description: formValue.description,
       cat1: formValue.cat1,
       cat2: formValue.cat2 || '',
+			estimatedDueDate: formValue.time,
 			fileBase64: formValue.fileList
 		}
 

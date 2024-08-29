@@ -819,6 +819,7 @@ export default function OrderInfo(props) {
 		description: '',
 		price: 0,
 		dueDate: '',
+    type: '',
 		fileList: [],
 	});
 
@@ -857,9 +858,11 @@ export default function OrderInfo(props) {
 
   // Updates service status -----------------------------------------------
   const onChange = (targetInput) => {
+    console.log(targetInput)
 		setApplication((state) => ({
 			...state,
-			[targetInput.target.name]: targetInput.target.value,
+      
+			[targetInput.target == undefined ? 'type' : targetInput.target.name]: targetInput.target == undefined ? targetInput : targetInput.target.value,
 		}));
 	};
 
@@ -945,9 +948,12 @@ export default function OrderInfo(props) {
       name: userData.bussiness,
       description: application.description,
       price: application.price,
+      changeType: application.type,
       dueDate: application.dueDate,
       fileBase64: application.fileList
     }
+
+    console.log(apply)
 
     OrderService.ApplyService(apply).then(resp => {
       if (resp.data.success === true) {
@@ -1004,7 +1010,7 @@ export default function OrderInfo(props) {
     });
   }
 
-  const chooseProposal = (proposalId, supplierId, supplier, price, sup_price, dueDate, supplierFileUrl) => {
+  const chooseProposal = (proposalId, supplierId, supplier, price, sup_price, changeType, dueDate, supplierFileUrl) => {
     const choosenProp = {
       proposalId: proposalId,
       serviceId: service.id,
@@ -1012,6 +1018,7 @@ export default function OrderInfo(props) {
       supplier: supplier,
       price: price,
       sup_price: sup_price,
+      changeType: changeType,
       dueDate: dueDate,
       supplierFileUrl: supplierFileUrl,
       clientId: service.userId,
@@ -1058,7 +1065,6 @@ export default function OrderInfo(props) {
 		},
 		application
 	}; 
-
 
   const propsProp = (i) => ({
     beforeUpload: async (file) => {
@@ -1381,8 +1387,8 @@ export default function OrderInfo(props) {
             </Row> 
           }
           extra={ <b> {
-            role == 6 ? (!service.sup_price ? 'Precio: por definir' : service.sup_price) 
-            : !service.price ? 'Precio: por definir' : service.price
+            role == 6 ? (!service.sup_price ? 'Precio: por definir' : service.sup_price + ' ' + service.changeType + " $") 
+            : !service.price ? 'Precio: por definir' : service.price + ' ' + service.changeType +  " $"
              
           } </b> }
         >
@@ -1394,8 +1400,10 @@ export default function OrderInfo(props) {
                   <Paragraph > {service.description} </Paragraph>
                 </Col>
                 <Col xs={12} >
-                  <b>Archivo adjunto:</b> <br></br>
-                  <Button href={service.fileUrl} target="blank">Documento</Button>
+                  <b>Fecha de entrega esperada:</b>{" "}
+                  <p style={{ fontSize: 16, margin: 0 }}>
+                    { moment(service.estimatedDueDate).format("DD/MM/YYYY")}
+                  </p>
                 </Col>
                 <Col xs={12} >
                   <b>Fecha de entrega:</b>{" "}
@@ -1403,6 +1411,11 @@ export default function OrderInfo(props) {
                     { service.dueDate === '' ? 'Por definir' : moment(service.dueDate).format("DD/MM/YYYY")}
                   </p>
                 </Col>
+                <Col xs={1224} >
+                  <b>Archivo adjunto:</b> <br></br>
+                  <Button href={service.fileUrl} target="blank">Documento</Button>
+                </Col>
+                
                 { /* INDUSTRY ----------------------------------------------- */}
                 { role == 4 && (service.status == 3 && service.supplier !== '') ? 
                 <>
@@ -1526,7 +1539,12 @@ export default function OrderInfo(props) {
                     type="primary" 
                     icon={<CheckCircleOutlined />} 
                     loading={loadCancelar}
-                    disabled={application.fileList.length < 1}
+                    disabled={application.fileList.length < 1 ||
+                              application.type == '' || 
+                              application.description == '' ||
+                              application.dueDate == '' ||
+                              application.price == 0
+                    }
                     >
                     Enviar cotizacion
                   </Button>
@@ -1549,6 +1567,8 @@ export default function OrderInfo(props) {
               >
                 <Input name="description" onChange={onChange} />
               </Form.Item>
+            </Col>
+            <Col xs={12} style={{marginRight: '8px'}}>
               <Form.Item
                 label="Precio"
                 rules={[
@@ -1561,8 +1581,29 @@ export default function OrderInfo(props) {
               >
                 <Input type="number" name="price"  onChange={onChange} />
               </Form.Item>
+            </Col>
+            <Col xs={6}>
               <Form.Item
-                label="¿Cuándo espera recibir el servicio?"
+                label="Denominacion"
+                rules={[
+                  {
+                    required: true,
+                    message:
+                      "Favor de ingresar una pequeña descripcion de lo deseado",
+                  },
+                ]}
+              > 
+                <Select
+                  style={{ width: 120 }}
+                  name = "type"
+                  onChange={onChange}
+                  options={[{ value: 'MX', label: 'MX' },{ value: 'USA', label: 'USA' }]}
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24}>
+              <Form.Item
+                label="¿Cuándo espera terminar la orden?"
                 rules={[
                   {
                     required: true,
@@ -1578,6 +1619,8 @@ export default function OrderInfo(props) {
                   onChange={onDateChange}
                 />
               </Form.Item>
+            </Col>
+            <Col xs={24}>
               <Upload 
                 {...propsDrag}
                 maxCount={1}
@@ -1631,12 +1674,12 @@ export default function OrderInfo(props) {
                 </Col>
                 <Col xs={24} >
                   <p><b>Precio: 
-                  </b> { role === 4 ? sub.price_epno : sub.price } </p>
+                  </b> { role === 4 ? sub.price_epno : sub.price } {' ' + sub.changeType + ' $'} </p>
                 </Col>
                 {role === 1 ?
                 <Col xs={24} >
                   <p><b>Precio de EPNO: 
-                  </b> {sub.price_epno} </p>
+                  </b> {sub.price_epno + ' ' + sub.changeType + ' $'} </p>
                 </Col>
                 : <></>}
                 {role === 1 && (proposalFilesUrl[i] !== undefined) ?
@@ -1677,7 +1720,7 @@ export default function OrderInfo(props) {
                 <Col xs={24} >
                   <Button 
                     type="primary" 
-                    onClick={() => chooseProposal(sub.id, sub.userId, sub.name, sub.price_epno, sub.price, sub.dueDate, sub.fileUrl_epno)}
+                    onClick={() => chooseProposal(sub.id, sub.userId, sub.name, sub.price_epno, sub.price, sub.changeType, sub.dueDate, sub.fileUrl_epno)}
                     >
                     Aceptar cotizacion</Button>
                 </Col>
