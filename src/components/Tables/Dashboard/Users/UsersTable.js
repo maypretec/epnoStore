@@ -32,7 +32,7 @@ export default function UsersTable(props) {
     {
       title: 'Detalles',
       dataIndex: 'details',
-      // render: () => <Link to={`/orders/${role}`}>Ver más</Link>,
+      //render: () => <Link to={`/orders/wqeqwe}`}>Ver más</Link>,
     },
   ];
 
@@ -52,11 +52,7 @@ export default function UsersTable(props) {
         : user.role == 6 ? 'Proveedor'
         : user.role == 9 ? 'Repartidor' : '',
         details: (
-
-          type == 2 ? (
-            <Link to={`/@p/${user.id}`}>Ver más</Link>
-          ) : type == 1 && (<Link to={`/@p/${user.id}`}>Ver más</Link>)
-
+          user.role == 4 || user.role == 6 ? <Link to={`/@p/${user.id}`}>Ver más</Link> : ""
         )
       }
     )

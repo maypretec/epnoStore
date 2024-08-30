@@ -30,6 +30,7 @@ export default function Profile(props) {
 
   const [openOrders, setOpenOrders] = useState([]);
 	const user = JSON.parse(localStorage.getItem('user'))
+  const [userRole, setUserRole] = useState('')
 
   let token = localStorage.getItem('token');
   let role = localStorage.getItem('role');
@@ -48,28 +49,31 @@ export default function Profile(props) {
   }
 
   useEffect(() => {
+    console.log(id + "--------------")
+    UserService.GetUserById({id: id}).then(resp => {
+      if (resp.data.role == 1) { // GET SERVICES FOR ADMIN
+        OrderService.GetAll().then(response => {
+          setOpenOrders(response.data);
+        }).catch((error) => {});
+      }
+  
+      if (resp.data.role == 4) { // GET SERVICES FOR INDUSTRY
+        OrderService.GetServicesByUser({id: id}).then(response => {
+          setOpenOrders(response.data);
+        }).catch((error) => { });
+      }
+  
+      if (resp.data.role == 6 && user.role_data != undefined) { // GET SERVICES FOR SUPPLIER
+        const categories = { cat1: user.role_data.cat1, cat2: user.role_data.cat2 }
+        OrderService.GetServicesByCategory(categories).then(response => {
+          const serviceUser1 = response.data.filter(ser => ser.status == 2)
+          const serviceUser2 = response.data.filter(ser => ser.status > 3 && ser.supplierId == user.id)
+          const combinedServiceUsers = [...serviceUser1, ...serviceUser2];
+          setOpenOrders(combinedServiceUsers);
+        }).catch((error) => { });
+      }
+    })
     
-    if (role == 1) { // GET SERVICES FOR ADMIN
-      OrderService.GetAll().then(response => {
-        setOpenOrders(response.data);
-      }).catch((error) => {});
-    }
-
-    if (role == 4) { // GET SERVICES FOR INDUSTRY
-      OrderService.GetServicesByUser({id: id}).then(response => {
-        setOpenOrders(response.data);
-      }).catch((error) => { });
-    }
-
-    if (role == 6) { // GET SERVICES FOR SUPPLIER
-      const categories = { cat1: user.role_data.cat1, cat2: user.role_data.cat2 }
-      OrderService.GetServicesByCategory(categories).then(response => {
-        const serviceUser1 = response.data.filter(ser => ser.status == 2)
-        const serviceUser2 = response.data.filter(ser => ser.status > 3 && ser.supplierId == user.id)
-        const combinedServiceUsers = [...serviceUser1, ...serviceUser2];
-        setOpenOrders(combinedServiceUsers);
-      }).catch((error) => { });
-    }
   }, []);
 
   return (

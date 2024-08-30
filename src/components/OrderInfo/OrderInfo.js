@@ -1387,8 +1387,8 @@ export default function OrderInfo(props) {
             </Row> 
           }
           extra={ <b> {
-            role == 6 ? (!service.sup_price ? 'Precio: por definir' : service.sup_price + ' ' + service.changeType + " $") 
-            : !service.price ? 'Precio: por definir' : service.price + ' ' + service.changeType +  " $"
+            role == 6 ? (!service.sup_price ? 'Precio: por definir' : " $ " + service.sup_price + ' ' + service.changeType ) 
+            : !service.price ? 'Precio: por definir' :   " $ " +  service.price + ' ' + service.changeType
              
           } </b> }
         >
@@ -1568,7 +1568,7 @@ export default function OrderInfo(props) {
                 <Input name="description" onChange={onChange} />
               </Form.Item>
             </Col>
-            <Col xs={12} style={{marginRight: '8px'}}>
+            <Col xs={24} style={{marginRight: '8px'}}>
               <Form.Item
                 label="Precio"
                 rules={[
@@ -1582,7 +1582,7 @@ export default function OrderInfo(props) {
                 <Input type="number" name="price"  onChange={onChange} />
               </Form.Item>
             </Col>
-            <Col xs={6}>
+            <Col xs={24}>
               <Form.Item
                 label="Denominacion"
                 rules={[
@@ -1674,12 +1674,12 @@ export default function OrderInfo(props) {
                 </Col>
                 <Col xs={24} >
                   <p><b>Precio: 
-                  </b> { role === 4 ? sub.price_epno : sub.price } {' ' + sub.changeType + ' $'} </p>
+                  </b> {  role === 4 ? ' $ ' +  sub.price_epno : ' $ ' +  sub.price + ' ' + sub.changeType } </p>
                 </Col>
                 {role === 1 ?
                 <Col xs={24} >
                   <p><b>Precio de EPNO: 
-                  </b> {sub.price_epno + ' ' + sub.changeType + ' $'} </p>
+                  </b> { sub.price_epno != undefined ? ' $ ' + sub.price_epno + ' ' + sub.changeType : 'Por definir'} </p>
                 </Col>
                 : <></>}
                 {role === 1 && (proposalFilesUrl[i] !== undefined) ?

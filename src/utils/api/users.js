@@ -139,7 +139,7 @@ const UserService = {
   GetUserById,
   GetAll,
   UpdateStatus,
-   SaveToken
+  SaveToken
 };
 
 export default UserService;

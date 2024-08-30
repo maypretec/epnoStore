@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 
 export default function OrderByEmployee(props) {
   const { ordenesPro, type } = props;
-  console.log(ordenesPro)
 
   const columns = [
     {
