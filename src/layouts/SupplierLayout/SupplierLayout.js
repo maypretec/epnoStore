@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 // import '../../../../node_modules/antd/dist/antd.css';
 import "./SupplierLayout.scss";
-import { Layout, Menu, Row, Col, Input, Avatar, Badge, Button, Dropdown, Spin, Empty, Divider } from 'antd';
+import { notification, Layout, Menu, Row, Col, Input, Avatar, Badge, Button, Dropdown, Spin, Empty, Divider } from 'antd';
+import { BellOutlined } from '@ant-design/icons';
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
@@ -39,6 +40,8 @@ export default function LayoutPage(props) {
   let token = localStorage.getItem('token');
   let role = localStorage.getItem('role');
   let history = useNavigate();
+  const [isNotificationEnabled, setNotificationEnabled] = useState(Notification.permission === 'granted');
+
   const [notifications, setNotifications] = useState({
     notify: [],
     total: 0,
@@ -52,8 +55,8 @@ export default function LayoutPage(props) {
     NotificationService.GetNotifications(user.id).then(resp => {
       console.log(resp.data)
       setNotifications({
-        notify: resp.data,
-        total: resp.data.length,
+        notify: resp.data || [],
+        total: resp.data.length || 0,
         user_id: user.id
       })
     })
@@ -67,23 +70,45 @@ export default function LayoutPage(props) {
           description: message.data.body || 'You have a new notification', // Ensure body is accessible
           status: "info",
         });
-        console.log('Foreground notification:', message);
       } else {
         // Background: Use native notification
         sendNativeNotification({
           title: message.data.title || 'Notification', // Ensure title is accessible from message.data
           body: message.data.body || 'You have a new notification',
         });
-        console.log('Background notification:', message);
       }
     });
   }, [isForeground]);
+
+  const handleEnableNotifications = () => {
+    
+    if (Notification.permission === 'denied') {
+      notification.error({
+        message: 'Notificaciones bloqueadas',
+        description: 'Las notificaciones se encuentran bloquedas. Porfavor, habilitalas en las configuraciones del navegador.',
+        placement: 'topRight',
+      });
+      return;
+    }
+
+    Notification.requestPermission().then(permission => {
+      if (permission === 'granted') {
+        setNotificationEnabled(true);
+        notification.success({
+          message: 'Notificaciones habilitadas',
+          description: 'Las notificaciones han sido habilitadas exitosamente.',
+          placement: 'topRight',
+        });
+      }
+    });
+  };
 
   const logout = () => {
     history('/')
     localStorage.removeItem('token');
     localStorage.removeItem('role');
-
+    localStorage.removeItem('user');
+    localStorage.removeItem('fcm');
   }
 
   const ChangeNotification = (id) => {
@@ -99,25 +124,21 @@ export default function LayoutPage(props) {
   const allNotifications = (
     <Menu >
       <Menu.ItemGroup title="Notificaciones">
-        {/*notifications.notify == '' ? (
+        {notifications.total == 0 ? (
           <Empty description="Sin notificaciones" image={Empty.PRESENTED_IMAGE_SIMPLE} />
-
         ) :
           notifications.notify.map((ntf) => (
             <Menu.Item key={ntf.id} style={{ backgroundColor: ntf.seen == 0 ? "#F7F7F7" : "", fontWeight: ntf.seen == 0 ? "bold" : "normal" }} icon={ntf.seen == 0 ? <EyeInvisibleOutlined style={{ fontSize: 20 }} /> : <EyeOutlined style={{ fontSize: 20 }} />}>
 
-              <a href={`/#/orders/details/${ntf.table_id}`} onClick={() => ChangeNotification(ntf.id)}>{ntf.title}-{ntf.description}</a>
+              <a  onClick={() => {}}>{ntf.title}-{ntf.description}</a>
             </Menu.Item>
           ))
-        */}
-        <Row justify="center">
-          <Divider className="divider_link" />
-          <Col > <Link to={`/@a-@n`}>Ver más</Link></Col>
-        </Row>
+        }
       </Menu.ItemGroup>
     </Menu>
 
   );
+
   // if (role == '') {
   //   return (
   //     <Row justify='center'>
@@ -159,20 +180,28 @@ export default function LayoutPage(props) {
             <Row>
               <Col sm={6} md={24}>
                 <Menu className="site-layout-sub-header-background" mode="horizontal" defaultSelectedKeys={['2']}>
-                  <Menu.Item key="19" >
+                  <Menu.Item key="18" >
                   <a href={user.id !== ''?(`/#/@p/${user.id}`):(null)} disabled={user.id == '' && true}>
                         <Avatar style={{ backgroundColor: '#40a9ff' }} icon={<UserOutlined />} />
                       </a>
                   </Menu.Item>
-                  {/*
-                  <Menu.Item key="20" >
-                    <Dropdown menu={allNotifications} placement="bottom" overflow='scroll' >
-                      <Badge count={notifications.total} overflowCount={999} style={{ backgroundColor: '#95de64' }}>
-                        <NotificationTwoTone twoToneColor="#ff4d4f" />
-                      </Badge>
-                    </Dropdown>
+                  {
+                  <Menu.Item key="19" >
+                  <Dropdown overlay={allNotifications} placement="bottomCenter" overflow='scroll' >
+                    <Badge count={notifications.total} overflowCount={999} style={{ backgroundColor: '#95de64' }}>
+                      <NotificationTwoTone twoToneColor="#ff4d4f" />
+
+                    </Badge>
+                  </Dropdown>
+                </Menu.Item>
+                  }
+                  <Menu.Item key="20">
+                    <Button
+                      onClick={handleEnableNotifications}
+                      type="text"
+                      icon={<BellOutlined style={{ color: !isNotificationEnabled ? 'red' : 'green' }} />}
+                    />
                   </Menu.Item>
-                  */}
                   <Menu.Item key="21" >
                     <Button onClick={() => logout()} type="text">
                       Salir

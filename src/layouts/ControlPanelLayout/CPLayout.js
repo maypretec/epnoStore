@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import "./CPLayout.scss";
-import { Layout, Menu, Row, Col, Input, Avatar, Button, Badge, Dropdown, Modal, Form, Spin, message, Empty, Divider } from 'antd';
+import { notification, Layout, Menu, Row, Col, Input, Avatar, Button, Badge, Dropdown, Modal, Form, Spin, message, Empty, Divider } from 'antd';
 import { Link, useNavigate } from "react-router-dom";
+import { BellOutlined } from '@ant-design/icons';
+
 import {
   UsergroupAddOutlined,
   MoneyCollectOutlined,
@@ -49,6 +51,8 @@ export default function CPLayout(props) {
     <Button className="btn btn-info">Ver carrito <EyeOutlined /></Button>
   </div>;
   const [load, setLoad] = useState(false)
+  const [isNotificationEnabled, setNotificationEnabled] = useState(Notification.permission === 'granted');
+
   const [notifications, setNotifications] = useState({
     notify: [],
     total: 0,
@@ -97,6 +101,29 @@ export default function CPLayout(props) {
     });
   }, [isForeground]);
   
+  const handleEnableNotifications = () => {
+    
+    if (Notification.permission === 'denied') {
+      notification.error({
+        message: 'Notificaciones bloqueadas',
+        description: 'Las notificaciones se encuentran bloquedas. Porfavor, habilitalas en las configuraciones del navegador.',
+        placement: 'topRight',
+      });
+      return;
+    }
+
+    Notification.requestPermission().then(permission => {
+      if (permission === 'granted') {
+        setNotificationEnabled(true);
+        notification.success({
+          message: 'Notificaciones habilitadas',
+          description: 'Las notificaciones han sido habilitadas exitosamente.',
+          placement: 'topRight',
+        });
+      }
+    });
+  };
+
 
   let history = useNavigate();
 
@@ -126,7 +153,8 @@ export default function CPLayout(props) {
     history('/')
     localStorage.removeItem('token');
     localStorage.removeItem('role');
-
+    localStorage.removeItem('user');
+    localStorage.removeItem('fcm');
   }
 
   const allNotifications = (
@@ -138,14 +166,11 @@ export default function CPLayout(props) {
           notifications.notify.map((ntf) => (
             <Menu.Item key={ntf.id} style={{ backgroundColor: ntf.seen == 0 ? "#F7F7F7" : "", fontWeight: ntf.seen == 0 ? "bold" : "normal" }} icon={ntf.seen == 0 ? <EyeInvisibleOutlined style={{ fontSize: 20 }} /> : <EyeOutlined style={{ fontSize: 20 }} />}>
 
-              <a href={`/orders/details/${ntf.table_id}`} onClick={() => ChangeNotification(ntf.id)}>{ntf.title}-{ntf.description}</a>
+              <a onClick={() => {}}>{ntf.title}-{ntf.description}</a>
             </Menu.Item>
           ))
         }
-        <Row justify="center">
-          <Divider className="divider_link" />
-          <Col > <Link to={`/@a-@n`}>Ver más</Link></Col>
-        </Row>
+       
       </Menu.ItemGroup>
     </Menu>
   );
@@ -335,8 +360,10 @@ export default function CPLayout(props) {
                         <Avatar style={{ backgroundColor: '#40a9ff' }} icon={<UserOutlined />} />
                       </a>
                     </Menu.Item> */}
+                    
+                    
                     {
-                    <Menu.Item key="20" >
+                    <Menu.Item key="17" >
                       <Dropdown overlay={allNotifications} placement="bottomCenter" >
                         <Badge count={notifications.total} overflowCount={999} style={{ backgroundColor: '#95de64' }}>
                           <NotificationTwoTone twoToneColor="#ff4d4f" />
@@ -344,6 +371,15 @@ export default function CPLayout(props) {
                       </Dropdown>
                     </Menu.Item>
                     }
+                    <Menu.Item key="18" >
+                    </Menu.Item>
+                    <Menu.Item key="19" >
+                      <Button
+                        onClick={handleEnableNotifications}
+                        type="text"
+                        icon={<BellOutlined style={{ color: !isNotificationEnabled ? 'red' : 'green' }} />}
+                      />
+                    </Menu.Item>
                     <Menu.Item key="21" >
                       <Button onClick={() => logout()} type="text">
                         Salir

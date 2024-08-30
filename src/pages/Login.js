@@ -146,7 +146,7 @@ export default function Login() {
               </Form.Item>
 
 
-              <Link className='login-form-forgot' to='/@r-@p-@l'>¿Olvidaste tu contraseña?</Link>
+              {/* <Link className='login-form-forgot' to='/@r-@p-@l'>¿Olvidaste tu contraseña?</Link>*/}
             </Form.Item>
             <Form.Item shouldUpdate={true}>
               {() => (
