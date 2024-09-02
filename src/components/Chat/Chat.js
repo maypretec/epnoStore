@@ -37,8 +37,7 @@ import { BASE_URL } from "../../utils/constants";
 import OrderService from "../../utils//api/orders";
 import ChatService from "../../utils/api/chat";
 export default function Chat(props) {
-  const { data, reloadChat, setReloadChat, goBottom, user, callApi, op } = props;
-
+  const {reloadChat, setReloadChat, goBottom, user, callApi, service } = props;
   const userData = JSON.parse(localStorage.getItem('user'))
 
 
@@ -68,13 +67,11 @@ export default function Chat(props) {
       }
 
       setLoading(true)
-      console.log(message)
 
       ChatService.SendMessage(data_message).then(resp => {
         setInputValue("");
         setLoading(false)
         setReloadChat(!reloadChat)
-        console.log(resp.data)
 
         if (resp.data.success === true) {
           callApi(user.chatId, user.id);
@@ -100,8 +97,10 @@ export default function Chat(props) {
       <Button
         type="link"
         loading={loading}
+        disabled = {userData.role == 1 && user.type == 2}
       >
         <SendOutlined
+        
           onClick={onFinish}
           style={{
             fontSize: 20,
@@ -142,12 +141,13 @@ export default function Chat(props) {
             name="inputValue"
             size="large"
             allowClear
+            disabled = {userData.role == 1 && user.type == 2}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={keyPress}
             value={inputValue}
             bordered={false}
             suffix={suffix}
-            placeholder="Agregar comentario"
+            placeholder= {userData.role == 1 && user.type == 2 ? 'No puedes participar en este chat' : "Agregar comentario"}
             
           />
         </Form>,
@@ -165,7 +165,9 @@ export default function Chat(props) {
             <Text
               key={cm.id}
               author={cm.user_id}
-              className={cm.user_id == userData.id ? 'my_comment' : userData.role == 1 && cm.user_id == 'Administrador' ? 'my_comment' : 'user_comment'}
+              className={cm.user_id == userData.id ? 'my_comment' : 
+                         userData.role == 1 && cm.user_id == 'Administrador' ? 'my_comment' :
+                         userData.role == 1 && user.type == 2 && service.userId != cm.user_id ? 'my_comment' : 'user_comment'}
               actions={
                 [<span >
                   <ClockCircleOutlined />
@@ -190,7 +192,9 @@ export default function Chat(props) {
                   xs={24}
                   style={{
                     display:"flex",
-                    justifyContent: cm.user_id == userData.id ? 'right' : userData.role == 1 && cm.user_id == 'Administrador' ? 'right' : 'left'
+                    justifyContent: cm.user_id == userData.id ? 'right' : 
+                    userData.role == 1 && cm.user_id == 'Administrador' ? 'right' :
+                    userData.role == 1 && user.type == 2 && service.userId != cm.user_id ? 'right' : 'left'
                   }}
                 >
                   <span className="span-comment"> {cm.comment} </span>

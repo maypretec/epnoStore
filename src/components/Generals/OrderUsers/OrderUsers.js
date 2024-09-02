@@ -4,9 +4,8 @@ import Chat from "../../Chat";
 import ChatService from "../../../utils/api/chat";
 
 export default function OrderUsers(props) {
-  const { data, op, chats } = props;
-  console.log((props))
-  let service = op == 1 ? data.service.id : data.queja.service_id;
+  const { data, op, chats, service } = props;
+  
   const [visible, setVisible] = useState(false);
   const [user, setUser] = useState({
     id: "",
@@ -48,7 +47,7 @@ export default function OrderUsers(props) {
 
 
   return (
-    <Card title="Usuarios" style={{ height: 260, overflow: "auto", }} >
+    <Card title="Chats" style={{ height: 260, overflow: "auto", }} >
       {/* TODO: validar usuarios. Si agente; todos. Si cliente; agente. Si proveedor; agente */}
       <List
         dataSource={chats}
@@ -62,7 +61,8 @@ export default function OrderUsers(props) {
                   chat.type, 
                   chat.type === 1 && role == 1 ? chat.users[0].user_name : 
                   chat.type === 2 && role == 4 ? chat.users[0].user_name : 
-                  chat.type === 2 && role == 6 ? chat.users[1].user_name : 'Administrador', 
+                  chat.type === 2 && role == 6 ? chat.users[1].user_name : 
+                  chat.type === 2 && role == 1 ? 'Cliente - Provedor' : 'Administrador',
                   chat.type === 1 && role != 1 ? chat.users[0].user_id : 
                   chat.type === 2 && role == 6 ? chat.users[0].user_id : 
                   chat.type === 2 && role == 4 ? chat.users[1].user_id : 'Administrador',
@@ -71,12 +71,13 @@ export default function OrderUsers(props) {
                   {
                   chat.type === 1 && role == 1 ? chat.users[0].user_name : 
                   chat.type === 2 && role == 4 ? chat.users[0].user_name : 
+                  chat.type === 2 && role == 1 ? 'Cliente - Provedor' : 
                   chat.type === 2 && role == 6 ? chat.users[1].user_name : 'Administrador' 
                   }
 									
                 </a>
               }
-              description={chat.type === 2 && role == 4 ? 'Proovedor' : chat.type === 2 && role == 6 ? 'Industria' :  'EPNO'}
+              description={chat.type === 2 && role == 4 ? 'Proovedor' : chat.type === 2 && role == 1 ? 'Cliente - Provedor' : chat.type === 2 && role == 6 ? 'Industria' :  'EPNO'}
             />
           </List.Item>
         )}
@@ -102,6 +103,7 @@ export default function OrderUsers(props) {
               <Chat
 								chat = {chats}
                 data={data}
+                service= {service}
                 conversation={messages}
                 callApi={callApi}
                 user={user}

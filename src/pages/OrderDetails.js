@@ -416,11 +416,9 @@ export default function OrderDetails() {
     ChatService.ServiceChats(id).then(resp => {
       let filteredChats = [];
     
-      if (role == 1) {
-        filteredChats = resp.data.data.filter(chat => chat.type === 1);
-      } else if (role == 4) {
+      if (role == 4) {
         filteredChats = resp.data.data.filter(chat => chat.type === 2);
-      } else if (role == 6) {
+      } else if (role == 6 || role == 1) {
         filteredChats = resp.data.data; // No filtramos, ya que se quieren ambos tipos.
       }
       console.log(filteredChats)
@@ -462,7 +460,7 @@ export default function OrderDetails() {
               <Row gutter={[12, 12]}>
                 {
                 <Col xs={24}>
-                  <OrderUsers chats={chats} data={order} token={token} op={1} />
+                  <OrderUsers chats={chats} data={order} service={service} token={token} op={1} />
                 </Col>
                 }
                 <Col xs={24}>
