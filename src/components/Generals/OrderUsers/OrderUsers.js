@@ -62,7 +62,7 @@ export default function OrderUsers(props) {
                   chat.type === 1 && role == 1 ? chat.users[0].user_name : 
                   chat.type === 2 && role == 4 ? chat.users[0].user_name : 
                   chat.type === 2 && role == 6 ? chat.users[1].user_name : 
-                  chat.type === 2 && role == 1 ? 'Cliente - Provedor' : 'Administrador',
+                  chat.type === 2 && role == 1 ? 'Cliente - Proveedor' : 'Administrador',
                   chat.type === 1 && role != 1 ? chat.users[0].user_id : 
                   chat.type === 2 && role == 6 ? chat.users[0].user_id : 
                   chat.type === 2 && role == 4 ? chat.users[1].user_id : 'Administrador',
@@ -71,13 +71,13 @@ export default function OrderUsers(props) {
                   {
                   chat.type === 1 && role == 1 ? chat.users[0].user_name : 
                   chat.type === 2 && role == 4 ? chat.users[0].user_name : 
-                  chat.type === 2 && role == 1 ? 'Cliente - Provedor' : 
+                  chat.type === 2 && role == 1 ? 'Cliente - Proveedor' : 
                   chat.type === 2 && role == 6 ? chat.users[1].user_name : 'Administrador' 
                   }
 									
                 </a>
               }
-              description={chat.type === 2 && role == 4 ? 'Proovedor' : chat.type === 2 && role == 1 ? 'Cliente - Provedor' : chat.type === 2 && role == 6 ? 'Industria' :  'EPNO'}
+              description={chat.type === 2 && role == 4 ? 'Proovedor' : chat.type === 2 && role == 1 ? 'Cliente - Proveedor' : chat.type === 2 && role == 6 ? 'Industria' :  'EPNO'}
             />
           </List.Item>
         )}

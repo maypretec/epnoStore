@@ -86,6 +86,7 @@ export default function ClientInfo(props) {
                   shape="square"
                 />
               </Col>
+              {/*
               <Col sm={24} style={{ alignItems: "center" }}>
                 <Upload {...propsFile} maxCount={1} accept=".png,.jpg,.jpeg">
                   <Button icon={<UploadOutlined />}>
@@ -95,6 +96,8 @@ export default function ClientInfo(props) {
                   </Button>
                 </Upload>
               </Col>
+               */}
+              
             </Row>
           </Col>
           <Col xs={24} md={12}>
@@ -127,11 +130,14 @@ export default function ClientInfo(props) {
                   >{`${profile.colony} ${profile.postal_code},${profile.city},${profile.state}, ${profile.country}`}</Title>
                 </Text>
               </Col>
-              <Col xs={24} md={10}>
+              {/* 
+                <Col xs={24} md={10}>
                 <Text>
                   Total :<Title level={3}>12,654</Title>
                 </Text>
               </Col>
+              */}
+              
               <Col xs={24} md={14}>
                 {(profile.role_id == 1 ||
                   profile.role_id == 2 ||
