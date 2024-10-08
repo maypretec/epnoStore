@@ -4,16 +4,23 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Estatus de las ordenes
 1: La orden se encuentra siendo verificada por algun administrador.
+
 2: La orden ha sido verificada. La orden ha sido enviada a los proveedores para su cotización. El administrador tiene que verficar las ordenes y ordenarlas segun las necesidades del cliente. Por ultimo, el administrador envia las cotizaciones.
+
 3: El cliente debe de elegir una cotizacion. El proveedor elegido debe de subir una orden de compra. El adminstrador debe de generar otra orden de compra teniendo en cuenta la PO del proveedor.
+
 4: El proveedor debe empezar a elaborar el servicio.
+
 5: EPNO debe de verificar que el servicio haya sido elaborado correctamente.
+
 6: El pedido debe ser entregado o enviado.
+
 7: El proceso ha terminado.
 
 8: La orden de compra ha sido cancelada. El registro sera guardado y archivado. Todos los participantes seran notificados por medio de un correo y en la aplicacion.
 
 -- PROXIMAMENTE -- 
+
 9: Se inicio una queja del servicio.
 
 ## Available Scripts
