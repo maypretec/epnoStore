@@ -43,8 +43,11 @@ import SeguimientoQuejas from "./pages/SeguimientoQuejas";
 import GetMerchant from "./pages/Merchants/GET";
 import NewMerchant from "./pages/Merchants/POST";
 
+
+
 import store from "./store";
 import { Provider } from "react-redux";
+import RegisterConfirmPage from "./pages/RegisterConfirm/RegisterConfirm";
 
 function App() {
   return (
@@ -53,6 +56,7 @@ function App() {
         <Routes>
           <Route path="" exact={true} element={<Login />} />
           <Route path="/register" exact={true} element={<Register />} />
+          <Route path="/register/confirm" exact={true} element={<RegisterConfirmPage />} />
           <Route path="reset">
             <Route
               path="password/:tokenUrl"

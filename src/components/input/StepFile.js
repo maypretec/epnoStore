@@ -10,7 +10,7 @@ export default function StepFile(props) {
 			const reader = new FileReader();
 			reader.readAsDataURL(file);
 			reader.onload = () => {
-				const base64String = reader.result.split(',')[1];
+				const base64String = reader.result;
 				resolve(base64String);
 			};
 			reader.onerror = (error) => reject(error);

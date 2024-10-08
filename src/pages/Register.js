@@ -264,11 +264,7 @@ export default function RegisterX() {
       .then((response) => {
         console.log(response)
         if (response.data.success == true) {
-          message.success(
-            "Registro creado correctamente!"
-          ).then(
-            history('/')
-          );
+          history('/register/confirm')
         } else {
           setError(true);
           setLoad(false);

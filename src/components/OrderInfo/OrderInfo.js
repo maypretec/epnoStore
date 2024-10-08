@@ -1047,7 +1047,7 @@ export default function OrderInfo(props) {
 			const reader = new FileReader();
 			reader.readAsDataURL(file);
 			reader.onload = () => {
-				const base64String = reader.result.split(',')[1];
+				const base64String = reader.result;
 				resolve(base64String);
 			};
 			reader.onerror = (error) => reject(error);
@@ -1108,9 +1108,9 @@ export default function OrderInfo(props) {
 
   const adminStatusLogs = [
     'Verifica que el cliente haya subido correctamente los datos de cotizacion. Si fue asi, envia a cotizacion el servicio.',
-    'Espere a que los provedores cotizen el servicio. Una vez se tengan las cotizaciones deseadas, asigna un lugar a los provedores, actualiza el precio y archivo de cotizacion a cada uno. Al finalizar envia las cotizaciones a el cliente.',
-    'El cliente se encuentra seleccionando la cotizacion. Una vez seleccione la cotizacion deseada y el cliente envie la orden de compra, debes de generar una orden de compra para enviar al provedor.',
-    'El provedor se encuentra elaborando el servicio',
+    'Espere a que los proveedores cotizen el servicio. Una vez se tengan las cotizaciones deseadas, asigna un lugar a los proveedores, actualiza el precio y archivo de cotizacion a cada uno. Al finalizar envia las cotizaciones a el cliente.',
+    'El cliente se encuentra seleccionando la cotizacion. Una vez seleccione la cotizacion deseada y el cliente envie la orden de compra, debes de generar una orden de compra para enviar al proveedor.',
+    'El proveedor se encuentra elaborando el servicio',
     'Verifica que el servicio solicitado sea el correcto para el cliente.',
     'El servicio se encuentra en camino o listo para recoger. Espera a que el cliente confirme que el pedido ya ha sido entregado.',
     'El servicio a concluido.'
@@ -1154,7 +1154,7 @@ export default function OrderInfo(props) {
           </Col>
 
           {/* BOTON DE SEGUIMIENTO DE PROCESOS */}        
-          <Col xs={24} md={6} xl={4} style={{ textAlign: "center" }}>
+          <Col xs={24} md={6} xl={4} style={{ textAlign: "center" }}>     
 
           { /* Administrador */
           role === 1 ? 
@@ -1291,7 +1291,7 @@ export default function OrderInfo(props) {
           <Row gutter={[12, 12]} align="middle">
             <Col xs={24}>
               <Row gutter={[12, 12]}>
-                <Col xs={24}>
+                <Col xs={20}>
                   <label className="gris-bold">Estatus del servicio: </label> <br />
                   {
                     role == 1 ?
@@ -1302,6 +1302,23 @@ export default function OrderInfo(props) {
                     <b>{supplierStatusLogs[service.status - 2]} </b>
                     : <b>{adminStatusLogs[service.status]}</b>
                   }
+                </Col>
+                <Col xs={4} style={{margin: 'auto'}}>
+                  <Popconfirm
+                    title="¿Seguro que deseas cancelar la orden?"
+                    // TODO: Cancelar orden de compra
+                    onConfirm={() => {console.log('Cancelar orden de compra ')}}
+                    okText="Si"
+                    cancelText="No"
+                  >
+                    <Button
+                      danger
+                      loading={loadServiceChangeStep}
+                      disabled={details.subservices == "" && true}
+                    >
+                      Cancelar orden
+                    </Button>
+                  </Popconfirm>
                 </Col>
               </Row>
             </Col>
@@ -1467,7 +1484,7 @@ export default function OrderInfo(props) {
                 <>
                   <Divider />
                   <Col xs={24}>
-                    <b>Subir orden de compra para provedor</b>
+                    <b>Subir orden de compra para proveedor</b>
                   </Col>
                   <Col xs={24}>
                     <Upload {...propsPOSupplier}>
@@ -1492,7 +1509,7 @@ export default function OrderInfo(props) {
                 <>
                   <Divider />
                   <Col xs={24}>
-                    <b>Ver orden de compra para provedor</b><br></br>
+                    <b>Ver orden de compra para proveedor</b><br></br>
                     <Button href={service.supplier.supplierPOFileUrl} target="blank">Documento</Button>
                   </Col>
                 </>

@@ -226,7 +226,7 @@ export default function SubserviceComplaint(props) {
                                                     <Button type="dashed" danger
                                                         loading={loadAgregarSupp}
                                                         onClick={() => AddSuppliers(details.service.id, subservice.subservice_id)}
-                                                    >Agregar provedores</Button>
+                                                    >Agregar proveedores</Button>
                                                 </Col>
                                                 <Col xs={24} md={12} lg={6} xl={5}>
                                                     <Button type="dashed"
