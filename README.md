@@ -1,6 +1,5 @@
-# Getting Started with Create React App
+# Documentación de la aplicación
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Estatus de las ordenes
 1: La orden se encuentra siendo verificada por algun administrador.

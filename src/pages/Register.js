@@ -33,7 +33,6 @@ export default function RegisterX() {
   const [logo, setLogo] = useState({
     logoList: [],
   });
-  const [base64Image, setBase64Image] = useState('');
 
   const [disabled, setDisabled] = useState({
     stateOrg: false,
@@ -215,9 +214,6 @@ export default function RegisterX() {
     console.log(values)
     let base64Logo = values.logo.fileList[0].thumbUrl
 
-    if (base64Logo.startsWith('data:image')) {
-      base64Logo = base64Logo.split(',')[1];
-    }
     const formData = new FormData();
     formData.append("name", values.name);
     formData.append("email", values.email);

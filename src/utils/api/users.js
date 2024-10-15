@@ -125,6 +125,14 @@ function SaveToken(data) {
   });
 }
 
+function ChangeLogo(data) {
+  return request({
+    url: API.USER.CHANGE_LOGO,
+    method: requestMethods.POST,
+    data: data
+  });
+}
+
 const UserService = {
   All,
   Change_User,
@@ -139,7 +147,8 @@ const UserService = {
   GetUserById,
   GetAll,
   UpdateStatus,
-  SaveToken
+  SaveToken, 
+  ChangeLogo
 };
 
 export default UserService;

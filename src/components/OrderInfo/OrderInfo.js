@@ -1188,10 +1188,9 @@ export default function OrderInfo(props) {
             </Popconfirm>
 
             : (service.status === 7 || service.status === 8) ?
-              <Button type="dashed" danger /*onClick={() => }*/ >
+              /*<Button type="dashed" danger /*onClick={() =>  >
                   Seguir proceso
-              </Button>
-
+              </Button>*/<></>
             : service.status === 5 ?
             <Popconfirm
                 title="¿Seguro que desea confirmar esta orden como lista?"

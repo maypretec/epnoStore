@@ -50,7 +50,8 @@ export const API = {
         GET_USER_BY_ID:     'users/getById',
         ALL:                'users/',
         UPDATE_STATUS:      'users/updateStatus',
-        SAVE_TOKEN:         'users/save-token'
+        SAVE_TOKEN:         'users/save-token',
+        CHANGE_LOGO:        'users/change-logo'
         
     },
     NOTIFICATIONS:{
