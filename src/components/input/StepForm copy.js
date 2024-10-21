@@ -80,13 +80,35 @@ export default function StepGeneralServiceForm(props) {
 				>
 					<Row>
 						<Col xs={24}>
-							<Form.Item label="Titulo de la orden"
-								rules={[ { required: true, message: "Favor de ingresar un titulo para su proyecto", },]}>
-								<Input name="title" onChange={onChange} />
+							<Form.Item
+								label="¿Que servicio necesita?"
+								rules={[
+									{
+										required: true,
+										message:
+											"Favor de ingresar un titulo para su proyecto",
+									},
+								]}
+							>
+								<Input
+									name="title"
+									onChange={onChange}
+								/>
 							</Form.Item>
-							<Form.Item label="Descripcion de lo deseado"
-								rules={[{ required: true, message: "Favor de ingresar una pequeña descripcion de lo deseado", }]}>
-								<Input.TextArea name="description" onChange={onChange}/>
+							<Form.Item
+								label="Descripcion de lo deseado"
+								rules={[
+									{
+										required: true,
+										message:
+											"Favor de ingresar una pequeña descripcion de lo deseado",
+									},
+								]}
+							>
+								<Input.TextArea
+									name="description"
+									onChange={onChange}
+								/>
 							</Form.Item>
 						</Col>
 					</Row>

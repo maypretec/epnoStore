@@ -138,6 +138,10 @@ export default function GeneralServices() {
 							{steps[current].content}
 						</div>
 
+						<div className='steps-content'>
+							{steps[current].content}
+						</div>
+
 						<Button
 							type='primary'
 							onClick={onFinish}
