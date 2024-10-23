@@ -18,9 +18,9 @@ export default function GeneralServices() {
 	const [formValue, setFormValue] = useState({
 		title: '',
 		time: '',
-		cat1: null,
-		cat2: null,
-		services: [ {title: '', description: '', file: ''} ]
+		cat1: 0,
+		cat2: 0,
+		services: []
 	});
 
 	const [modal, setModal] = useState({
@@ -30,16 +30,6 @@ export default function GeneralServices() {
 		description: '',
 		req_id: '',
 	});
-
-	function isFormIncomplete() {
-    if (!formValue.title || !formValue.time || !formValue.cat1) { return true; }
-
-    for (let service of formValue.services) {
-      if (!service.title || !service.description || !service.file) { return true; }
-    }
-
-    return false;
-}
 
 	const onFinish = () => {
 		setLoading(true);
@@ -67,8 +57,8 @@ export default function GeneralServices() {
 						open: true,
 						type: 'success',
 						title: '¡Solicitud enviada con exito!',
-						description: 'Tu numero de orden es: ' + response.data.order_id + ', podras ver tu pedido, en apartado de ORDENES .',
-						req_id: response.data.order_id,
+						description: 'Tu numero de orden es: ' + response.data.purchase_order + ', podras ver tu pedido, en apartado de ORDENES .',
+						req_id: response.data.service_id,
 					});
 					setLoading(false);
 				});
@@ -89,8 +79,39 @@ export default function GeneralServices() {
 				title: 'Algo salió mal',
 				req_id: error,
 			});
-			setLoading(false);
 		})
+		/*OrderService.NewService(service)
+			.then((response) => {
+				if (response.data.success === true) {
+					setTimeout(() => {
+						setModal({
+							open: true,
+							type: 'success',
+							title: '¡Solicitud enviada con exito!',
+							description: 'Tu numero de orden es: ' + response.data.purchase_order + ', podras ver tu pedido, en apartado de ORDENES .',
+							req_id: response.data.service_id,
+						});
+						setLoading(false);
+					});
+					setFormValue({
+						title: '',
+						description: '',
+						time: '',
+						fileList: [],
+					});
+				} else {
+					setLoading(false);
+				}
+			})
+			.catch((error) => {
+				setModal({
+					open: true,
+					type: 'error',
+					description: 'Revisa tus datos e intentalo de nuevo',
+					title: 'Algo salió mal',
+					req_id: error,
+				});
+			});*/
 	};
 	
 	const onCancel = (target) => {
@@ -155,7 +176,7 @@ export default function GeneralServices() {
 							type='primary'
 							onClick={onFinish}
 							loading={loading}
-							disabled={isFormIncomplete()}
+							
 						>
 							Subir y Finalizar
 						</Button>

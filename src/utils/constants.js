@@ -83,6 +83,9 @@ export const API = {
         OPEN:               '/api/self-service/get_all_orders/1',
         ADD_REQUEST:        '/api/self-service/add_request',
         DETAILS:            '/api/self-service/get_order/',
+
+        NEW:                'orders/new',
+
         SERVICES: {
             CHANGE_INFO:        '/api/self-service/change_service_info',
             CHANGE_STEP:        '/api/self-service/service_change_step',

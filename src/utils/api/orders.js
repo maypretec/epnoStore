@@ -1,6 +1,17 @@
 import request from "../services/HTTPClient";
 import { requestMethods, API } from "../constants";
 
+// MAYPRETEC --------------------------------------------------------------------------------
+// ORDERS:
+
+function NewOrder(body) {
+  return request({
+    url: API.ORDERS.NEW,
+    method: requestMethods.POST,
+    data: body
+  });
+}
+
 function OpenOrders() {
   return request({
     url: API.ORDERS.OPEN,
@@ -367,6 +378,8 @@ const OrderService = {
   SendOrderComment,
   GeneralServices,
   ChangeStep,
+
+  NewOrder,
 
   NewService,
   GetServicesByUser,
